@@ -301,7 +301,7 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 
 
 def evaluation(examples, classifier, DEVICE, supersense_dist, supersense_correct, hypersense_dist, hypersense_correct, def_errors, run, dataset, data):
-    batch_size =25
+	batch_size =25
 	i = 0
 	nb_good_preds = 0
 	nb_good_preds_hs = 0
