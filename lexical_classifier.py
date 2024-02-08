@@ -356,25 +356,25 @@ class Baseline:
 
 
 class MostFrequentSequoia(Baseline):
-    def __init__(self, sequoia_file):
-	super().__init__()
+	def __init__(self, sequoia_file):
+		super().__init__()
 
-    def training(self):
-        self.most_frequent_supersense = 'act'
+	def training(self):
+		self.most_frequent_supersense = 'act'
 
 
 class MostFrequentWiktionary(Baseline):
-    def __init__(self):
-    	super().__init__()
-    def training(self):
-        self.most_frequent_supersense = 'person'
+	def __init__(self):
+		super().__init__()
+	def training(self):
+		self.most_frequent_supersense = 'person'
 
 
 class MostFrequentTrainingData(Baseline):
-    def __init__(self):
-	super().__init__()
-	
-    def training(self):
-        self.most_frequent_supersense = 'artifact'
+	def __init__(self):
+		super().__init__()
+
+	def training(self):
+		self.most_frequent_supersense = 'artifact'
 
 
