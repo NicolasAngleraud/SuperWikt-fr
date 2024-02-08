@@ -85,10 +85,6 @@ if __name__ == '__main__':
 			    supersense_dist_test = {supersense: 0 for supersense in SUPERSENSES}
 			    supersense_correct_test = {supersense: 0 for supersense in SUPERSENSES}
 
-			    hypersense_dist_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
-			    hypersense_correct_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
-			    supersense_dist_test_2 = {supersense: 0 for supersense in SUPERSENSES}
-			    supersense_correct_test_2 = {supersense: 0 for supersense in SUPERSENSES}
 
 			    params = Parameters(lr=lr, patience=patience, frozen=frozen)
 

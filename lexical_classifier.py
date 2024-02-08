@@ -37,7 +37,7 @@ PADDING_TOKEN_ID = 2
 
 def encoded_examples(datafile, eval_prefix):
 	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
-
+	df_senses = df_senses[df_senses['supersense'].isin(SUPERSENSES)]
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	dev = f"{eval_prefix}-dev"
