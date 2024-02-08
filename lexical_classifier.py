@@ -124,7 +124,7 @@ class SupersenseTagger(nn.Module):
 		return F.log_softmax(out, dim=1)
 
 	def predict(self, definitions_batch_encodings):
-		torch.eval()
+		self.eval()
 		with torch.no_grad():
 			log_probs = self.forward(definitions_batch_encodings)
 			predicted_indices = torch.argmax(log_probs, dim=1).tolist()
@@ -132,7 +132,7 @@ class SupersenseTagger(nn.Module):
 
 	def evaluate(self, examples_batch_encodings, DEVICE, supersense_dist, supersense_correct, hypersense_dist, hypersense_correct, def_errors, run, dataset):
 
-		torch.eval()
+		self.eval()
 		good_pred_hs = 0
 		with torch.no_grad():
 			X, Y = zip(*examples_batch_encodings)
@@ -236,7 +236,7 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		i = 0
 		j = 0
 
-		torch.train()
+		my_supersense_tagger.train()
 		while i < len(train_examples):
 			train_batch = train_examples[i: i + locals()["batch_size"]]
 
@@ -262,7 +262,7 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		train_losses.append(epoch_loss)
 		train_accuracies.append(train_epoch_accuracy / len(train_examples))
 
-		torch.eval()
+		my_supersense_tagger.eval()
 		with torch.no_grad():
 			while j < len(dev_examples):
 				dev_batch = dev_examples[j: j + locals()["batch_size"]]
