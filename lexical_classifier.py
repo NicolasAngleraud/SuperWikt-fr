@@ -30,7 +30,7 @@ supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
 
 
 NB_CLASSES = len(supersense2i)
-MODEL_NAME = "flaubert/flaubert_large_cased"
+MODEL_NAME = "flaubert/flaubert_base_cased"
 HIDDEN_LAYER_SIZE = 256
 PADDING_TOKEN_ID = 2
 
