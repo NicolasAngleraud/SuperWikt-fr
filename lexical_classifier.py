@@ -71,12 +71,12 @@ def pad_batch(encodings_batch, padding_token_id=2, max_seq_length=100):
 	padding_size = max(len(sublist) for sublist in encodings_batch)
 	padding_size = min(padding_size, max_seq_length)
 	for sentence_encoding in encodings_batch:
-	if len(sentence_encoding) < padding_size:
-	    while len(sentence_encoding) < padding_size:
-		sentence_encoding.append(padding_token_id)
-	else:
-	    while len(sentence_encoding) > padding_size:
-		sentence_encoding.pop(-2)
+		if len(sentence_encoding) < padding_size:
+		    while len(sentence_encoding) < padding_size:
+			sentence_encoding.append(padding_token_id)
+		else:
+		    while len(sentence_encoding) > padding_size:
+			sentence_encoding.pop(-2)
 	return torch.tensor(encodings_batch, dtype=torch.long)
 
 
