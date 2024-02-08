@@ -91,19 +91,19 @@ if __name__ == '__main__':
 			    dev_data["run"] = i + 1
 			    test_data["run"] = i + 1
 
-			    classifier = clf.SupersenseTagger(params, DEVICE)
-			    clf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
-			    clf.evaluation(dev_examples, classifier, DEVICE, supersense_dist_dev,
+			    classifier = lclf.SupersenseTagger(params, DEVICE)
+			    lclf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
+			    lclf.evaluation(dev_examples, classifier, DEVICE, supersense_dist_dev,
 				            supersense_correct_dev, hypersense_dist_dev, hypersense_correct_dev, def_errors, i+1, 
 				            "dev", dev_data)
-			    clf.evaluation(test_examples, classifier, DEVICE, supersense_dist_test,
+			    lclf.evaluation(test_examples, classifier, DEVICE, supersense_dist_test,
 				            supersense_correct_test, hypersense_dist_test, hypersense_correct_test, def_errors, i+1, 
 				            "test", test_data)
 
 			   
-			    sequoia_baseline = clf.MostFrequentSequoia()
-			    train_baseline = clf.MostFrequentTrainingData()
-			    wiki_baseline = clf.MostFrequentWiktionary()
+			    sequoia_baseline = lclf.MostFrequentSequoia()
+			    train_baseline = lclf.MostFrequentTrainingData()
+			    wiki_baseline = lclf.MostFrequentWiktionary()
 
 			    sequoia_baseline.training()
 			    train_baseline.training()
