@@ -48,21 +48,21 @@ def encoded_examples(datafile, eval_prefix):
 	train_lemmas = df_senses[df_senses['set']=='train']['lemma'].tolist()
 	train_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(train_definitions, train_lemmas)]
 	train_supersenses_encoded = [supersense2i[supersense] for supersense in train_supersenses]
-	train_examples = zip(train_definitions_encoded, train_supersenses_encoded)
+	train_examples = list(zip(train_definitions_encoded, train_supersenses_encoded))
 
 	dev_definitions = df_senses[df_senses['set']==dev]['definition'].tolist()
 	dev_supersenses = df_senses[df_senses['set']==dev]['supersense'].tolist()
 	dev_lemmas = df_senses[df_senses['set']==dev]['lemma'].tolist()
 	dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(dev_definitions, dev_lemmas)]
 	dev_supersenses_encoded = [supersense2i[supersense] for supersense in dev_supersenses]
-	dev_examples = zip(dev_definitions_encoded, dev_supersenses_encoded)
+	dev_examples = list(zip(dev_definitions_encoded, dev_supersenses_encoded))
 	
 	test_definitions = df_senses[df_senses['set']==test]['definition'].tolist()
 	test_supersenses = df_senses[df_senses['set']==test]['supersense'].tolist()
 	test_lemmas = df_senses[df_senses['set']==test]['lemma'].tolist()
 	test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(test_definitions, test_lemmas)]
 	test_supersenses_encoded = [supersense2i[supersense] for supersense in test_supersenses]
-	test_examples = zip(test_definitions_encoded, test_supersenses_encoded)
+	test_examples = list(zip(test_definitions_encoded, test_supersenses_encoded))
 	
 	return train_examples, dev_examples, test_examples
 
