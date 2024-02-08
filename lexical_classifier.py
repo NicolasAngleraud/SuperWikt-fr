@@ -356,7 +356,7 @@ class Baseline:
 
 
 class MostFrequentSequoia(Baseline):
-	def __init__(self, sequoia_file):
+	def __init__(self):
 		super().__init__()
 
 	def training(self):
