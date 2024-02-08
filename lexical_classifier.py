@@ -88,8 +88,8 @@ class SupersenseTagger(nn.Module):
 		self.bert_model = AutoModel.from_pretrained(bert_model_name, output_attentions=True).to(DEVICE)
 
 		if params.frozen:
-		    for param in self.bert_model.parameters():
-			param.requires_grad = False
+			for param in self.bert_model.parameters():
+				param.requires_grad = False
 
 		self.embedding_layer_size = self.bert_model.config.hidden_size
 
@@ -126,8 +126,8 @@ class SupersenseTagger(nn.Module):
 	def predict(self, definitions_batch_encodings):
 		torch.eval()
 		with torch.no_grad():
-		    log_probs = self.forward(definitions_batch_encodings)
-		    predicted_indices = torch.argmax(log_probs, dim=1).tolist()
+			log_probs = self.forward(definitions_batch_encodings)
+			predicted_indices = torch.argmax(log_probs, dim=1).tolist()
 		return [SUPERSENSES[i] for i in predicted_indices]
 
 	def evaluate(self, examples_batch_encodings, DEVICE, supersense_dist, supersense_correct, hypersense_dist, hypersense_correct, def_errors, run, dataset):
@@ -135,75 +135,75 @@ class SupersenseTagger(nn.Module):
 		torch.eval()
 		good_pred_hs = 0
 		with torch.no_grad():
-		    X, Y = zip(*examples_batch_encodings)
-		    X = pad_batch(X, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-		    Y_gold = torch.tensor(Y).to(DEVICE)
-		    Y_pred = torch.argmax(self.forward(X), dim=1)
+			X, Y = zip(*examples_batch_encodings)
+			X = pad_batch(X, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+			Y_gold = torch.tensor(Y).to(DEVICE)
+			Y_pred = torch.argmax(self.forward(X), dim=1)
 
 		# Find the indices where predictions and gold classes differ
 		error_indices = torch.nonzero(Y_pred != Y_gold).squeeze().to(DEVICE)
 		error_indices = error_indices.tolist()
 		if type(error_indices) == int:
-		    error_indices = [error_indices]
+			error_indices = [error_indices]
 
 		correct_indices = torch.nonzero(Y_pred == Y_gold).squeeze().to(DEVICE)
 		correct_indices = correct_indices.tolist()
 		if type(correct_indices) == int:
-		    correct_indices = [correct_indices]
+			correct_indices = [correct_indices]
 		# Get the predicted and gold classes for the errors
 		if len(error_indices) > 0:
-		    errors = [(SUPERSENSES[Y_pred[i].item()], SUPERSENSES[Y_gold[i].item()]) for i in error_indices]
+			errors = [(SUPERSENSES[Y_pred[i].item()], SUPERSENSES[Y_gold[i].item()]) for i in error_indices]
 		else:
-		    errors = []
+			errors = []
 
 		if len(correct_indices) > 0:
-		    for i in correct_indices:
-			supersense = SUPERSENSES[Y_gold[i].item()]
-			supersense_correct[supersense] += 1
+			for i in correct_indices:
+				supersense = SUPERSENSES[Y_gold[i].item()]
+				supersense_correct[supersense] += 1
 			for hypersense in HYPERSENSES:
-			    if supersense in HYPERSENSES[hypersense]:
-				hypersense_correct[hypersense] += 1
+	        		if supersense in HYPERSENSES[hypersense]:
+					hypersense_correct[hypersense] += 1
 
 		if len(error_indices) > 0:
 		    for i in error_indices:
-			pred_supersense = SUPERSENSES[Y_pred[i].item()]
-			gold_supersense = SUPERSENSES[Y_gold[i].item()]
+				pred_supersense = SUPERSENSES[Y_pred[i].item()]
+				gold_supersense = SUPERSENSES[Y_gold[i].item()]
+				pred_hypersenses = []
+				gold_hypersenses = []
+				for hypersense in HYPERSENSES:
+					if pred_supersense in HYPERSENSES[hypersense]:
+						pred_hypersenses.append(hypersense)
+					if gold_supersense in HYPERSENSES[hypersense]:
+						gold_hypersenses.append(hypersense)
+				for pred_hs in pred_hypersenses:
+					for gold_hs in gold_hypersenses:
+						if pred_hs == gold_hs:
+				         		hypersense_correct[gold_hs] += 1
+				def_errors.append(
+				    {"run":run,
+				     "dataset": dataset, 
+				     "definition":self.tokenizer.decode(X[i], skip_special_tokens=True),
+				     "pred_supersense": SUPERSENSES[Y_pred[i].item()],
+				     "gold_supersense": SUPERSENSES[Y_gold[i].item()]}
+				     )
+
+		for j in range(len(examples_batch_encodings)):
+			supersense = SUPERSENSES[Y_gold[j].item()]
+			supersense_dist[supersense] += 1
+			for hypersense in HYPERSENSES:
+				if supersense in HYPERSENSES[hypersense]:
+					hypersense_dist[hypersense] += 1
+
+			pred_supersense = SUPERSENSES[Y_pred[j].item()]
+			gold_supersense = SUPERSENSES[Y_gold[j].item()]
 			pred_hypersenses = []
 			gold_hypersenses = []
 			for hypersense in HYPERSENSES:
-			    if pred_supersense in HYPERSENSES[hypersense]:
-				pred_hypersenses.append(hypersense)
-			    if gold_supersense in HYPERSENSES[hypersense]:
-				gold_hypersenses.append(hypersense)
-			for pred_hs in pred_hypersenses:
-			    for gold_hs in gold_hypersenses:
-				if pred_hs == gold_hs:
-				    hypersense_correct[gold_hs] += 1
-			def_errors.append(
-			    {"run":run,
-			     "dataset": dataset, 
-			     "definition":self.tokenizer.decode(X[i], skip_special_tokens=True),
-			     "pred_supersense": SUPERSENSES[Y_pred[i].item()],
-			     "gold_supersense": SUPERSENSES[Y_gold[i].item()]}
-			     )
-
-		for j in range(len(examples_batch_encodings)):
-		    supersense = SUPERSENSES[Y_gold[j].item()]
-		    supersense_dist[supersense] += 1
-		    for hypersense in HYPERSENSES:
-			if supersense in HYPERSENSES[hypersense]:
-			    hypersense_dist[hypersense] += 1
-		    
-		    pred_supersense = SUPERSENSES[Y_pred[j].item()]
-		    gold_supersense = SUPERSENSES[Y_gold[j].item()]
-		    pred_hypersenses = []
-		    gold_hypersenses = []
-		    for hypersense in HYPERSENSES:
-			if pred_supersense in HYPERSENSES[hypersense]:
-			    pred_hypersenses.append(hypersense)
-			if gold_supersense in HYPERSENSES[hypersense]:
-			    gold_hypersenses.append(hypersense)        
-		    good_pred_hs += int(bool(set(pred_hypersenses).intersection(gold_hypersenses)))
+				if pred_supersense in HYPERSENSES[hypersense]:
+					pred_hypersenses.append(hypersense)
+				if gold_supersense in HYPERSENSES[hypersense]:
+					gold_hypersenses.append(hypersense)        
+			good_pred_hs += int(bool(set(pred_hypersenses).intersection(gold_hypersenses)))
 
 		return errors, torch.sum((Y_pred == Y_gold).int()).item(), good_pred_hs
 
@@ -238,26 +238,26 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 
 		torch.train()
 		while i < len(train_examples):
-		    train_batch = train_examples[i: i + locals()["batch_size"]]
+			train_batch = train_examples[i: i + locals()["batch_size"]]
 
-		    i += locals()["batch_size"]
+			i += locals()["batch_size"]
 
-		    X_train, Y_train = zip(*train_batch)
+			X_train, Y_train = zip(*train_batch)
 
-		    padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-		    Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
+			padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+			Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
 
-		    my_supersense_tagger.zero_grad()
-		    log_probs = my_supersense_tagger(padded_encodings)
+			my_supersense_tagger.zero_grad()
+			log_probs = my_supersense_tagger(padded_encodings)
 
-		    predicted_indices = torch.argmax(log_probs, dim=1)
-		    train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
+			predicted_indices = torch.argmax(log_probs, dim=1)
+			train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
-		    loss = loss_function(log_probs, Y_train)
-		    loss.backward()
-		    optimizer.step()
+			loss = loss_function(log_probs, Y_train)
+			loss.backward()
+			optimizer.step()
 
-		    epoch_loss += loss.item()
+			epoch_loss += loss.item()
 
 		train_losses.append(epoch_loss)
 		train_accuracies.append(train_epoch_accuracy / len(train_examples))
@@ -265,27 +265,27 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		torch.eval()
 		with torch.no_grad():
 			while j < len(dev_examples):
-			    dev_batch = dev_examples[j: j + locals()["batch_size"]]
-			    j += locals()["batch_size"]
-			    X_dev, Y_dev = zip(*dev_batch)
-			    dev_padded_encodings = pad_batch(X_dev, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-			    Y_dev = torch.tensor(Y_dev, dtype=torch.long).to(DEVICE)
-			    dev_log_probs = my_supersense_tagger(dev_padded_encodings)
+				dev_batch = dev_examples[j: j + locals()["batch_size"]]
+				j += locals()["batch_size"]
+				X_dev, Y_dev = zip(*dev_batch)
+				dev_padded_encodings = pad_batch(X_dev, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+				Y_dev = torch.tensor(Y_dev, dtype=torch.long).to(DEVICE)
+				dev_log_probs = my_supersense_tagger(dev_padded_encodings)
 
-			    predicted_indices = torch.argmax(dev_log_probs, dim=1)
-			    dev_epoch_accuracy += torch.sum((predicted_indices == Y_dev).int()).item()
+				predicted_indices = torch.argmax(dev_log_probs, dim=1)
+				dev_epoch_accuracy += torch.sum((predicted_indices == Y_dev).int()).item()
 
-			    dev_loss = loss_function(dev_log_probs, Y_dev)
-			    dev_epoch_loss += dev_loss.item()
+				dev_loss = loss_function(dev_log_probs, Y_dev)
+				dev_epoch_loss += dev_loss.item()
 
 			dev_losses.append(dev_epoch_loss)
 			dev_accuracies.append(dev_epoch_accuracy / len(dev_examples))
 
 			if epoch > locals()["patience"]:
-			    if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -locals()["patience"], -1)):
-				dev_data["early_stopping"] = epoch
-				test_data["early_stopping"] = epoch
-				break
+				if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -locals()["patience"], -1)):
+					dev_data["early_stopping"] = epoch
+					test_data["early_stopping"] = epoch
+					break
 
 	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
 	test_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
@@ -327,11 +327,11 @@ def evaluation(examples, classifier, DEVICE, supersense_dist, supersense_correct
 
 	for supersense in supersense_dist:
 		if supersense_dist[supersense] > 0:
-		    data[supersense] = supersense_correct[supersense]/supersense_dist[supersense]
+			data[supersense] = supersense_correct[supersense]/supersense_dist[supersense]
 
 	for hypersense in hypersense_dist:
 		if hypersense_dist[hypersense] > 0:
-		    data[hypersense] = hypersense_correct[hypersense]/hypersense_dist[hypersense]
+			data[hypersense] = hypersense_correct[hypersense]/hypersense_dist[hypersense]
 
 
 
@@ -350,7 +350,7 @@ class Baseline:
         for example in eval_examples:
             nb_examples += 1
             if example['supersense'] == self.most_frequent_supersense:
-                correct_pred += 1
+            	correct_pred += 1
 
         return correct_pred / nb_examples
 
