@@ -33,14 +33,14 @@ class Parameters:
         
         
 def get_parser_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
-    parser.add_argument("-data_file", default="donnees_stage_wiktionnaire_supersenses.xlsx", help="")
-    parser.add_argument("-def_errors", action="store_true", help="Writes a xlsx file containing the description of the examples wrongly predicted by the classifier during evalutation.")
-    parser.add_argument("-inference_data_file", default=None, help="File containing the data for inference.")
-    parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
-    args = parser.parse_args()
-    return args
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
+	parser.add_argument("-data_file", default="donnees_stage_wiktionnaire_supersenses.xlsx", help="")
+	parser.add_argument("-def_errors", action="store_true", help="Writes a xlsx file containing the description of the examples wrongly predicted by the classifier during evalutation.")
+	parser.add_argument("-inference_data_file", default=None, help="File containing the data for inference.")
+	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
+	args = parser.parse_args()
+	return args
 
 
 if __name__ == '__main__':
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 	# DEVICE setup
 	device_id = args.device_id
 	if torch.cuda.is_available():
-	    DEVICE = torch.device("cuda:" + args.device_id)
+		DEVICE = torch.device("cuda:" + args.device_id)
 
 	nb_runs = 1
 	patiences = [2]
@@ -62,68 +62,68 @@ if __name__ == '__main__':
 	def_errors = []
 
 	for i in range(nb_runs):
-	    train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix='freq')
+		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix='freq')
  
-	    for lr in lrs:
-		for patience in patiences:
+		for lr in lrs:
+			for patience in patiences:
 
-		    dev_data = {}
-		    test_data = {}
+			    dev_data = {}
+			    test_data = {}
 
 
-		    print("")
-		    print(f"run {i+1} : lr = {lr}")
-		    print("")
+			    print("")
+			    print(f"run {i+1} : lr = {lr}")
+			    print("")
 
-		    hypersense_dist_dev = {hypersense: 0 for hypersense in HYPERSENSES}
-		    hypersense_correct_dev = {hypersense: 0 for hypersense in HYPERSENSES}
-		    supersense_dist_dev = {supersense: 0 for supersense in SUPERSENSES}
-		    supersense_correct_dev = {supersense: 0 for supersense in SUPERSENSES}
+			    hypersense_dist_dev = {hypersense: 0 for hypersense in HYPERSENSES}
+			    hypersense_correct_dev = {hypersense: 0 for hypersense in HYPERSENSES}
+			    supersense_dist_dev = {supersense: 0 for supersense in SUPERSENSES}
+			    supersense_correct_dev = {supersense: 0 for supersense in SUPERSENSES}
 
-		    hypersense_dist_test = {hypersense: 0 for hypersense in HYPERSENSES}
-		    hypersense_correct_test = {hypersense: 0 for hypersense in HYPERSENSES}
-		    supersense_dist_test = {supersense: 0 for supersense in SUPERSENSES}
-		    supersense_correct_test = {supersense: 0 for supersense in SUPERSENSES}
+			    hypersense_dist_test = {hypersense: 0 for hypersense in HYPERSENSES}
+			    hypersense_correct_test = {hypersense: 0 for hypersense in HYPERSENSES}
+			    supersense_dist_test = {supersense: 0 for supersense in SUPERSENSES}
+			    supersense_correct_test = {supersense: 0 for supersense in SUPERSENSES}
 
-		    hypersense_dist_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
-		    hypersense_correct_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
-		    supersense_dist_test_2 = {supersense: 0 for supersense in SUPERSENSES}
-		    supersense_correct_test_2 = {supersense: 0 for supersense in SUPERSENSES}
+			    hypersense_dist_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
+			    hypersense_correct_test_2 = {hypersense: 0 for hypersense in HYPERSENSES}
+			    supersense_dist_test_2 = {supersense: 0 for supersense in SUPERSENSES}
+			    supersense_correct_test_2 = {supersense: 0 for supersense in SUPERSENSES}
 
-		    params = Parameters(lr=lr, patience=patience, frozen=frozen)
+			    params = Parameters(lr=lr, patience=patience, frozen=frozen)
 
-		    dev_data["run"] = i + 1
-		    test_data["run"] = i + 1
+			    dev_data["run"] = i + 1
+			    test_data["run"] = i + 1
 
-		    classifier = clf.SupersenseTagger(params, DEVICE)
-		    clf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
-		    clf.evaluation(dev_examples, classifier, DEVICE, supersense_dist_dev,
-		                    supersense_correct_dev, hypersense_dist_dev, hypersense_correct_dev, def_errors, i+1, 
-		                    "dev", dev_data)
-		    clf.evaluation(test_examples, classifier, DEVICE, supersense_dist_test,
-		                    supersense_correct_test, hypersense_dist_test, hypersense_correct_test, def_errors, i+1, 
-		                    "test", test_data)
+			    classifier = clf.SupersenseTagger(params, DEVICE)
+			    clf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
+			    clf.evaluation(dev_examples, classifier, DEVICE, supersense_dist_dev,
+				            supersense_correct_dev, hypersense_dist_dev, hypersense_correct_dev, def_errors, i+1, 
+				            "dev", dev_data)
+			    clf.evaluation(test_examples, classifier, DEVICE, supersense_dist_test,
+				            supersense_correct_test, hypersense_dist_test, hypersense_correct_test, def_errors, i+1, 
+				            "test", test_data)
 
-		   
-		    sequoia_baseline = clf.MostFrequentSequoia()
-		    train_baseline = clf.MostFrequentTrainingData()
-		    wiki_baseline = clf.MostFrequentWiktionary()
+			   
+			    sequoia_baseline = clf.MostFrequentSequoia()
+			    train_baseline = clf.MostFrequentTrainingData()
+			    wiki_baseline = clf.MostFrequentWiktionary()
 
-		    sequoia_baseline.training()
-		    train_baseline.training()
-		    wiki_baseline.training()
+			    sequoia_baseline.training()
+			    train_baseline.training()
+			    wiki_baseline.training()
 
-		    dev_data["sequoia_baseline"] = sequoia_baseline.evaluation(dev_examples)
-		    test_data["sequoia_baseline"] = sequoia_baseline.evaluation(test_examples)
-		    
-		    dev_data["train_baseline"] =train_baseline.evaluation(dev_examples)
-		    test_data["train_baseline"] = train_baseline.evaluation(test_examples)
+			    dev_data["sequoia_baseline"] = sequoia_baseline.evaluation(dev_examples)
+			    test_data["sequoia_baseline"] = sequoia_baseline.evaluation(test_examples)
+			    
+			    dev_data["train_baseline"] =train_baseline.evaluation(dev_examples)
+			    test_data["train_baseline"] = train_baseline.evaluation(test_examples)
 
-		    dev_data["wiki_baseline"] = wiki_baseline.evaluation(dev_examples)
-		    test_data["wiki_baseline"] = wiki_baseline.evaluation(test_examples)
+			    dev_data["wiki_baseline"] = wiki_baseline.evaluation(dev_examples)
+			    test_data["wiki_baseline"] = wiki_baseline.evaluation(test_examples)
 
-		    df_dev.append(dev_data)
-		    df_test.append(test_data)
+			    df_dev.append(dev_data)
+			    df_test.append(test_data)
 
 
 	# dev
@@ -138,6 +138,6 @@ if __name__ == '__main__':
 
 
 	if args.def_errors:
-	    df = pd.DataFrame(def_errors)
-	    excel_filename = 'descriptions_errors.xlsx'
-	    df.to_excel(excel_filename, index=False)
+		df = pd.DataFrame(def_errors)
+		excel_filename = 'descriptions_errors.xlsx'
+		df.to_excel(excel_filename, index=False)
