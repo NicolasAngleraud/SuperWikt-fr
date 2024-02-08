@@ -36,7 +36,7 @@ PADDING_TOKEN_ID = 2
 
 
 def encoded_examples(datafile, eval_prefix):
-	df_senses = pd.read_excel(datafile, sheet_name='senses')
+	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
