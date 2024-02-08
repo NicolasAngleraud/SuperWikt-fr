@@ -20,7 +20,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 class Parameters:
-    def __init__(self, nb_epochs=25, batch_size=32, hidden_layer_size=256, patience=2, lr=0.00025, frozen=True, max_seq_length=100, window_example=100):
+    def __init__(self, nb_epochs=25, batch_size=32, hidden_layer_size=256, patience=2, lr=0.0005, frozen=True, max_seq_length=100, window_example=100):
         self.nb_epochs = nb_epochs
         self.batch_size = batch_size
         self.hidden_layer_size = hidden_layer_size
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 	nb_runs = 1
 	patiences = [2]
 	frozen = True
-	lrs = [0.001]
+	lrs = [0.0005]
 	def_errors = []
 
 	for i in range(nb_runs):
