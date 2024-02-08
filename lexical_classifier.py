@@ -163,7 +163,7 @@ class SupersenseTagger(nn.Module):
 			for hypersense in HYPERSENSES:
 	        		if supersense in HYPERSENSES[hypersense]:
 					hypersense_correct[hypersense] += 1
-
+					
 		if len(error_indices) > 0:
 			for i in error_indices:
 				pred_supersense = SUPERSENSES[Y_pred[i].item()]
