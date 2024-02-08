@@ -115,11 +115,11 @@ class SupersenseTagger(nn.Module):
 
 		out = torch.relu(out) # SHAPE [len(definitions), hidden_layer_size]
 
-		out = self.dropout(out)
+		# out = self.dropout(out)
 
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 
-		out = self.dropout(out)
+		# out = self.dropout(out)
 
 		return F.log_softmax(out, dim=1)
 
@@ -282,7 +282,7 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 			dev_accuracies.append(dev_epoch_accuracy / len(dev_examples))
 
 			if epoch > locals()["patience"]:
-				if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -locals()["patience"], -1)):
+				if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -locals()["patience"]-1, -1)):
 					dev_data["early_stopping"] = epoch
 					test_data["early_stopping"] = epoch
 					break
