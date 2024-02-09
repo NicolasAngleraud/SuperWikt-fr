@@ -51,7 +51,7 @@ if __name__ == '__main__':
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
 		
-	eval_prefix = 'freq'
+	eval_prefix = 'rand'
 
 	nb_runs = 1
 	patiences = [2]
