@@ -63,9 +63,7 @@ if __name__ == '__main__':
 	for i in range(nb_runs):
 		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix=eval_prefix)
 		
-		print(len(train_examples))
-		print(len(dev_examples))
-		"""
+		
 		for lr in lrs:
 			for patience in patiences:
 
@@ -123,4 +121,4 @@ if __name__ == '__main__':
 	df = pd.DataFrame(df_test)
 	excel_filename = 'results_{eval_prefix}-test.xlsx'
 	df.to_excel(excel_filename, index=False)
-		"""
+
