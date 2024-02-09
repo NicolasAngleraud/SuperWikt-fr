@@ -279,6 +279,7 @@ class Baseline:
 		nb_examples = 0
 
 		for _, supersense in eval_examples:
+			print(supersense, self.most_frequent_supersense)
 	    		nb_examples += 1
 	    		if supersense == self.most_frequent_supersense:
 	    			correct_pred += 1
