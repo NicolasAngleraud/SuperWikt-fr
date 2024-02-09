@@ -269,7 +269,7 @@ def inference(inference_data_set, classifier, DEVICE):
 class Baseline:
 
 	def __init__(self):
-		self.most_frequent_supersense = None
+		self.most_frequent_supersense = 'act'
 	
 	def training(self):
 		pass
