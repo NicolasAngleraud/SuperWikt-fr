@@ -211,8 +211,8 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 
 			if epoch > parameters["patience"]:
 				if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
-					dev_data["early_stopping"] = epoch
-					test_data["early_stopping"] = epoch
+					dev_data["early_stopping"] = epoch+1
+					test_data["early_stopping"] = epoch+1
 					break
 	j = 0
 	my_supersense_tagger.eval()

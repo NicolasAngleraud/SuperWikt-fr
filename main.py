@@ -56,7 +56,7 @@ if __name__ == '__main__':
 	nb_runs = 1
 	patiences = [2]
 	frozen = True
-	lrs = [0.01]
+	lrs = [0.001]
 	def_errors = []
 
 	for i in range(nb_runs):
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
 	# test
 	df = pd.DataFrame(df_test)
-	excel_filename = './results_{eval_prefix}-test.xlsx'
+	excel_filename = f'./results_{eval_prefix}-test.xlsx'
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.")
