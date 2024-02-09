@@ -55,9 +55,8 @@ if __name__ == '__main__':
 
 	nb_runs = 1
 	patiences = [2]
-	frozen = True
-	lrs = [0.001]
-	def_errors = []
+	frozen = False
+	lrs = [0.00005]
 
 	for i in range(nb_runs):
 		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix=eval_prefix)
