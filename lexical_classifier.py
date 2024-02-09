@@ -275,7 +275,6 @@ class Baseline:
 		pass
 
 	def evaluation(self, eval_examples):
-		for i in range(10): print(eval_examples[i][0], eval_examples[i][1])
 		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for _, supersense in eval_examples])/len(eval_examples)
 
 
