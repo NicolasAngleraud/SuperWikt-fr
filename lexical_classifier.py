@@ -280,11 +280,11 @@ class Baseline:
 
 		for _, supersense in eval_examples:
 			print(supersense, self.most_frequent_supersense)
-	    		nb_examples += 1
-	    		if supersense == self.most_frequent_supersense:
-	    			correct_pred += 1
+			nb_examples += 1
+			if supersense == self.most_frequent_supersense:
+				correct_pred += 1
 
-		return correct_pred / nb_examples
+			return correct_pred / nb_examples
 
 
 class MostFrequentSequoia(Baseline):
