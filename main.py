@@ -66,10 +66,10 @@ if __name__ == '__main__':
 		
 		for lr in lrs:
 			for patience in patiences:
-			    """
+			    
 			    dev_data = {}
 			    test_data = {}
-
+		            """
 
 			    print("")
 			    print(f"run {i+1} : lr = {lr}")
@@ -115,8 +115,8 @@ if __name__ == '__main__':
 			    print(train_baseline.evaluation(dev_examples))
 			    print(wiki_baseline.evaluation(dev_examples))
 			    
-			    # df_dev.append(dev_data)
-			    # df_test.append(test_data)
+			    df_dev.append(dev_data)
+			    df_test.append(test_data)
 
 """
 	# dev
