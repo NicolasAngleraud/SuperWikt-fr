@@ -57,7 +57,7 @@ if __name__ == '__main__':
 	nb_runs = 1
 	patiences = [2]
 	frozen = True
-	lrs = [0.0005]
+	lrs = [0.005]
 	def_errors = []
 
 	for i in range(nb_runs):
