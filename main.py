@@ -21,7 +21,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
 LPARAMETERS = {
 	"nb_epochs": 25,
 	"batch_size": 32,
-	"hidden_layer_size": 256,
+	"hidden_layer_size": 128,
 	"patience": 2,
 	"lr": 0.001,
 	"frozen": True,
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 	nb_runs = 1
 	patiences = [2]
 	frozen = True
-	lrs = [0.001]
+	lrs = [0.01]
 	def_errors = []
 
 	for i in range(nb_runs):

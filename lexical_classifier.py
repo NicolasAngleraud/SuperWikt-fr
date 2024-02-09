@@ -81,7 +81,7 @@ def pad_batch(encodings_batch, padding_token_id=2, max_seq_length=100):
 
 class SupersenseTagger(nn.Module):
 
-	def __init__(self, params, DEVICE, dropout_rate=0.5, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, dropout_rate=0.2, bert_model_name=MODEL_NAME):
 		super(SupersenseTagger, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name, output_attentions=True).to(DEVICE)
@@ -146,12 +146,10 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		test_data[param] = value
 
 	my_supersense_tagger = classifier
-	dev_data["early_stopping"] = parameters["nb_epochs"]
-	test_data["early_stopping"] = parameters["nb_epochs"]
-
+	dev_data["early_stopping"] = 0
+	test_data["early_stopping"] = 0
+	train_final_accuracy = 0
 	train_losses = []
-	train_accuracies = []
-
 	dev_losses = []
 	dev_accuracies = []
 	loss_function = nn.NLLLoss()
@@ -162,8 +160,6 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		print("epoch: ", epoch+1)
 		epoch_loss = 0
 		dev_epoch_loss = 0
-
-		train_epoch_accuracy = 0
 		dev_epoch_accuracy = 0
 
 		shuffle(train_examples)
@@ -230,9 +226,9 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 			train_log_probs = my_supersense_tagger(train_padded_encodings)
 
 			predicted_indices = torch.argmax(train_log_probs, dim=1)
-			train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
+			train_final_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
-		train_accuracies.append(train_epoch_accuracy / len(train_examples))
+		train_final_accuracy = train_final_accuracy/len(train_examples)
 
 	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
 	test_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
@@ -240,8 +236,8 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 	dev_data["dev_losses"] = [round(dev_loss, 2) for dev_loss in dev_losses]
 	test_data["dev_losses"] = [round(dev_loss, 2) for dev_loss in dev_losses]
 
-	dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies]
-	test_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies]
+	dev_data["train_final_accuracy"] = round(train_final_accuracy, 2)
+	test_data["train_final_accuracy"] = round(train_final_accuracy, 2)
 
 	dev_data["dev_accuracies"] = [round(dev_accuracy, 2) for dev_accuracy in dev_accuracies]
 	test_data["dev_accurcies"] = [round(dev_accuracy, 2) for dev_accuracy in dev_accuracies]
@@ -257,7 +253,7 @@ def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
 		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, run, dataset)
 		nb_good_preds += partial_nb_good_preds
 
-	data["accuracy"] = nb_good_preds/len(examples)
+	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
 
 	
 
