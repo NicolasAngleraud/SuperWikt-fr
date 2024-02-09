@@ -19,7 +19,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 25,
+	"nb_epochs": 5,
 	"batch_size": 32,
 	"hidden_layer_size": 128,
 	"patience": 2,
