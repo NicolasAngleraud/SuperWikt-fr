@@ -32,7 +32,7 @@ LPARAMETERS = {
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
-	parser.add_argument("-data_file", default="donnees_stage_wiktionnaire_supersenses.xlsx", help="")
+	parser.add_argument("-data_file", default="./donnees_stage_wiktionnaire_supersenses.xlsx", help="")
 	parser.add_argument("-inference_data_file", default=None, help="File containing the data for inference.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
@@ -87,6 +87,8 @@ if __name__ == '__main__':
 			    lclf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
 			    lclf.evaluation(dev_examples, classifier, params, DEVICE,  i+1, f"{eval_prefix}-dev", dev_data)
 			    lclf.evaluation(test_examples, classifier, params, DEVICE, i+1, f"{eval_prefix}-test", test_data)
+			    
+			    print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
 			   
 			    sequoia_baseline = lclf.MostFrequentSequoia()
 			    train_baseline = lclf.MostFrequentTrainingData()
@@ -105,18 +107,21 @@ if __name__ == '__main__':
 			    dev_data["wiki_baseline"] = wiki_baseline.evaluation(dev_examples)
 			    test_data["wiki_baseline"] = wiki_baseline.evaluation(test_examples)
 			    
+			    print("BASELINES COMPUTED.")
 			    
 			    df_dev.append(dev_data)
 			    df_test.append(test_data)
 
-
+	print("CREATION OF THE EVALUATION FILES...")
 	# dev
 	df = pd.DataFrame(df_dev)
-	excel_filename = f'results_{eval_prefix}-dev.xlsx'
+	excel_filename = f'./results_{eval_prefix}-dev.xlsx'
 	df.to_excel(excel_filename, index=False)
 
 	# test
 	df = pd.DataFrame(df_test)
-	excel_filename = 'results_{eval_prefix}-test.xlsx'
+	excel_filename = './results_{eval_prefix}-test.xlsx'
 	df.to_excel(excel_filename, index=False)
+	
+	print("PROCESS DONE.")
 

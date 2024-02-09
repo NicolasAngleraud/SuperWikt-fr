@@ -157,6 +157,7 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
 
 	for epoch in range(parameters["nb_epochs"]):
+		print("epoch: ", epoch+1)
 		epoch_loss = 0
 		dev_epoch_loss = 0
 
