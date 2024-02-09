@@ -277,9 +277,11 @@ class Baseline:
 	def evaluation(self, eval_examples):
 		correct_pred = 0
 		nb_examples = 0
-
+		i = 0
+		
 		for _, supersense in eval_examples:
-			print(supersense, self.most_frequent_supersense)
+			if i < 10: print(supersense, self.most_frequent_supersense)
+			i += 1
 			nb_examples += 1
 			if supersense == self.most_frequent_supersense:
 				correct_pred += 1
