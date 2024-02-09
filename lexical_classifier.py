@@ -42,6 +42,9 @@ def encoded_examples(datafile, eval_prefix):
 	dev = f"{eval_prefix}-dev"
 	test = f"{eval_prefix}-test"
 	
+	print("dev : ", dev)
+	print("test : ", test)
+	
 	train_definitions = df_senses[df_senses['set']=='train']['definition'].tolist()
 	train_supersenses = df_senses[df_senses['set']=='train']['supersense'].tolist()
 	train_lemmas = df_senses[df_senses['set']=='train']['lemma'].tolist()
@@ -50,8 +53,12 @@ def encoded_examples(datafile, eval_prefix):
 	train_examples = list(zip(train_definitions_encoded, train_supersenses_encoded))
 
 	dev_definitions = df_senses[df_senses['set']==dev]['definition'].tolist()
+	
+	print(dev_definitions[:3])
 	dev_supersenses = df_senses[df_senses['set']==dev]['supersense'].tolist()
+	print(dev_supersenses[:3])
 	dev_lemmas = df_senses[df_senses['set']==dev]['lemma'].tolist()
+	print(dev_lemmas[:3])
 	dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(dev_definitions, dev_lemmas)]
 	dev_supersenses_encoded = [supersense2i[supersense] for supersense in dev_supersenses]
 	dev_examples = list(zip(dev_definitions_encoded, dev_supersenses_encoded))
@@ -191,23 +198,6 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 
 		train_losses.append(epoch_loss)
 
-
-		my_supersense_tagger.eval()
-		with torch.no_grad():
-			while j < len(train_examples):
-				train_batch = train_examples[j: j + parameters["batch_size"]]
-				j += parameters["batch_size"]
-				X_train, Y_train = zip(*train_batch)
-				train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-				Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
-				train_log_probs = my_supersense_tagger(train_padded_encodings)
-
-				predicted_indices = torch.argmax(train_log_probs, dim=1)
-				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
-
-			train_accuracies.append(train_epoch_accuracy / len(train_examples))
-
-
 		my_supersense_tagger.eval()
 		with torch.no_grad():
 			while j < len(dev_examples):
@@ -232,6 +222,22 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 					dev_data["early_stopping"] = epoch
 					test_data["early_stopping"] = epoch
 					break
+					
+					
+	my_supersense_tagger.eval()
+		with torch.no_grad():
+			while j < len(train_examples):
+				train_batch = train_examples[j: j + parameters["batch_size"]]
+				j += parameters["batch_size"]
+				X_train, Y_train = zip(*train_batch)
+				train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+				Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
+				train_log_probs = my_supersense_tagger(train_padded_encodings)
+
+				predicted_indices = torch.argmax(train_log_probs, dim=1)
+				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
+
+			train_accuracies.append(train_epoch_accuracy / len(train_examples))
 
 
 

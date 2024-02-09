@@ -62,7 +62,10 @@ if __name__ == '__main__':
 
 	for i in range(nb_runs):
 		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix=eval_prefix)
- 
+		
+		print(len(train_examples))
+		print(len(dev_examples))
+		"""
 		for lr in lrs:
 			for patience in patiences:
 
@@ -87,7 +90,7 @@ if __name__ == '__main__':
 			    classifier = lclf.SupersenseTagger(params, DEVICE)
 			    lclf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
 			    lclf.evaluation(dev_examples, classifier, params, DEVICE,  i+1, f"{eval_prefix}-dev", dev_data)
-			    lclf.evaluation(test_examples, classifier, params, DEVICE, i+1, f"{eval_prefix}test", test_data)
+			    lclf.evaluation(test_examples, classifier, params, DEVICE, i+1, f"{eval_prefix}-test", test_data)
 
 			   
 			    sequoia_baseline = lclf.MostFrequentSequoia()
@@ -120,4 +123,4 @@ if __name__ == '__main__':
 	df = pd.DataFrame(df_test)
 	excel_filename = 'results_{eval_prefix}-test.xlsx'
 	df.to_excel(excel_filename, index=False)
-
+		"""
