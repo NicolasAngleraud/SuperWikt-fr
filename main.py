@@ -69,8 +69,8 @@ if __name__ == '__main__':
 			    
 			    dev_data = {}
 			    test_data = {}
-		            """
-
+			    
+			    """
 			    print("")
 			    print(f"run {i+1} : lr = {lr}")
 			    print(f"eval set : {eval_prefix}")
@@ -89,7 +89,6 @@ if __name__ == '__main__':
 			    lclf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
 			    lclf.evaluation(dev_examples, classifier, params, DEVICE,  i+1, f"{eval_prefix}-dev", dev_data)
 			    lclf.evaluation(test_examples, classifier, params, DEVICE, i+1, f"{eval_prefix}-test", test_data)
-			    
 			    
 			    """
 			   
