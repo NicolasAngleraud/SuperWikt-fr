@@ -146,6 +146,8 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 		test_data[param] = value
 
 	my_supersense_tagger = classifier
+	dev_data["early_stopping"] = parameters["nb_epochs"]
+	test_data["early_stopping"] = parameters["nb_epochs"]
 
 	train_losses = []
 	train_accuracies = []
@@ -216,21 +218,21 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 					dev_data["early_stopping"] = epoch
 					test_data["early_stopping"] = epoch
 					break
-		j = 0
-		my_supersense_tagger.eval()
-		with torch.no_grad():
-			while j < len(train_examples):
-				train_batch = train_examples[j: j + parameters["batch_size"]]
-				j += parameters["batch_size"]
-				X_train, Y_train = zip(*train_batch)
-				train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-				Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
-				train_log_probs = my_supersense_tagger(train_padded_encodings)
+	j = 0
+	my_supersense_tagger.eval()
+	with torch.no_grad():
+		while j < len(train_examples):
+			train_batch = train_examples[j: j + parameters["batch_size"]]
+			j += parameters["batch_size"]
+			X_train, Y_train = zip(*train_batch)
+			train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+			Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
+			train_log_probs = my_supersense_tagger(train_padded_encodings)
 
-				predicted_indices = torch.argmax(train_log_probs, dim=1)
-				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
+			predicted_indices = torch.argmax(train_log_probs, dim=1)
+			train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
-			train_accuracies.append(train_epoch_accuracy / len(train_examples))
+		train_accuracies.append(train_epoch_accuracy / len(train_examples))
 
 	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
 	test_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
