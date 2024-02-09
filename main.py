@@ -66,7 +66,7 @@ if __name__ == '__main__':
 		
 		for lr in lrs:
 			for patience in patiences:
-
+			    """
 			    dev_data = {}
 			    test_data = {}
 
@@ -89,7 +89,9 @@ if __name__ == '__main__':
 			    lclf.training(params, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data)
 			    lclf.evaluation(dev_examples, classifier, params, DEVICE,  i+1, f"{eval_prefix}-dev", dev_data)
 			    lclf.evaluation(test_examples, classifier, params, DEVICE, i+1, f"{eval_prefix}-test", test_data)
-
+			    
+			    
+			    """
 			   
 			    sequoia_baseline = lclf.MostFrequentSequoia()
 			    train_baseline = lclf.MostFrequentTrainingData()
@@ -107,11 +109,16 @@ if __name__ == '__main__':
 
 			    dev_data["wiki_baseline"] = wiki_baseline.evaluation(dev_examples)
 			    test_data["wiki_baseline"] = wiki_baseline.evaluation(test_examples)
+			    
+			    
+			    print(sequoia_baseline.evaluation(dev_examples))
+			    print(train_baseline.evaluation(dev_examples))
+			    print(wiki_baseline.evaluation(dev_examples))
+			    
+			    # df_dev.append(dev_data)
+			    # df_test.append(test_data)
 
-			    df_dev.append(dev_data)
-			    df_test.append(test_data)
-
-
+"""
 	# dev
 	df = pd.DataFrame(df_dev)
 	excel_filename = f'results_{eval_prefix}-dev.xlsx'
@@ -121,4 +128,4 @@ if __name__ == '__main__':
 	df = pd.DataFrame(df_test)
 	excel_filename = 'results_{eval_prefix}-test.xlsx'
 	df.to_excel(excel_filename, index=False)
-
+"""

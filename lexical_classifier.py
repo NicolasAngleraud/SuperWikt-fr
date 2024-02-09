@@ -267,19 +267,23 @@ def inference(inference_data_set, classifier, DEVICE):
 
 
 class Baseline:
-    def training(self):
-        pass
 
-    def evaluation(self, eval_examples):
-        correct_pred = 0
-        nb_examples = 0
+	def __init__(self):
+		self.most_frequent_supersense = None
+	
+	def training(self):
+		pass
 
-        for _, supersense in eval_examples:
-            nb_examples += 1
-            if supersense == self.most_frequent_supersense:
-            	correct_pred += 1
+	def evaluation(self, eval_examples):
+		correct_pred = 0
+		nb_examples = 0
 
-        return correct_pred / nb_examples
+		for _, supersense in eval_examples:
+	    		nb_examples += 1
+	    		if supersense == self.most_frequent_supersense:
+	    			correct_pred += 1
+
+		return correct_pred / nb_examples
 
 
 class MostFrequentSequoia(Baseline):
