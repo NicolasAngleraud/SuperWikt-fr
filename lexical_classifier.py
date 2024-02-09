@@ -275,15 +275,8 @@ class Baseline:
 		pass
 
 	def evaluation(self, eval_examples):
-		correct_pred = 0
-		nb_examples = 0
-		
-		for _, supersense in eval_examples:
-			nb_examples += 1
-			if supersense == supersense2i[self.most_frequent_supersense]:
-				correct_pred += 1
+		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for _, supersense in eval_examples])/len(eval_examples)
 
-			return correct_pred / nb_examples
 
 
 class MostFrequentSequoia(Baseline):
