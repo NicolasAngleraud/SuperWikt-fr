@@ -86,13 +86,13 @@ class SupersenseTagger(nn.Module):
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name, output_attentions=True).to(DEVICE)
 
-		if params.frozen:
+		if params["frozen"]:
 			for param in self.bert_model.parameters():
 				param.requires_grad = False
 
 		self.embedding_layer_size = self.bert_model.config.hidden_size
 
-		self.hidden_layer_size = params.hidden_layer_size
+		self.hidden_layer_size = params['hidden_layer_size']
 
 		self.output_size = NB_CLASSES
 
