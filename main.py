@@ -63,7 +63,7 @@ if __name__ == '__main__':
 	dropouts = [0.2, 0.5]
 
 	for i in range(nb_runs):
-		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix=eval_prefix)
+		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.lexical_data_file, eval_prefix=eval_prefix)
 		
 		
 		for lr in lrs:
