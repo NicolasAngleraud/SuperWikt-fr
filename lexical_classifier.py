@@ -100,7 +100,7 @@ class SupersenseTagger(nn.Module):
 
 		self.linear_2 = nn.Linear(self.hidden_layer_size, self.output_size).to(DEVICE)
 
-		self.dropout = nn.Dropout(dropout_rate).to(DEVICE)
+		self.dropout = nn.Dropout(params['dropout']).to(DEVICE)
 
 		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
