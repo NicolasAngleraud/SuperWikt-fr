@@ -51,12 +51,12 @@ if __name__ == '__main__':
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
 		
-	eval_prefix = 'rand'
+	eval_prefix = 'freq'
 
 	nb_runs = 1
 	patiences = [2]
 	frozen = False
-	lrs = [0.00005]
+	lrs = [0.000005]
 
 	for i in range(nb_runs):
 		train_examples, dev_examples, test_examples = lclf.encoded_examples(datafile=args.data_file, eval_prefix=eval_prefix)
