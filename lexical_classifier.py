@@ -34,13 +34,13 @@ MODEL_NAME = "flaubert/flaubert_base_cased"
 PADDING_TOKEN_ID = 2
 
 
-def encoded_examples(datafile, eval_prefix):
+def encoded_examples(datafile):
 	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	df_senses = df_senses[df_senses['supersense'].isin(SUPERSENSES)]
-	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	df_senses = df_senses[(~(df_senses['definition'] == "") & (df_senses['definition'].notna())]
+
 	
-	dev = f"{eval_prefix}-dev"
-	test = f"{eval_prefix}-test"
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	train_definitions = df_senses[df_senses['set']=='train']['definition'].tolist()
 	train_supersenses = df_senses[df_senses['set']=='train']['supersense'].tolist()
@@ -49,21 +49,21 @@ def encoded_examples(datafile, eval_prefix):
 	train_supersenses_encoded = [supersense2i[supersense] for supersense in train_supersenses]
 	train_examples = list(zip(train_definitions_encoded, train_supersenses_encoded))
 
-	dev_definitions = df_senses[df_senses['set']==dev]['definition'].tolist()
-	dev_supersenses = df_senses[df_senses['set']==dev]['supersense'].tolist()
-	dev_lemmas = df_senses[df_senses['set']==dev]['lemma'].tolist()
-	dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(dev_definitions, dev_lemmas)]
-	dev_supersenses_encoded = [supersense2i[supersense] for supersense in dev_supersenses]
-	dev_examples = list(zip(dev_definitions_encoded, dev_supersenses_encoded))
+	freq_dev_definitions = df_senses[df_senses['set']=='freq-dev']['definition'].tolist()
+	freq_dev_supersenses = df_senses[df_senses['set']=='freq-dev']['supersense'].tolist()
+	freq_dev_lemmas = df_senses[df_senses['set']=='freq-dev']['lemma'].tolist()
+	freq_dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(freq_dev_definitions, freq_dev_lemmas)]
+	freq_dev_supersenses_encoded = [supersense2i[supersense] for supersense in freq_dev_supersenses]
+	freq_dev_examples = list(zip(freq_dev_definitions_encoded, freq_dev_supersenses_encoded))
 	
-	test_definitions = df_senses[df_senses['set']==test]['definition'].tolist()
-	test_supersenses = df_senses[df_senses['set']==test]['supersense'].tolist()
-	test_lemmas = df_senses[df_senses['set']==test]['lemma'].tolist()
-	test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(test_definitions, test_lemmas)]
-	test_supersenses_encoded = [supersense2i[supersense] for supersense in test_supersenses]
-	test_examples = list(zip(test_definitions_encoded, test_supersenses_encoded))
+	rand_dev_definitions = df_senses[df_senses['set']=='rand-dev']['definition'].tolist()
+	rand_dev_supersenses = df_senses[df_senses['set']=='rand-dev']['supersense'].tolist()
+	rand_dev_lemmas = df_senses[df_senses['set']=='rand-dev']['lemma'].tolist()
+	rand_dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(rand_dev_definitions, rand_dev_lemmas)]
+	rand_dev_supersenses_encoded = [supersense2i[supersense] for supersense in rand_dev_supersenses]
+	rand_dev_examples = list(zip(rand_dev_definitions_encoded, rand_dev_supersenses_encoded))
 	
-	return train_examples, dev_examples, test_examples
+	return train_examples, freq_dev_examples, rand_dev_examples
 
 
 def pad_batch(encodings_batch, padding_token_id=2, max_seq_length=100):
@@ -118,7 +118,7 @@ class SupersenseTagger(nn.Module):
 
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 
-		out = self.dropout(out)
+		# out = self.dropout(out)
 
 		return F.log_softmax(out, dim=1)
 
@@ -139,19 +139,21 @@ class SupersenseTagger(nn.Module):
 
 		return torch.sum((Y_pred == Y_gold).int()).item()
 
-def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_data, test_data):
+def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data):
 
 	for param, value in parameters.items():
 		dev_data[param] = value
-		test_data[param] = value
 
 	my_supersense_tagger = classifier
 	dev_data["early_stopping"] = 0
-	test_data["early_stopping"] = 0
-	train_final_accuracy = 0
 	train_losses = []
-	dev_losses = []
-	dev_accuracies = []
+	train_accuracies = []
+	mean_dev_losses = []
+	mean_dev_accuracies = []
+	freq_dev_losses = []
+	freq_dev_accuracies = []
+	rand_dev_losses = []
+	rand_dev_accuracies = []
 	loss_function = nn.NLLLoss()
 
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
@@ -159,8 +161,11 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 	for epoch in range(parameters["nb_epochs"]):
 		print("epoch: ", epoch+1)
 		epoch_loss = 0
-		dev_epoch_loss = 0
-		dev_epoch_accuracy = 0
+		train_epoch_accuracy = 0
+		freq_dev_epoch_loss = 0
+		freq_dev_epoch_accuracy = 0
+		rand_dev_epoch_loss = 0
+		rand_dev_epoch_accuracy = 0
 
 		shuffle(train_examples)
 		i = 0
@@ -190,57 +195,79 @@ def training(parameters, train_examples, dev_examples, classifier, DEVICE, dev_d
 
 		train_losses.append(epoch_loss)
 		
+		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(dev_examples):
-				dev_batch = dev_examples[j: j + parameters["batch_size"]]
+			while j < len(train_examples):
+				train_batch = train_examples[j: j + parameters["batch_size"]]
 				j += parameters["batch_size"]
-				X_dev, Y_dev = zip(*dev_batch)
-				dev_padded_encodings = pad_batch(X_dev, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-				Y_dev = torch.tensor(Y_dev, dtype=torch.long).to(DEVICE)
-				dev_log_probs = my_supersense_tagger(dev_padded_encodings)
+				X_train, Y_train = zip(*train_batch)
+				train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+				Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
+				train_log_probs = my_supersense_tagger(train_padded_encodings)
 
-				predicted_indices = torch.argmax(dev_log_probs, dim=1)
-				dev_epoch_accuracy += torch.sum((predicted_indices == Y_dev).int()).item()
+				predicted_indices = torch.argmax(train_log_probs, dim=1)
+				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
-				dev_loss = loss_function(dev_log_probs, Y_dev)
-				dev_epoch_loss += dev_loss.item()
+			train_accuracies.append(train_epoch_accuracy / len(train_examples))
 
-			dev_losses.append(dev_epoch_loss)
-			dev_accuracies.append(dev_epoch_accuracy / len(dev_examples))
 
-			if epoch > parameters["patience"]:
-				if all(dev_losses[i] > dev_losses[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
-					dev_data["early_stopping"] = epoch+1
-					test_data["early_stopping"] = epoch+1
-					break
-	j = 0
-	my_supersense_tagger.eval()
-	with torch.no_grad():
-		while j < len(train_examples):
-			train_batch = train_examples[j: j + parameters["batch_size"]]
-			j += parameters["batch_size"]
-			X_train, Y_train = zip(*train_batch)
-			train_padded_encodings = pad_batch(X_train, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
-			Y_train = torch.tensor(Y_train, dtype=torch.long).to(DEVICE)
-			train_log_probs = my_supersense_tagger(train_padded_encodings)
+		j = 0
+		my_supersense_tagger.eval()
+		with torch.no_grad():
+			while j < len(freq_dev_examples):
+				freq_dev_batch = freq_dev_examples[j: j + parameters["batch_size"]]
+				j += parameters["batch_size"]
+				X_freq_dev, Y_freq_dev = zip(*freq_dev_batch)
+				freq_dev_padded_encodings = pad_batch(X_freq_dev, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+				Y_freq_dev = torch.tensor(Y_freq_dev, dtype=torch.long).to(DEVICE)
+				freq_dev_log_probs = my_supersense_tagger(freq_dev_padded_encodings)
 
-			predicted_indices = torch.argmax(train_log_probs, dim=1)
-			train_final_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
+				predicted_indices = torch.argmax(freq_dev_log_probs, dim=1)
+				freq_dev_epoch_accuracy += torch.sum((predicted_indices == Y_freq_dev).int()).item()
 
-		train_final_accuracy = train_final_accuracy/len(train_examples)
+				freq_dev_loss = loss_function(freq_dev_log_probs, Y_freq_dev)
+				freq_dev_epoch_loss += freq_dev_loss.item()
 
-	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
-	test_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
+			freq_dev_losses.append(freq_dev_epoch_loss)
+			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_examples))
+		
+		j = 0
+		my_supersense_tagger.eval()
+		with torch.no_grad():
+			while j < len(rand_dev_examples):
+				rand_dev_batch = rand_dev_examples[j: j + parameters["batch_size"]]
+				j += parameters["batch_size"]
+				X_rand_dev, Y_rand_dev = zip(*rand_dev_batch)
+				rand_dev_padded_encodings = pad_batch(X_rand_dev, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
+				Y_rand_dev = torch.tensor(Y_rand_dev, dtype=torch.long).to(DEVICE)
+				rand_dev_log_probs = my_supersense_tagger(rand_dev_padded_encodings)
 
-	dev_data["dev_losses"] = [round(dev_loss, 2) for dev_loss in dev_losses]
-	test_data["dev_losses"] = [round(dev_loss, 2) for dev_loss in dev_losses]
+				predicted_indices = torch.argmax(rand_dev_log_probs, dim=1)
+				rand_dev_epoch_accuracy += torch.sum((predicted_indices == Y_rand_dev).int()).item()
 
-	dev_data["train_final_accuracy"] = round(train_final_accuracy, 2)
-	test_data["train_final_accuracy"] = round(train_final_accuracy, 2)
+				rand_dev_loss = loss_function(rand_dev_log_probs, Y_rand_dev)
+				rand_dev_epoch_loss += rand_dev_loss.item()
 
-	dev_data["dev_accuracies"] = [round(dev_accuracy, 2) for dev_accuracy in dev_accuracies]
-	test_data["dev_accurcies"] = [round(dev_accuracy, 2) for dev_accuracy in dev_accuracies]
+			rand_dev_losses.append(rand_dev_epoch_loss)
+			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_examples))
+			
+		mean_dev_losses.append( (freq_dev_epoch_loss + rand_dev_epoch_loss) / 2 )
+		mean_dev_accuracies.append( (freq_dev_epoch_accuracy + rand_dev_epoch_accuracy) / 2 )
+		if epoch > parameters["patience"]:
+			if all(mean_dev_accuracies[i] > mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
+				dev_data["early_stopping"] = epoch+1
+				break
+
+		dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
+		dev_data["mean_dev_losses"] = [round(mean_dev_loss, 2) for mean_dev_loss in mean_dev_losses]
+		dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies ]
+		dev_data["mean_dev_accuracies"] = [round(mean_dev_accuracy, 2) for mean_dev_accuracy in mean_dev_accuracies]
+		
+		dev_data["freq_dev_losses"] = [round(freq_dev_loss, 2) for freq_dev_loss in freq_dev_losses]
+		dev_data["freq_dev_accuracies"] = [round(freq_dev_accuracy, 2) for freq_dev_accuracy in freq_dev_accuracies]
+		dev_data["rand_dev_losses"] = [round(rand_dev_loss, 2) for rand_dev_loss in rand_dev_losses]
+		dev_data["rand_dev_accuracies"] = [round(rand_dev_accuracy, 2) for rand_dev_accuracy in rand_dev_accuracies]
 
 
 def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
@@ -254,8 +281,6 @@ def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
 		nb_good_preds += partial_nb_good_preds
 
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
-
-	
 
 
 
