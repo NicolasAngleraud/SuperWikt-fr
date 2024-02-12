@@ -252,8 +252,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_examples))
 			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_examples))
 
-		mean_dev_losses.append( (freq_dev_epoch_loss + rand_dev_epoch_loss) / 2 )
-		mean_dev_accuracies.append( (freq_dev_epoch_accuracy + rand_dev_epoch_accuracy) / 2 )
+		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_examples) + rand_dev_epoch_loss/len(rand_dev_examples) ) / 2)
+		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_examples) + rand_dev_epoch_accuracy/len(rand_dev_examples) ) / 2)
 		
 		if epoch > parameters["patience"]:
 			if all(mean_dev_accuracies[i] < mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
