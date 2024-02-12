@@ -84,7 +84,7 @@ class SupersenseTagger(nn.Module):
 	def __init__(self, params, DEVICE, dropout_rate=0.2, bert_model_name=MODEL_NAME):
 		super(SupersenseTagger, self).__init__()
 
-		self.bert_model = AutoModel.from_pretrained(bert_model_name, output_attentions=True).to(DEVICE)
+		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
 
 		if params["frozen"]:
 			for param in self.bert_model.parameters():
