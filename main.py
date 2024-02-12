@@ -53,7 +53,7 @@ if __name__ == '__main__':
 		
 
 	nb_runs = 1#3
-	patience = 2
+	patiences = [2]
 	frozen = False
 	lrs = [0.000005]#, 0.00001, 0.000005, 0.000001, 0.0000005, 0.0000001]
 	hidden_layer_sizes = [128]#, 256]
