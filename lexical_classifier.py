@@ -37,7 +37,7 @@ PADDING_TOKEN_ID = 2
 def encoded_examples(datafile):
 	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	df_senses = df_senses[df_senses['supersense'].isin(SUPERSENSES)]
-	df_senses = df_senses[(df_senses['definition'] != "") & (df_senses['definition'].notna())]
+	# df_senses = df_senses[(df_senses['definition'] != "") & (df_senses['definition'].notna())]
 
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -191,7 +191,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 			loss.backward()
 			optimizer.step()
 
-			epoch_loss += loss.item()
+			epoch_loss += loss.item()/parameters["batch_size"]
 
 		train_losses.append(epoch_loss)
 		
@@ -229,7 +229,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 				freq_dev_loss = loss_function(freq_dev_log_probs, Y_freq_dev)
 				freq_dev_epoch_loss += freq_dev_loss.item()
 
-			freq_dev_losses.append(freq_dev_epoch_loss)
+			freq_dev_losses.append(freq_dev_epoch_loss / len(freq_dev_examples))
 			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_examples))
 		
 		j = 0
@@ -249,26 +249,28 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 				rand_dev_loss = loss_function(rand_dev_log_probs, Y_rand_dev)
 				rand_dev_epoch_loss += rand_dev_loss.item()
 
-			rand_dev_losses.append(rand_dev_epoch_loss)
+			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_examples))
 			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_examples))
-			
+
 		mean_dev_losses.append( (freq_dev_epoch_loss + rand_dev_epoch_loss) / 2 )
 		mean_dev_accuracies.append( (freq_dev_epoch_accuracy + rand_dev_epoch_accuracy) / 2 )
+		
 		if epoch > parameters["patience"]:
 			if all(mean_dev_accuracies[i] < mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
-				dev_data["early_stopping"] = epoch
+				dev_data["early_stopping"] = epoch+1
 				break
-
-		dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
-		dev_data["mean_dev_losses"] = [round(mean_dev_loss, 2) for mean_dev_loss in mean_dev_losses]
-		dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies ]
-		dev_data["mean_dev_accuracies"] = [round(mean_dev_accuracy, 2) for mean_dev_accuracy in mean_dev_accuracies]
 		
-		dev_data["freq_dev_losses"] = [round(freq_dev_loss, 2) for freq_dev_loss in freq_dev_losses]
-		dev_data["freq_dev_accuracies"] = [round(freq_dev_accuracy, 2) for freq_dev_accuracy in freq_dev_accuracies]
-		dev_data["rand_dev_losses"] = [round(rand_dev_loss, 2) for rand_dev_loss in rand_dev_losses]
-		dev_data["rand_dev_accuracies"] = [round(rand_dev_accuracy, 2) for rand_dev_accuracy in rand_dev_accuracies]
-
+	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
+	dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies ]
+	
+	dev_data["mean_dev_losses"] = [round(mean_dev_loss, 2) for mean_dev_loss in mean_dev_losses]
+	dev_data["mean_dev_accuracies"] = [round(mean_dev_accuracy, 2) for mean_dev_accuracy in mean_dev_accuracies]
+	
+	dev_data["freq_dev_losses"] = [round(freq_dev_loss, 2) for freq_dev_loss in freq_dev_losses]
+	dev_data["freq_dev_accuracies"] = [round(freq_dev_accuracy, 2) for freq_dev_accuracy in freq_dev_accuracies]
+	
+	dev_data["rand_dev_losses"] = [round(rand_dev_loss, 2) for rand_dev_loss in rand_dev_losses]
+	dev_data["rand_dev_accuracies"] = [round(rand_dev_accuracy, 2) for rand_dev_accuracy in rand_dev_accuracies]
 
 def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
 	batch_size = parameters['batch_size']
