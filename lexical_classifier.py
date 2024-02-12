@@ -255,8 +255,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		mean_dev_losses.append( (freq_dev_epoch_loss + rand_dev_epoch_loss) / 2 )
 		mean_dev_accuracies.append( (freq_dev_epoch_accuracy + rand_dev_epoch_accuracy) / 2 )
 		if epoch > parameters["patience"]:
-			if all(mean_dev_accuracies[i] > mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
-				dev_data["early_stopping"] = epoch+1
+			if all(mean_dev_accuracies[i] < mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
+				dev_data["early_stopping"] = epoch
 				break
 
 		dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
