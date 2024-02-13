@@ -129,7 +129,7 @@ class SupersenseTagger(nn.Module):
 			predicted_indices = torch.argmax(log_probs, dim=1).tolist()
 		return [SUPERSENSES[i] for i in predicted_indices]
 
-	def evaluate(self, examples_batch_encodings, DEVICE, run, dataset):
+	def evaluate(self, examples_batch_encodings, DEVICE, dataset):
 		self.eval()
 		with torch.no_grad():
 			X, Y = zip(*examples_batch_encodings)
@@ -278,7 +278,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 	dev_data["rand_dev_losses"] = [round(rand_dev_loss, 2) for rand_dev_loss in rand_dev_losses]
 	dev_data["rand_dev_accuracies"] = [round(rand_dev_accuracy, 2) for rand_dev_accuracy in rand_dev_accuracies]
 
-def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
+def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	batch_size = parameters['batch_size']
 	i = 0
 	nb_good_preds = 0
