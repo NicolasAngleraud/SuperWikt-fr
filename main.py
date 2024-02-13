@@ -43,7 +43,7 @@ def parse_clf_name(clf_name):
 			else:
 				params[param] = False
 				
-		elif any(char.isdigit() for char in str_params[param])
+		elif any(char.isdigit() for char in str_params[param]):
 			if str_params[param].isdigit():
 				params[param] = int(str_params[param])
 			else:
