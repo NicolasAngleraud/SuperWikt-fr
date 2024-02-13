@@ -34,8 +34,8 @@ params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr",
 
 def parse_clf_name(clf_name):
 	params = {}
-	clf_name = clf_name.split('-')[0]
 	run = clf_name.split('-')[1]
+	clf_name = clf_name.split('-')[0]
 	str_params = {el.split('=')[0] : el.split('=')[1] for el in clf_name.strip(".params").split(';')}
 	str_params['run'] = run
 	for param in str_params:
