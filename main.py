@@ -194,7 +194,7 @@ if __name__ == '__main__':
 		eval_data["rand_dev_train_baseline"] =train_baseline.evaluation(rand_dev_examples)
 		eval_data["rand_dev_wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
 		
-		df_eval = pd.DataFrame(list(eval_data))
+		df_eval = pd.DataFrame([eval_data])
 		# df.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
 		df_eval.to_excel("./test_eval_pretrained_model.xlsx", index=False)
 		
