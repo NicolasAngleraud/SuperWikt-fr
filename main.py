@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
 				print()
 				print(f"run {i+1} : lr = {lr}")
-				print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}")
+				print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}; batch_size : {batch_size}")
 				print()
 
 
