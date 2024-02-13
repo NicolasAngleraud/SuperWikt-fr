@@ -164,7 +164,7 @@ if __name__ == '__main__':
 		
 		eval_data = {}
 		clf_name = args.trained_model_name
-		params = {'batch_size': args.batch_size, 'frozen': True}
+		params = {'batch_size': args.batch_size, 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
 		# params = parse_clf_name(clf_name)
 		
 		# for param in params: eval_data[param] = params[param]
