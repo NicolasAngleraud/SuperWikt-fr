@@ -86,8 +86,8 @@ if __name__ == '__main__':
 		patience = 2
 		batch_size = args.batch_size
 		frozen = False
-		lrs = [0.00001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
-		hidden_layer_sizes = [128, 256]
+		lrs = [0.00001, 0.000001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
+		hidden_layer_sizes = [256]
 		dropout = float(args.dropout)
 
 		for i in range(nb_runs):
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 					
 					classifier_name = ';'.join([f'{key}={params[key]}' for key in params_keys]).strip(';')
 					
-					dev_data['clf_name'] = '{classifier_name}-{i+1}'
+					dev_data['clf_name'] = f'{classifier_name}-{i+1}'
 					dev_data["run"] = i + 1
 
 					classifier = lclf.SupersenseTagger(params, DEVICE)
