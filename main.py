@@ -34,8 +34,8 @@ params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr",
 
 def parse_clf_name(clf_name):
 	params = {}
-	run = clf_name.split('-')[1]
-	clf_name = clf_name.split('-')[0]
+	run = clf_name.split('-')[-1]
+	clf_name = ''.join(clf_name.split('-')[:-1])
 	str_params = {el.split('=')[0] : el.split('=')[1] for el in clf_name.strip(".params").split(';')}
 	str_params['run'] = run
 	for param in str_params:
@@ -164,10 +164,10 @@ if __name__ == '__main__':
 		
 		eval_data = {}
 		clf_name = args.trained_model_name
+		params = {'batch_size': args.batch_size}
+		# params = parse_clf_name(clf_name)
 		
-		params = parse_clf_name(clf_name)
-		
-		for param in params: eval_data[param] = params[param]
+		# for param in params: eval_data[param] = params[param]
 		
 		loaded_model = lclf.SupersenseTagger(params, DEVICE)
 		loaded_model.load_state_dict(torch.load(f'./lexical_classifiers/{clf_name}'))
