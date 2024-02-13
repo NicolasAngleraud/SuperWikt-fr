@@ -86,7 +86,7 @@ if __name__ == '__main__':
 				params['dropout'] = dropout
 				params['hidden_layer_size'] = hidden_layer_size
 				
-				classifier_name = '_'.join([f'{key}={params[key]}' for key in param_keys]).strip('_')
+				classifier_name = '_'.join([f'{key}={params[key]}' for key in params_keys]).strip('_')
 				
 				dev_data['clf_name'] = '{classifier_name}-{i+1}'
 				dev_data["run"] = i + 1
