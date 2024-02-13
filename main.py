@@ -34,7 +34,7 @@ params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr",
 
 def parse_clf_name(clf_name):
 	params = {}
-	str_params = {el.split('=')[0] : el.split('=')[1] for el in cfl_name.strip(".params").split('_')}
+	str_params = {el.split('=')[0] : el.split('=')[1] for el in clf_name.strip(".params").split(';')}
 	for param in str_params:
 	
 		if str_params[param] in ['True', 'False']: 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
 					params['dropout'] = dropout
 					params['hidden_layer_size'] = hidden_layer_size
 					
-					classifier_name = '_'.join([f'{key}={params[key]}' for key in params_keys]).strip('_')
+					classifier_name = ';'.join([f'{key}={params[key]}' for key in params_keys]).strip(';')
 					
 					dev_data['clf_name'] = '{classifier_name}-{i+1}'
 					dev_data["run"] = i + 1

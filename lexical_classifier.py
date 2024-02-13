@@ -285,7 +285,7 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	while i < len(examples):
 		evaluation_batch = examples[i: i + batch_size]
 		i += batch_size
-		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, run, dataset)
+		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, dataset)
 		nb_good_preds += partial_nb_good_preds
 
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
