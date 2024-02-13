@@ -39,7 +39,7 @@ def parse_clf_name(clf_name):
 	str_params = {el.split('=')[0] : el.split('=')[1] for el in clf_name.strip(".params").split(';')}
 	str_params['run'] = run
 	for param in str_params:
-		if param = 'lr':
+		if param == 'lr':
 			continue
 	
 		if str_params[param] in ['True', 'False']: 
