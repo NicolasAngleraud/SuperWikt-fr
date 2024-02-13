@@ -56,11 +56,10 @@ def get_parser_args():
 
 
 if __name__ == '__main__':
+	args = get_parser_args()
 
 	if args.mode == 'train':
-
-		args = get_parser_args()
-
+		
 		df_dev = []
 
 		# DEVICE setup
