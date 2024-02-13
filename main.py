@@ -172,7 +172,7 @@ if __name__ == '__main__':
 		loaded_model = lclf.SupersenseTagger(params, DEVICE)
 		loaded_model.load_state_dict(torch.load(f'./lexical_classifiers/{clf_name}'))
 		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
-		loaded_model.deep_analysis(train_examples, freq_dev_examples, rand_dev_examples, eval_data)
+		# loaded_model.deep_analysis(train_examples, freq_dev_examples, rand_dev_examples, eval_data)
 		
 		lclf.evaluation(freq_dev_examples, loaded_model, params, DEVICE, f"freq-dev", eval_data)
 		lclf.evaluation(rand_dev_examples, loaded_model, params, DEVICE, f"rand-dev", eval_data)
@@ -194,6 +194,7 @@ if __name__ == '__main__':
 		eval_data["rand_dev_wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
 		
 		df_eval = pd.DataFrame(list(eval_data))
-		df.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
+		# df.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
+		df.to_excel("./test_eval_pretrained_model.xlsx", index=False)
 		
 		
