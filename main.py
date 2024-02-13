@@ -165,7 +165,7 @@ if __name__ == '__main__':
 		for param in params: eval_data[param] = params[param]
 		
 		loaded_model = lclf.SupersenseTagger(params, DEVICE)
-		loaded_model.load_state_dict(torch.load(clf_name))
+		loaded_model.load_state_dict(torch.load(f'./lexical_classifiers/{clf_name}'))
 		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 		loaded_model.deep_analysis(train_examples, freq_dev_examples, rand_dev_examples, eval_data)
 		
