@@ -164,7 +164,7 @@ if __name__ == '__main__':
 		
 		eval_data = {}
 		clf_name = args.trained_model_name
-		params = {'batch_size': args.batch_size, 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
+		params = {'batch_size': int(args.batch_size), 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
 		# params = parse_clf_name(clf_name)
 		
 		# for param in params: eval_data[param] = params[param]
@@ -174,8 +174,9 @@ if __name__ == '__main__':
 		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 		# loaded_model.deep_analysis(train_examples, freq_dev_examples, rand_dev_examples, eval_data)
 		
-		lclf.evaluation(freq_dev_examples, loaded_model, params, DEVICE, f"freq-dev", eval_data)
-		lclf.evaluation(rand_dev_examples, loaded_model, params, DEVICE, f"rand-dev", eval_data)
+		lclf.evaluation(train_examples, loaded_model, params, DEVICE, "train", eval_data)
+		lclf.evaluation(freq_dev_examples, loaded_model, params, DEVICE, "freq-dev", eval_data)
+		lclf.evaluation(rand_dev_examples, loaded_model, params, DEVICE, "rand-dev", eval_data)
 		
 		sequoia_baseline = lclf.MostFrequentSequoia()
 		train_baseline = lclf.MostFrequentTrainingData()
