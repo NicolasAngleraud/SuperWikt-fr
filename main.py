@@ -196,6 +196,6 @@ if __name__ == '__main__':
 		
 		df_eval = pd.DataFrame(list(eval_data))
 		# df.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
-		df.to_excel("./test_eval_pretrained_model.xlsx", index=False)
+		df_eval.to_excel("./test_eval_pretrained_model.xlsx", index=False)
 		
 		
