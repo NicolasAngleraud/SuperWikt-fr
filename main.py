@@ -105,8 +105,8 @@ if __name__ == '__main__':
 
 					classifier = lclf.SupersenseTagger(params, DEVICE)
 					lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data)
-					lclf.evaluation(freq_dev_examples, classifier, params, DEVICE,  i+1, f"freq-dev", dev_data)
-					lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, i+1, f"rand-dev", dev_data)
+					lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", dev_data)
+					lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", dev_data)
 
 					print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
 
