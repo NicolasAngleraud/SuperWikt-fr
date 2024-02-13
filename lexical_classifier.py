@@ -30,7 +30,7 @@ supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
 
 
 NB_CLASSES = len(supersense2i)
-MODEL_NAME = "flaubert/flaubert_large_cased"
+MODEL_NAME = "flaubert/flaubert_base_cased"
 PADDING_TOKEN_ID = 2
 
 
@@ -155,7 +155,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 	rand_dev_losses = []
 	rand_dev_accuracies = []
 	loss_function = nn.NLLLoss()
-
+	
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
 
 	for epoch in range(parameters["nb_epochs"]):
@@ -255,10 +255,16 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_examples) + rand_dev_epoch_loss/len(rand_dev_examples) ) / 2)
 		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_examples) + rand_dev_epoch_accuracy/len(rand_dev_examples) ) / 2)
 		
-		if epoch > parameters["patience"]:
+		if epoch >= parameters["patience"]:
+			
+			if mean_dev_accuracies[epoch] > mean_dev_accuracies[epoch - 1]:
+				torch.save(my_supersense_tagger.state_dict(), f'./lexical_classifiers/saved_params/{dev_data["clf_name"]}.pth')
+			
 			if all(mean_dev_accuracies[i] < mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
 				dev_data["early_stopping"] = epoch+1
 				break
+		else:
+			torch.save(my_supersense_tagger.state_dict(), f'./lexical_classifiers/saved_params/{dev_data["clf_name"]}.pth')
 		
 	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
 	dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies ]
@@ -284,10 +290,6 @@ def evaluation(examples, classifier, parameters, DEVICE, run, dataset, data):
 
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
 
-
-
-def inference(inference_data_set, classifier, DEVICE):
-    pass
 
 
 class Baseline:
