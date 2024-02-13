@@ -36,7 +36,21 @@ def parse_clf_name(clf_name):
 	params = {}
 	str_params = {el.split('=')[0] : el.split('=')[1] for el in cfl_name.strip(".params").split('_')}
 	for param in str_params:
-		if str_params[param] in ['True', 'False']: params[param] = bool(str_params[param])
+	
+		if str_params[param] in ['True', 'False']: 
+			if str_params[param] == 'True':
+				params[param] = True
+			else:
+				params[param] = False
+				
+		elif any(char.isdigit() for char in str_params[param])
+			if str_params[param].isdigit():
+				params[param] = int(str_params[param])
+			else:
+				params[param] = float(str_params[param])
+				
+		else:
+			params[param] = str_params[param]
 			
 	return params
 
