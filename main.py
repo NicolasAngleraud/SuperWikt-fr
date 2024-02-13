@@ -62,7 +62,7 @@ if __name__ == '__main__':
 	frozen = False
 	lrs = [0.000005, 0.00001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
 	hidden_layer_sizes = [128, 256]
-	dropout = args.dropout
+	dropout = float(args.dropout)
 
 	for i in range(nb_runs):
 		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
