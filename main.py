@@ -21,9 +21,9 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
 LPARAMETERS = {
 	"nb_epochs": 100,
 	"batch_size": 16,
-	"hidden_layer_size": 128,
+	"hidden_layer_size": 256,
 	"patience": 2,
-	"lr": 0.001,
+	"lr": 0.0001,
 	"frozen": True,
 	"dropout": 0.1,
 	"max_seq_length": 100
@@ -34,9 +34,7 @@ params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr",
 
 def parse_clf_name(clf_name):
 	params = {}
-	run = clf_name.split('-')[-1]
-	clf_name = ''.join(clf_name.split('-')[:-1])
-	str_params = {el.split('=')[0] : el.split('=')[1] for el in clf_name.strip(".params").split(';')}
+	str_params = {el.split('%')[0] : el.split('%')[1] for el in clf_name.strip(".params").split('+')}
 	str_params['run'] = run
 	for param in str_params:
 		if param == 'lr':
@@ -91,7 +89,7 @@ if __name__ == '__main__':
 		patience = 2
 		batch_size = args.batch_size
 		frozen = False
-		lrs = [0.00001, 0.000001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
+		lrs = [0.00001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
 		hidden_layer_sizes = [256]
 		dropout = float(args.dropout)
 
@@ -117,9 +115,9 @@ if __name__ == '__main__':
 					params['dropout'] = dropout
 					params['hidden_layer_size'] = hidden_layer_size
 					
-					classifier_name = ';'.join([f'{key}={params[key]}' for key in params_keys]).strip(';')
+					classifier_name = '+'.join([f'{key}%{params[key]}' for key in params_keys]).strip('+')
 					
-					dev_data['clf_name'] = f'{classifier_name}-{i+1}'
+					dev_data['clf_name'] = f'{classifier_name}+run%{i+1}'
 					dev_data["run"] = i + 1
 
 					classifier = lclf.SupersenseTagger(params, DEVICE)
@@ -164,7 +162,7 @@ if __name__ == '__main__':
 		
 		eval_data = {}
 		clf_name = args.trained_model_name
-		params = {'batch_size': int(args.batch_size), 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
+		# params = {'batch_size': int(args.batch_size), 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
 		# params = parse_clf_name(clf_name)
 		
 		# for param in params: eval_data[param] = params[param]
@@ -195,7 +193,6 @@ if __name__ == '__main__':
 		eval_data["rand_dev_wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
 		
 		df_eval = pd.DataFrame([eval_data])
-		# df.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
-		df_eval.to_excel("./test_eval_pretrained_model.xlsx", index=False)
+		df_eval.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
 		
 		
