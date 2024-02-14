@@ -19,7 +19,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 100,
+	"nb_epochs": 2,
 	"batch_size": 16,
 	"hidden_layer_size": 256,
 	"patience": 2,
@@ -95,9 +95,10 @@ if __name__ == '__main__':
 		lrs = [0.0001, 0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
 		hidden_layer_size = int(args.hidden_layer_size)
 		dropout = float(args.dropout)
-
+		
+		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
+		
 		for i in range(nb_runs):
-			train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 			
 			for lr in lrs:
 		    
