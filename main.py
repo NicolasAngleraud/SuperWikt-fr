@@ -21,7 +21,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
 LPARAMETERS = {
 	"nb_epochs": 100,
 	"batch_size": 16,
-	"hidden_layer_size": 256,
+	"hidden_layer_size": 128,
 	"patience": 2,
 	"lr": 0.0001,
 	"frozen": True,
@@ -77,6 +77,8 @@ if __name__ == '__main__':
 
 	if args.mode == 'train':
 		
+		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+nb_runs%{int(args.nb_runs)}++' 
+		
 		df_dev = []
 
 		# DEVICE setup
@@ -87,10 +89,10 @@ if __name__ == '__main__':
 
 		nb_runs = int(args.nb_runs)
 		patience = 2
-		batch_size = args.batch_size
+		batch_size = int(args.batch_size)
 		frozen = False
 		lrs = [0.00001] #, 0.000005, 0.000001, 0.0000005, 0.0000001]
-		hidden_layer_sizes = [256]
+		hidden_layer_sizes = [128]
 		dropout = float(args.dropout)
 
 		for i in range(nb_runs):
@@ -112,6 +114,7 @@ if __name__ == '__main__':
 					params['lr'] = lr
 					params['patience'] = patience
 					params['frozen'] = frozen
+					params['batch_size'] = batch_size
 					params['dropout'] = dropout
 					params['hidden_layer_size'] = hidden_layer_size
 					
@@ -149,7 +152,7 @@ if __name__ == '__main__':
 
 		print("CREATION OF THE EVALUATION FILE...")
 		df = pd.DataFrame(df_dev)
-		excel_filename = f'./lexical_classifier_results.xlsx'
+		excel_filename = f'./{session_key}lexical_classifier_results.xlsx'
 		df.to_excel(excel_filename, index=False)
 		
 		print("PROCESS DONE.")

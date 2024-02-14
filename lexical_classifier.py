@@ -260,7 +260,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 			if mean_dev_accuracies[epoch] > mean_dev_accuracies[epoch - 1]:
 				torch.save(my_supersense_tagger.state_dict(), f'./lexical_classifiers/{dev_data["clf_name"]}.params')
 			
-			if all(mean_dev_accuracies[i] < mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
+			if all(mean_dev_accuracies[i] <= mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
 				dev_data["early_stopping"] = epoch+1
 				break
 		else:
