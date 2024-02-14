@@ -92,7 +92,7 @@ if __name__ == '__main__':
 		patience = 2
 		batch_size = int(args.batch_size)
 		frozen = False
-		lrs = [0.0001, 0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
+		lrs = [0.0001, 0.00005]#, 0.00001, 0.000005, 0.000001, 0.0000005]
 		hidden_layer_size = int(args.hidden_layer_size)
 		dropout = float(args.dropout)
 		
