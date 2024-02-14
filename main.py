@@ -66,7 +66,7 @@ def get_parser_args():
 	parser.add_argument("-hidden_layer_size", choices=['128', '256', '512'], help="hidden layer size of the linear layers of the mlp for the classifier.")
 	parser.add_argument("-batch_size", choices=['8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument("-nb_runs", choices=['1', '2', '3', '4', '5'], default='1', help="number of runs for each classifier.")
-	parser.add_argument("-dropout", choices=['0.1', '0.3'], help="dropout rate for the classifier.")
+	parser.add_argument("-dropout", choices=['0.1', '0.2', '0.3'], help="dropout rate for the classifier.")
 	parser.add_argument("-trained_model_name", help="name of the trained classifier to load and evaluate.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
