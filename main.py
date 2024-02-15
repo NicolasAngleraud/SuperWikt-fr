@@ -19,13 +19,13 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 2,
+	"nb_epochs": 100,
 	"batch_size": 16,
-	"hidden_layer_size": 256,
+	"hidden_layer_size": 512,
 	"patience": 2,
-	"lr": 0.0001,
-	"frozen": True,
-	"dropout": 0.1,
+	"lr": 0.00001,
+	"frozen": False,
+	"dropout": 0.2,
 	"max_seq_length": 100
 }
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 		patience = 2
 		batch_size = int(args.batch_size)
 		frozen = False
-		lrs = [0.0001, 0.00005]#, 0.00001, 0.000005, 0.000001, 0.0000005]
+		lrs = [0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
 		hidden_layer_size = int(args.hidden_layer_size)
 		dropout = float(args.dropout)
 		
