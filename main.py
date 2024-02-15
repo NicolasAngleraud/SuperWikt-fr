@@ -19,7 +19,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 100,
+	"nb_epochs": 1,
 	"batch_size": 16,
 	"hidden_layer_size": 512,
 	"patience": 2,
@@ -65,7 +65,7 @@ def get_parser_args():
 	parser.add_argument("-lexical_data_file", default="./donnees_stage_wiktionnaire_supersenses.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
 	parser.add_argument("-hidden_layer_size", choices=['128', '256', '512'], help="hidden layer size of the linear layers of the mlp for the classifier.")
 	parser.add_argument("-batch_size", choices=['8', '16', '32', '64'], help="batch size for the classifier.")
-	parser.add_argument("-nb_runs", choices=['1', '2', '3', '4', '5'], default='1', help="number of runs for each classifier.")
+	parser.add_argument("-run", choices=['1', '2', '3', '4', '5'], help="number of the run for an experiment.")
 	parser.add_argument("-dropout", choices=['0.1', '0.2', '0.3'], help="dropout rate for the classifier.")
 	parser.add_argument("-trained_model_name", help="name of the trained classifier to load and evaluate.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
 	if args.mode == 'train':
 		
-		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+hidden_layer_size%{int(args.hidden_layer_size)}+nb_runs%{int(args.nb_runs)}++' 
+		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+hidden_layer_size%{int(args.hidden_layer_size)}+run%{int(args.run)}++' 
 		
 		df_dev = []
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 			DEVICE = torch.device("cuda:" + args.device_id)
 			
 
-		nb_runs = int(args.nb_runs)
+		run = int(args.run)
 		patience = 2
 		batch_size = int(args.batch_size)
 		frozen = False
@@ -97,58 +97,60 @@ if __name__ == '__main__':
 		dropout = float(args.dropout)
 		
 		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
-		
-		for i in range(nb_runs):
 			
-			for lr in lrs:
-		    
-				dev_data = {}
+		for lr in lrs:
+	    
+			dev_data = {}
 
-				print()
-				print(f"run {i+1} : lr = {lr}")
-				print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}; batch_size : {batch_size}")
-				print()
+			print()
+			print(f"run {run} : lr = {lr}")
+			print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}; batch_size : {batch_size}")
+			print()
 
 
-				params = {key: value for key, value in LPARAMETERS.items()}
-				params['lr'] = lr
-				params['patience'] = patience
-				params['frozen'] = frozen
-				params['batch_size'] = batch_size
-				params['dropout'] = dropout
-				params['hidden_layer_size'] = hidden_layer_size
-				
-				classifier_name = '+'.join([f'{key}%{params[key]}' for key in params_keys]).strip('+')
-				
-				dev_data['clf_name'] = f'{classifier_name}+run%{i+1}'
-				dev_data["run"] = i + 1
+			params = {key: value for key, value in LPARAMETERS.items()}
+			params['lr'] = lr
+			params['patience'] = patience
+			params['frozen'] = frozen
+			params['batch_size'] = batch_size
+			params['dropout'] = dropout
+			params['hidden_layer_size'] = hidden_layer_size
+			
+			classifier_name = '+'.join([f'{key}%{params[key]}' for key in params_keys]).strip('+')
+			
+			dev_data['clf_name'] = f'{classifier_name}+run%{run}'
+			dev_data["run"] = run
 
-				classifier = lclf.SupersenseTagger(params, DEVICE)
-				lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data)
-				lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", dev_data)
-				lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", dev_data)
+			classifier = lclf.SupersenseTagger(params, DEVICE)
+			lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data)
+			lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", dev_data)
+			lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", dev_data)
 
-				print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
+			print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
 
-				sequoia_baseline = lclf.MostFrequentSequoia()
-				train_baseline = lclf.MostFrequentTrainingData()
-				wiki_baseline = lclf.MostFrequentWiktionary()
+			sequoia_baseline = lclf.MostFrequentSequoia()
+			train_baseline = lclf.MostFrequentTrainingData()
+			wiki_baseline = lclf.MostFrequentWiktionary()
 
-				sequoia_baseline.training()
-				train_baseline.training()
-				wiki_baseline.training()
+			sequoia_baseline.training()
+			train_baseline.training()
+			wiki_baseline.training()
+			
+			dev_data["train-sequoia_baseline"] = sequoia_baseline.evaluation(train_examples)
+			dev_data["train-train_baseline"] =train_baseline.evaluation(train_examples)
+			dev_data["train-wiki_baseline"] = wiki_baseline.evaluation(train_examples)
 
-				dev_data["freq_dev_sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
-				dev_data["freq_dev_train_baseline"] =train_baseline.evaluation(freq_dev_examples)
-				dev_data["freq_dev_wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
+			dev_data["freq_dev-sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
+			dev_data["freq_dev-train_baseline"] =train_baseline.evaluation(freq_dev_examples)
+			dev_data["freq_dev-wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
 
-				dev_data["rand_dev_sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
-				dev_data["rand_dev_train_baseline"] =train_baseline.evaluation(rand_dev_examples)
-				dev_data["rand_dev_wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
+			dev_data["rand_dev-sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
+			dev_data["rand_dev-train_baseline"] =train_baseline.evaluation(rand_dev_examples)
+			dev_data["rand_dev-wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
 
-				print("BASELINES COMPUTED.")
+			print("BASELINES COMPUTED.")
 
-				df_dev.append(dev_data)
+			df_dev.append(dev_data)
 
 		print("CREATION OF THE EVALUATION FILE...")
 		df = pd.DataFrame(df_dev)
