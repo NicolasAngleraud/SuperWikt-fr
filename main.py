@@ -19,7 +19,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 1,
+	"nb_epochs": 100,
 	"batch_size": 16,
 	"hidden_layer_size": 512,
 	"patience": 2,
@@ -63,10 +63,11 @@ def get_parser_args():
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
 	parser.add_argument("-mode", choices=['train', 'evaluate'], help="Sets the mode of the program, either train classifiers or evaluate trained models.")
 	parser.add_argument("-lexical_data_file", default="./donnees_stage_wiktionnaire_supersenses.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
-	parser.add_argument("-hidden_layer_size", choices=['128', '256', '512'], help="hidden layer size of the linear layers of the mlp for the classifier.")
+	parser.add_argument("-hidden_layer_size", choices=['128', '256', '512', '768'], help="hidden layer size of the linear layers of the mlp for the classifier.")
 	parser.add_argument("-batch_size", choices=['8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument("-run", choices=['1', '2', '3', '4', '5'], help="number of the run for an experiment.")
 	parser.add_argument("-dropout", choices=['0.1', '0.2', '0.3'], help="dropout rate for the classifier.")
+	parser.add_argument("-lrs", choices=['0', '1', '2'], default='0', help="part of the half split lrs to be used.")
 	parser.add_argument("-trained_model_name", help="name of the trained classifier to load and evaluate.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
@@ -78,7 +79,7 @@ if __name__ == '__main__':
 
 	if args.mode == 'train':
 		
-		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+hidden_layer_size%{int(args.hidden_layer_size)}+run%{int(args.run)}++' 
+		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+hidden_layer_size%{int(args.hidden_layer_size)}+lrs%{int(args.lrs)}+run%{int(args.run)}++' 
 		
 		df_dev = []
 
@@ -92,7 +93,9 @@ if __name__ == '__main__':
 		patience = 2
 		batch_size = int(args.batch_size)
 		frozen = False
-		lrs = [0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
+		lrs = [0.0001, 0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
+		if args.lrs == '1': lrs = lrs[:int(len(lrs)/2)]
+		if args.lrs == '2': lrs = lrs[int(len(lrs)/2):]
 		hidden_layer_size = int(args.hidden_layer_size)
 		dropout = float(args.dropout)
 		
