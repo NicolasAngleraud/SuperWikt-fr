@@ -107,8 +107,9 @@ if __name__ == '__main__':
 				classifier = lclf.SupersenseTagger(params, DEVICE)
 				classifier.load_state_dict(torch.load(clf_file))
 				
-				lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", eval_data)
-				lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", eval_data)
+				lclf.evaluation(train_examples, classifier, params, DEVICE, "train", eval_data)
+				lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, "freq-dev", eval_data)
+				lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, "rand-dev", eval_data)
 
 				print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
 
@@ -134,8 +135,8 @@ if __name__ == '__main__':
 
 				print("BASELINES COMPUTED.")
 				
-				lclf.evaluation(freq_test_examples, classifier, params, DEVICE, f"freq-test", eval_data)
-				lclf.evaluation(rand_test_examples, classifier, params, DEVICE, f"rand-test", eval_data)
+				lclf.evaluation(freq_test_examples, classifier, params, DEVICE, "freq-test", eval_data)
+				lclf.evaluation(rand_test_examples, classifier, params, DEVICE, "rand-test", eval_data)
 
 				df_eval.append(eval_data)
 
