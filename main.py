@@ -59,7 +59,7 @@ if __name__ == '__main__':
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
 	
-	clf_file = f"clf_{device_id}.params"
+	clf_file = f"./clf_{device_id}.params"
 		
 
 	run = int(args.run)

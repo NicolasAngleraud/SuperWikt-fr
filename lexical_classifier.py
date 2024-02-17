@@ -280,7 +280,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		
 			if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
 				max_mean_dev_accuracy = mean_dev_accuracies[epoch]
-				torch.save(my_supersense_tagger.state_dict(), f'./{clf_file}')
+				torch.save(my_supersense_tagger.state_dict(), clf_file)
 				patience = parameters["patience"]
 				
 			else:
@@ -292,7 +292,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		else:
 			if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
 				max_mean_dev_accuracy = mean_dev_accuracies[epoch]
-			torch.save(my_supersense_tagger.state_dict(), f'./{clf_file}')
+			torch.save(my_supersense_tagger.state_dict(), clf_file)
 		
 	eval_data["train_losses"] = [train_loss for train_loss in train_losses]
 	eval_data["train_accuracies"] = [train_accuracy for train_accuracy in train_accuracies ]
@@ -323,6 +323,7 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	
 	with open(predictions_file, 'w', encoding='utf-8') as f:
 		f.write("definition\tpred\tgold\n")
+		print(predictions[0])
 		for definition, pred, gold in predictions:
 			f.write(f"{definition}\t{SUPERSENSES[pred]}\t{SUPERSENSES[gold]}\n")
 
