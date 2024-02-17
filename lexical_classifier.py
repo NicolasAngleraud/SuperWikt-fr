@@ -322,8 +322,9 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
 	
 	with open(predictions_file, 'w', encoding='utf-8') as f:
+		f.write("definition\tpred\tgold\n")
 		for definition, pred, gold in predictions:
-			f.write(f"{}")
+			f.write(f"{definition}\t{SUPERSENSES[pred]}\t{SUPERSENSES[gold]}\n")
 
 
 
