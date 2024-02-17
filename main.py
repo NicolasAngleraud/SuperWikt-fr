@@ -2,6 +2,7 @@ import argparse
 import torch
 import lexical_classifier as lclf
 import pandas as pd
+import datetime
 
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
@@ -19,56 +20,30 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 100,
+	"nb_epochs": 1,
 	"batch_size": 16,
 	"hidden_layer_size": 512,
 	"patience": 2,
 	"lr": 0.00001,
 	"frozen": False,
-	"dropout": 0.2,
+	"dropout": 0.1,
 	"max_seq_length": 100
 }
 
 params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr", "frozen", "dropout", "max_seq_length"]
 
+def create_unique_id(unique_mark):
+	return f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')}-{unique_mark}"
 
-def parse_clf_name(clf_name):
-	params = {}
-	str_params = {el.split('%')[0] : el.split('%')[1] for el in clf_name.strip(".params").split('+')}
-	str_params['run'] = run
-	for param in str_params:
-		if param == 'lr':
-			continue
-	
-		if str_params[param] in ['True', 'False']: 
-			if str_params[param] == 'True':
-				params[param] = True
-			else:
-				params[param] = False
-				
-		elif any(char.isdigit() for char in str_params[param]):
-			if str_params[param].isdigit():
-				params[param] = int(str_params[param])
-			else:
-				params[param] = float(str_params[param])
-				
-		else:
-			params[param] = str_params[param]
-			
-	return params
-
+def flatten_list(lst):
+    return [item for sublist in lst for item in (flatten_list(sublist) if isinstance(sublist, list) else [sublist])]
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
-	parser.add_argument("-mode", choices=['train', 'evaluate'], help="Sets the mode of the program, either train classifiers or evaluate trained models.")
 	parser.add_argument("-lexical_data_file", default="./donnees_stage_wiktionnaire_supersenses.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
-	parser.add_argument("-hidden_layer_size", choices=['128', '256', '512', '768'], help="hidden layer size of the linear layers of the mlp for the classifier.")
 	parser.add_argument("-batch_size", choices=['8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument("-run", choices=['1', '2', '3', '4', '5'], help="number of the run for an experiment.")
-	parser.add_argument("-dropout", choices=['0.1', '0.2', '0.3'], help="dropout rate for the classifier.")
-	parser.add_argument("-lrs", choices=['0', '1', '2'], default='0', help="part of the half split lrs to be used.")
-	parser.add_argument("-trained_model_name", help="name of the trained classifier to load and evaluate.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
 	return args
@@ -76,131 +51,98 @@ def get_parser_args():
 
 if __name__ == '__main__':
 	args = get_parser_args()
-
-	if args.mode == 'train':
-		
-		session_key = f'dropout%{float(args.dropout)}+batch_size%{int(args.batch_size)}+hidden_layer_size%{int(args.hidden_layer_size)}+lrs%{int(args.lrs)}+run%{int(args.run)}++' 
-		
-		df_dev = []
-
-		# DEVICE setup
-		device_id = args.device_id
-		if torch.cuda.is_available():
-			DEVICE = torch.device("cuda:" + args.device_id)
-			
-
-		run = int(args.run)
-		patience = 2
-		batch_size = int(args.batch_size)
-		frozen = False
-		lrs = [0.0001, 0.00005, 0.00001, 0.000005, 0.000001, 0.0000005]
-		if args.lrs == '1': lrs = lrs[:int(len(lrs)/2)]
-		if args.lrs == '2': lrs = lrs[int(len(lrs)/2):]
-		hidden_layer_size = int(args.hidden_layer_size)
-		dropout = float(args.dropout)
-		
-		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
-			
-		for lr in lrs:
-	    
-			dev_data = {}
-
-			print()
-			print(f"run {run} : lr = {lr}")
-			print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}; batch_size : {batch_size}")
-			print()
-
-
-			params = {key: value for key, value in LPARAMETERS.items()}
-			params['lr'] = lr
-			params['patience'] = patience
-			params['frozen'] = frozen
-			params['batch_size'] = batch_size
-			params['dropout'] = dropout
-			params['hidden_layer_size'] = hidden_layer_size
-			
-			classifier_name = '+'.join([f'{key}%{params[key]}' for key in params_keys]).strip('+')
-			
-			dev_data['clf_name'] = f'{classifier_name}+run%{run}'
-			dev_data["run"] = run
-
-			classifier = lclf.SupersenseTagger(params, DEVICE)
-			lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data)
-			lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", dev_data)
-			lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", dev_data)
-
-			print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
-
-			sequoia_baseline = lclf.MostFrequentSequoia()
-			train_baseline = lclf.MostFrequentTrainingData()
-			wiki_baseline = lclf.MostFrequentWiktionary()
-
-			sequoia_baseline.training()
-			train_baseline.training()
-			wiki_baseline.training()
-			
-			dev_data["train-sequoia_baseline"] = sequoia_baseline.evaluation(train_examples)
-			dev_data["train-train_baseline"] =train_baseline.evaluation(train_examples)
-			dev_data["train-wiki_baseline"] = wiki_baseline.evaluation(train_examples)
-
-			dev_data["freq_dev-sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
-			dev_data["freq_dev-train_baseline"] =train_baseline.evaluation(freq_dev_examples)
-			dev_data["freq_dev-wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
-
-			dev_data["rand_dev-sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
-			dev_data["rand_dev-train_baseline"] =train_baseline.evaluation(rand_dev_examples)
-			dev_data["rand_dev-wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
-
-			print("BASELINES COMPUTED.")
-
-			df_dev.append(dev_data)
-
-		print("CREATION OF THE EVALUATION FILE...")
-		df = pd.DataFrame(df_dev)
-		excel_filename = f'./{session_key}lexical_classifier_results.xlsx'
-		df.to_excel(excel_filename, index=False)
-		
-		print("PROCESS DONE.")
-
-	elif args.mode == 'evaluate':
 	
-		device_id = args.device_id
-		if torch.cuda.is_available():
-			DEVICE = torch.device("cuda:" + args.device_id)
-		
-		eval_data = {}
-		clf_name = args.trained_model_name
-		# params = {'batch_size': int(args.batch_size), 'frozen': True, 'hidden_layer_size': 256, 'dropout': 0.1}
-		# params = parse_clf_name(clf_name)
-		
-		# for param in params: eval_data[param] = params[param]
-		
-		loaded_model = lclf.SupersenseTagger(params, DEVICE)
-		loaded_model.load_state_dict(torch.load(f'./lexical_classifiers/{clf_name}'))
-		train_examples, freq_dev_examples, rand_dev_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
-		# loaded_model.deep_analysis(train_examples, freq_dev_examples, rand_dev_examples, eval_data)
-		
-		lclf.evaluation(train_examples, loaded_model, params, DEVICE, "train", eval_data)
-		lclf.evaluation(freq_dev_examples, loaded_model, params, DEVICE, "freq-dev", eval_data)
-		lclf.evaluation(rand_dev_examples, loaded_model, params, DEVICE, "rand-dev", eval_data)
-		
-		sequoia_baseline = lclf.MostFrequentSequoia()
-		train_baseline = lclf.MostFrequentTrainingData()
-		wiki_baseline = lclf.MostFrequentWiktionary()
+	df_eval = []
 
-		sequoia_baseline.training()
-		train_baseline.training()
-		wiki_baseline.training()
+	# DEVICE setup
+	device_id = args.device_id
+	if torch.cuda.is_available():
+		DEVICE = torch.device("cuda:" + args.device_id)
+	
+	clf_file = f"clf_{device_id}.params"
+		
 
-		eval_data["freq_dev_sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
-		eval_data["freq_dev_train_baseline"] =train_baseline.evaluation(freq_dev_examples)
-		eval_data["freq_dev_wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
+	run = int(args.run)
+	patience = 2
+	batch_size = int(args.batch_size)
+	frozen = True
+	lrs = [0.00001, 0.000005, 0.000001, 0.0000005, 0.0000001]
+	dropouts = [0.1, 0.3]
+	hidden_layer_sizes = [512, 768]
+	
+	params_ids = flatten([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(dropouts)] for j in range(hidden_layer_sizes)] for k in range(lrs)]
+	
+	train_examples, freq_dev_examples, rand_dev_examples, freq_test_examples, rand_test_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 
-		eval_data["rand_dev_sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
-		eval_data["rand_dev_train_baseline"] =train_baseline.evaluation(rand_dev_examples)
-		eval_data["rand_dev_wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
-		
-		df_eval = pd.DataFrame([eval_data])
-		df_eval.to_excel(f"./{clf_name.strip('.params')}.xlsx", index=False)
-		
-		
+	for lr in lrs:
+		for hidden_layer_size in hidden_layer_sizes:
+			for dropout in dropouts:
+			
+				
+			
+				params_id = params_ids.pop(0)
+				clf_id = params_id + f"-{run}"
+				eval_data = {}
+				eval_data['params_id'] = params_id
+				eval_data['clf_id'] = clf_id
+				
+				print()
+				print(f"run {run} : lr = {lr}")
+				print(f"dropout :  {dropout} ; hidden layer size : {hidden_layer_size}; batch_size : {batch_size}")
+				print()
+
+
+				params = {key: value for key, value in LPARAMETERS.items()}
+				params['lr'] = lr
+				params['patience'] = patience
+				params['frozen'] = frozen
+				params['batch_size'] = batch_size
+				params['dropout'] = dropout
+				params['hidden_layer_size'] = hidden_layer_size
+				eval_data["run"] = run
+
+				classifier = lclf.SupersenseTagger(params, DEVICE)
+				lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, eval_data, clf_file)
+				
+				classifier = lclf.SupersenseTagger(params, DEVICE)
+				classifier.load_state_dict(torch.load(clf_file))
+				
+				lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, f"freq-dev", eval_data)
+				lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, f"rand-dev", eval_data)
+
+				print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
+
+				sequoia_baseline = lclf.MostFrequentSequoia()
+				train_baseline = lclf.MostFrequentTrainingData()
+				wiki_baseline = lclf.MostFrequentWiktionary()
+
+				sequoia_baseline.training()
+				train_baseline.training()
+				wiki_baseline.training()
+				
+				eval_data["train-sequoia_baseline"] = sequoia_baseline.evaluation(train_examples)
+				eval_data["train-train_baseline"] =train_baseline.evaluation(train_examples)
+				eval_data["train-wiki_baseline"] = wiki_baseline.evaluation(train_examples)
+
+				eval_data["freq_dev-sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
+				eval_data["freq_dev-train_baseline"] =train_baseline.evaluation(freq_dev_examples)
+				eval_data["freq_dev-wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
+
+				eval_data["rand_dev-sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
+				eval_data["rand_dev-train_baseline"] =train_baseline.evaluation(rand_dev_examples)
+				eval_data["rand_dev-wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
+
+				print("BASELINES COMPUTED.")
+				
+				lclf.evaluation(freq_test_examples, classifier, params, DEVICE, f"freq-test", eval_data)
+				lclf.evaluation(rand_test_examples, classifier, params, DEVICE, f"rand-test", eval_data)
+
+				df_eval.append(eval_data)
+
+	print("CREATION OF THE EVALUATION FILE...")
+	df = pd.DataFrame(df_eval)
+	excel_filename = f'./lexical_clf/def/lexical_classifier_results-run{run}.xlsx'
+	df.to_excel(excel_filename, index=False)
+	
+	print("PROCESS DONE.")
+

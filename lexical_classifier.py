@@ -11,7 +11,7 @@ from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 
 
-# Definition of the supersenses and index structure
+
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
                'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition',
@@ -63,7 +63,21 @@ def encoded_examples(datafile):
 	rand_dev_supersenses_encoded = [supersense2i[supersense] for supersense in rand_dev_supersenses]
 	rand_dev_examples = list(zip(rand_dev_definitions_encoded, rand_dev_supersenses_encoded))
 	
-	return train_examples, freq_dev_examples, rand_dev_examples
+	freq_test_definitions = df_senses[df_senses['set']=='freq-test']['definition'].tolist()
+	freq_test_supersenses = df_senses[df_senses['set']=='freq-test']['supersense'].tolist()
+	freq_test_lemmas = df_senses[df_senses['set']=='freq-test']['lemma'].tolist()
+	freq_test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(freq_test_definitions, freq_test_lemmas)]
+	freq_test_supersenses_encoded = [supersense2i[supersense] for supersense in freq_test_supersenses]
+	freq_test_examples = list(zip(freq_test_definitions_encoded, freq_test_supersenses_encoded))
+	
+	rand_test_definitions = df_senses[df_senses['set']=='rand-test']['definition'].tolist()
+	rand_test_supersenses = df_senses[df_senses['set']=='rand-test']['supersense'].tolist()
+	rand_test_lemmas = df_senses[df_senses['set']=='rand-test']['lemma'].tolist()
+	rand_test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(rand_test_definitions, rand_test_lemmas)]
+	rand_test_supersenses_encoded = [supersense2i[supersense] for supersense in rand_test_supersenses]
+	rand_test_examples = list(zip(rand_test_definitions_encoded, rand_test_supersenses_encoded))
+	
+	return train_examples, freq_dev_examples, rand_dev_examples, freq_test_examples, rand_test_examples
 
 
 def pad_batch(encodings_batch, padding_token_id=2, max_seq_length=100):
@@ -81,7 +95,7 @@ def pad_batch(encodings_batch, padding_token_id=2, max_seq_length=100):
 
 class SupersenseTagger(nn.Module):
 
-	def __init__(self, params, DEVICE, dropout_rate=0.2, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, dropout_rate=0.1, bert_model_name=MODEL_NAME):
 		super(SupersenseTagger, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
@@ -118,8 +132,6 @@ class SupersenseTagger(nn.Module):
 
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 
-		# out = self.dropout(out)
-
 		return F.log_softmax(out, dim=1)
 
 	def predict(self, definitions_batch_encodings):
@@ -129,23 +141,29 @@ class SupersenseTagger(nn.Module):
 			predicted_indices = torch.argmax(log_probs, dim=1).tolist()
 		return [SUPERSENSES[i] for i in predicted_indices]
 
-	def evaluate(self, examples_batch_encodings, DEVICE, dataset):
+	def evaluate(self, examples_batch_encodings, DEVICE, dataset, predictions):
 		self.eval()
 		with torch.no_grad():
 			X, Y = zip(*examples_batch_encodings)
 			X = pad_batch(X, padding_token_id=PADDING_TOKEN_ID).to(DEVICE)
 			Y_gold = torch.tensor(Y).to(DEVICE)
 			Y_pred = torch.argmax(self.forward(X), dim=1)
+			
+			definitions = self.tokenizer.batch_decode(X, skip_special_tokens=True)
+			gold = Y_gold.tolist()
+			pred = Y_pred.tolist()
+			
+			predictions.append(list(zip(definitions, pred, gold)))
 
 		return torch.sum((Y_pred == Y_gold).int()).item()
 
-def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, dev_data):
+def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, eval_data, clf_file):
 
 	for param, value in parameters.items():
-		dev_data[param] = value
+		eval_data[param] = value
 
 	my_supersense_tagger = classifier
-	dev_data["early_stopping"] = 0
+	eval_data["early_stopping"] = 0
 	train_losses = []
 	train_accuracies = []
 	mean_dev_losses = []
@@ -155,11 +173,14 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 	rand_dev_losses = []
 	rand_dev_accuracies = []
 	loss_function = nn.NLLLoss()
+	patience = parameters["patience"]
+	max_mean_dev_accuracy = 0
 	
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
 
 	for epoch in range(parameters["nb_epochs"]):
 		print("epoch: ", epoch+1)
+		
 		epoch_loss = 0
 		train_epoch_accuracy = 0
 		freq_dev_epoch_loss = 0
@@ -256,39 +277,53 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_examples) + rand_dev_epoch_accuracy/len(rand_dev_examples) ) / 2)
 		
 		if epoch >= parameters["patience"]:
+		
+			if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+				max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				torch.save(my_supersense_tagger.state_dict(), f'./{clf_file}')
+				patience = parameters["patience"]
+				
+			else:
+				patience = patience - 1
 			
-			if mean_dev_accuracies[epoch] > mean_dev_accuracies[epoch - 1]:
-				torch.save(my_supersense_tagger.state_dict(), f'./lexical_classifiers/{dev_data["clf_name"]}.params')
-			
-			if all(mean_dev_accuracies[i] <= mean_dev_accuracies[i - 1] for i in range(-1, -parameters["patience"]-1, -1)):
-				dev_data["early_stopping"] = epoch+1
+			if patience == 0:
+				eval_data["early_stopping"] = epoch+1
 				break
 		else:
-			torch.save(my_supersense_tagger.state_dict(), f'./lexical_classifiers/{dev_data["clf_name"]}.params')
+			if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+				max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+			torch.save(my_supersense_tagger.state_dict(), f'./{clf_file}')
 		
-	dev_data["train_losses"] = [round(train_loss, 2) for train_loss in train_losses]
-	dev_data["train_accuracies"] = [round(train_accuracy, 2) for train_accuracy in train_accuracies ]
+	eval_data["train_losses"] = [train_loss for train_loss in train_losses]
+	eval_data["train_accuracies"] = [train_accuracy for train_accuracy in train_accuracies ]
 	
-	dev_data["mean_dev_losses"] = [round(mean_dev_loss, 2) for mean_dev_loss in mean_dev_losses]
-	dev_data["mean_dev_accuracies"] = [round(mean_dev_accuracy, 2) for mean_dev_accuracy in mean_dev_accuracies]
+	eval_data["mean_dev_losses"] = [mean_dev_loss for mean_dev_loss in mean_dev_losses]
+	eval_data["mean_dev_accuracies"] = [mean_dev_accuracy for mean_dev_accuracy in mean_dev_accuracies]
 	
-	dev_data["freq_dev_losses"] = [round(freq_dev_loss, 2) for freq_dev_loss in freq_dev_losses]
-	dev_data["freq_dev_accuracies"] = [round(freq_dev_accuracy, 2) for freq_dev_accuracy in freq_dev_accuracies]
+	eval_data["freq_dev_losses"] = [freq_dev_loss for freq_dev_loss in freq_dev_losses]
+	eval_data["freq_dev_accuracies"] = [freq_dev_accuracy for freq_dev_accuracy in freq_dev_accuracies]
 	
-	dev_data["rand_dev_losses"] = [round(rand_dev_loss, 2) for rand_dev_loss in rand_dev_losses]
-	dev_data["rand_dev_accuracies"] = [round(rand_dev_accuracy, 2) for rand_dev_accuracy in rand_dev_accuracies]
+	eval_data["rand_dev_losses"] = [rand_dev_loss for rand_dev_loss in rand_dev_losses]
+	eval_data["rand_dev_accuracies"] = [rand_dev_accuracy for rand_dev_accuracy in rand_dev_accuracies]
+
 
 def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	batch_size = parameters['batch_size']
+	predictions_file = f'./lexical_clf/def/{data["clf_id"]}_{dataset}_predictions.text'
+	predictions = []
 	i = 0
 	nb_good_preds = 0
 	while i < len(examples):
 		evaluation_batch = examples[i: i + batch_size]
 		i += batch_size
-		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, dataset)
+		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, dataset, predictions)
 		nb_good_preds += partial_nb_good_preds
 
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
+	
+	with open(predictions_file, 'w', encoding='utf-8') as f:
+		for definition, pred, gold in predictions:
+			f.write(f"{}")
 
 
 
