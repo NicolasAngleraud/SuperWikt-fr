@@ -20,7 +20,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon", "act*cognitio
                }
                
 LPARAMETERS = {
-	"nb_epochs": 1,
+	"nb_epochs": 100,
 	"batch_size": 16,
 	"hidden_layer_size": 512,
 	"patience": 2,
@@ -65,10 +65,10 @@ if __name__ == '__main__':
 	run = int(args.run)
 	patience = 2
 	batch_size = int(args.batch_size)
-	frozen = True
-	lrs = [0.00001, 0.000005, 0.000001, 0.0000005, 0.0000001]
-	dropouts = [0.1, 0.3]
-	hidden_layer_sizes = [512, 768]
+	frozen = False
+	lrs = [0.000005]# [0.00001, 0.000005, 0.000001, 0.0000005, 0.0000001]
+	dropouts = [0.1]# [0.1, 0.3]
+	hidden_layer_sizes = [768]# [512, 768]
 	
 	params_ids = flatten_list([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	

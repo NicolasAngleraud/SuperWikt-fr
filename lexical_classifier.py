@@ -323,7 +323,7 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data):
 	
 	with open(predictions_file, 'w', encoding='utf-8') as f:
 		f.write("definition\tpred\tgold\n")
-		print(predictions[0])
+
 		for definition, pred, gold in predictions:
 			f.write(f"{definition}\t{SUPERSENSES[pred]}\t{SUPERSENSES[gold]}\n")
 
