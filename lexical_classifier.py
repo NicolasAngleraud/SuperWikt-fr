@@ -153,7 +153,7 @@ class SupersenseTagger(nn.Module):
 			gold = Y_gold.tolist()
 			pred = Y_pred.tolist()
 			
-			predictions.append(list(zip(definitions, pred, gold)))
+			predictions.extend(list(zip(definitions, pred, gold)))
 
 		return torch.sum((Y_pred == Y_gold).int()).item()
 
