@@ -70,7 +70,7 @@ if __name__ == '__main__':
 	dropouts = [0.1, 0.3]
 	hidden_layer_sizes = [512, 768]
 	
-	params_ids = flatten([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(dropouts)] for j in range(hidden_layer_sizes)] for k in range(lrs)])
+	params_ids = flatten_list([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(dropouts)] for j in range(hidden_layer_sizes)] for k in range(lrs)])
 	
 	train_examples, freq_dev_examples, rand_dev_examples, freq_test_examples, rand_test_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 
