@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	patience = 2
 	batch_size = int(args.batch_size)
 	frozen = False
-	lrs = [0.00001, 0.000005, 0.000001, 0.0000005, 0.0000001]
+	lrs = [0.00001, 0.000005, 0.000001, 0.0000005]
 	dropouts = [0.1, 0.3]
 	hidden_layer_sizes = [512, 768]
 	
