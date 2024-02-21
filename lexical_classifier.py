@@ -45,35 +45,35 @@ def encoded_examples(datafile):
 	train_definitions = df_senses[df_senses['set']=='train']['definition'].tolist()
 	train_supersenses = df_senses[df_senses['set']=='train']['supersense'].tolist()
 	train_lemmas = df_senses[df_senses['set']=='train']['lemma'].tolist()
-	train_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(train_definitions, train_lemmas)]
+	train_definitions_encoded = [tokenizer.encode(text=f"{definition}", add_special_tokens=True) for definition, lemma in zip(train_definitions, train_lemmas)]
 	train_supersenses_encoded = [supersense2i[supersense] for supersense in train_supersenses]
 	train_examples = list(zip(train_definitions_encoded, train_supersenses_encoded))
 
 	freq_dev_definitions = df_senses[df_senses['set']=='freq-dev']['definition'].tolist()
 	freq_dev_supersenses = df_senses[df_senses['set']=='freq-dev']['supersense'].tolist()
 	freq_dev_lemmas = df_senses[df_senses['set']=='freq-dev']['lemma'].tolist()
-	freq_dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(freq_dev_definitions, freq_dev_lemmas)]
+	freq_dev_definitions_encoded = [tokenizer.encode(text=f"{definition}", add_special_tokens=True) for definition, lemma in zip(freq_dev_definitions, freq_dev_lemmas)]
 	freq_dev_supersenses_encoded = [supersense2i[supersense] for supersense in freq_dev_supersenses]
 	freq_dev_examples = list(zip(freq_dev_definitions_encoded, freq_dev_supersenses_encoded))
 	
 	rand_dev_definitions = df_senses[df_senses['set']=='rand-dev']['definition'].tolist()
 	rand_dev_supersenses = df_senses[df_senses['set']=='rand-dev']['supersense'].tolist()
 	rand_dev_lemmas = df_senses[df_senses['set']=='rand-dev']['lemma'].tolist()
-	rand_dev_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(rand_dev_definitions, rand_dev_lemmas)]
+	rand_dev_definitions_encoded = [tokenizer.encode(text=f"{definition}", add_special_tokens=True) for definition, lemma in zip(rand_dev_definitions, rand_dev_lemmas)]
 	rand_dev_supersenses_encoded = [supersense2i[supersense] for supersense in rand_dev_supersenses]
 	rand_dev_examples = list(zip(rand_dev_definitions_encoded, rand_dev_supersenses_encoded))
 	
 	freq_test_definitions = df_senses[df_senses['set']=='freq-test']['definition'].tolist()
 	freq_test_supersenses = df_senses[df_senses['set']=='freq-test']['supersense'].tolist()
 	freq_test_lemmas = df_senses[df_senses['set']=='freq-test']['lemma'].tolist()
-	freq_test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(freq_test_definitions, freq_test_lemmas)]
+	freq_test_definitions_encoded = [tokenizer.encode(text=f"{definition}", add_special_tokens=True) for definition, lemma in zip(freq_test_definitions, freq_test_lemmas)]
 	freq_test_supersenses_encoded = [supersense2i[supersense] for supersense in freq_test_supersenses]
 	freq_test_examples = list(zip(freq_test_definitions_encoded, freq_test_supersenses_encoded))
 	
 	rand_test_definitions = df_senses[df_senses['set']=='rand-test']['definition'].tolist()
 	rand_test_supersenses = df_senses[df_senses['set']=='rand-test']['supersense'].tolist()
 	rand_test_lemmas = df_senses[df_senses['set']=='rand-test']['lemma'].tolist()
-	rand_test_definitions_encoded = [tokenizer.encode(text=f"{lemma}: {definition}", add_special_tokens=True) for definition, lemma in zip(rand_test_definitions, rand_test_lemmas)]
+	rand_test_definitions_encoded = [tokenizer.encode(text=f"{definition}", add_special_tokens=True) for definition, lemma in zip(rand_test_definitions, rand_test_lemmas)]
 	rand_test_supersenses_encoded = [supersense2i[supersense] for supersense in rand_test_supersenses]
 	rand_test_examples = list(zip(rand_test_definitions_encoded, rand_test_supersenses_encoded))
 	
