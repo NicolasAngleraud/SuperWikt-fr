@@ -41,8 +41,8 @@ def flatten_list(lst):
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
-	parser.add_argument("-lexical_data_file", default="./donnees_stage_wiktionnaire_supersenses.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
-	parser.add_argument("-batch_size", choices=['8', '16', '32', '64'], help="batch size for the classifier.")
+	parser.add_argument("-lexical_data_file", default="./donnees.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
+	parser.add_argument("-batch_size", choices=['2', '4', '8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument("-run", choices=['1', '2', '3', '4', '5'], help="number of the run for an experiment.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
 	
-	clf_file = f"./clf_{device_id}.params"
+	clf_file = f"./clfs/clf_{device_id}.params"
 		
 
 	run = int(args.run)
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 	dropouts = [0.1, 0.3]
 	hidden_layer_sizes = [512, 768]
 	
-	params_ids = flatten_list([[[f"LCLFDEXP2LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
+	params_ids = flatten_list([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
 	train_examples, freq_dev_examples, rand_dev_examples, freq_test_examples, rand_test_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
 	print("CREATION OF THE EVALUATION FILE...")
 	df = pd.DataFrame(df_eval)
-	excel_filename = f'./lexical_clf/def/lexical_classifier_results-run{run}.xlsx'
+	excel_filename = f'./exp1/lexical_classifier_results-run{run}.xlsx'
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.")
