@@ -104,7 +104,7 @@ def encoded_examples(datafile, set_, max_length=100):
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
+	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas, ranks
 
 
 
