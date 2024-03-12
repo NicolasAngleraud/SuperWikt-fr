@@ -53,6 +53,8 @@ def get_parser_args():
 if __name__ == '__main__':
 	args = get_parser_args()
 	
+	nlp = spacy.load("fr_core_news_lg")
+	
 	df_eval = []
 
 	# DEVICE setup
@@ -75,6 +77,8 @@ if __name__ == '__main__':
 	
 	params_ids = flatten_list([[[f"CCLFDEXP3LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
+	"""
+	
 	train_examples = cclfw.encoded_examples(datafile=args.data_file, set_='train', max_length=100)
 	freq_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=100)
 	rand_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=100)
@@ -92,6 +96,32 @@ if __name__ == '__main__':
 			
 			print()
 			print()
+	
+	"""
+	
+	train_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=100)
+	freq_dev_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-dev', max_length=100)
+	rand_dev_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-dev', max_length=100)
+	freq_test_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=100)
+	rand_test_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=100)
+	
+	i = 0
+	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma in zip(*train_definitions):
+		
+		i += 1
+		if i > 50: break
+		
+		print(tokenizer.convert_ids_to_tokens(bert_input))
+		print(index_map)
+		print(tg_wrk)
+		print(lemma)
+		
+		print()
+		print()	
+
+	
+	
+	
 	
 	
 	"""

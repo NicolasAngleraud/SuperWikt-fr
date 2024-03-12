@@ -7,6 +7,7 @@ import torch.optim as optim
 import sacremoses
 from random import shuffle
 import numpy as np
+import spacy
 from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 
@@ -82,6 +83,9 @@ def encoded_examples(datafile, set_, max_length=100):
 	examples = df_examples[df_examples['set']==set_]['example'].tolist()
 	# examples = [example.replace('{ { exemple|lang = fr|', '').replace('{ { exemple|', '').replace('{ { exemple', '').replace('<br', '').replace('lang = fr', '') for example in examples]
 	examples = [ x.split(' ') for x in examples ]
+	for example in examples:
+		for x in example:
+			x = x.replace('##', ' ')
 	
 	supersenses = df_examples[df_examples['set']==set_]['supersense'].tolist()
 	senses_ids = df_examples[df_examples['set']==set_]['sense_id'].tolist()
@@ -107,6 +111,37 @@ def encoded_examples(datafile, set_, max_length=100):
 	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas, ranks
 
 
+def encoded_definitions(datafile, nlp, set_, max_length=100):
+	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
+	df_senses = df_senses[df_senses['supersense'].isin(SUPERSENSES)]
+	df_senses = df_senses[(df_senses['definition'] != "") & (df_senses['definition'].notna())]
+
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	lemmas = df_senses[df_senses['set']==set_]['lemma'].tolist()
+	
+	definitions = df_senses[df_senses['set']==set_]['definition'].tolist()
+	# examples = [example.replace('{ { exemple|lang = fr|', '').replace('{ { exemple|', '').replace('{ { exemple', '').replace('<br', '').replace('lang = fr', '') for example in examples]
+	
+	definitions = [ [lemma]+[' : ']+[token.text for token in nlp(x)] for x, lemma in zip(definitions, lemmas) ]
+	
+	supersenses = df_senses[df_senses['set']==set_]['supersense'].tolist()
+	senses_ids = df_senses[df_senses['set']==set_]['sense_id'].tolist()
+	
+	ranks = [1]*len(definitions)
+		
+	sentences_wrks = [ [sent[:max_length], ranks[i]] for i, sent in enumerate(examples) ]
+
+	sentences = [inner[0] for inner in sentences_wrks]
+	tg_wrks = [inner[1] for inner in sentences_wrks]
+	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in sentences ]
+	index_map_raw = [ flatten_list([len(word_toks)*[(i+1)] for i, word_toks in enumerate(sent)]) for sent in sents_encoded ]
+	bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
+	bert_input_raw, index_map_raw = truncate_batch(bert_input_raw, tg_wrks, index_map_raw, max_length)
+	bert_input_raw, index_map_raw = pad_batch(bert_input_raw, index_map_raw, pad_id=2, max_length=max_length)
+	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
+	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
+
+	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
 
 
 class SupersenseTagger(nn.Module):
