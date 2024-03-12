@@ -96,7 +96,7 @@ def encoded_examples(datafile, set_, max_length=100):
 
 	sentences = [inner[0] for inner in sentences_wrks]
 	tg_wrks = [inner[1] for inner in sentences_wrks]
-	sents_encoded = [ flaubert_tokenizer(word, add_special_tokens=False)['input_ids'] for word in sentences ]
+	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in sentences ]
 	index_map_raw = [ flatten_list([len(word_toks)*[(i+1)] for i, word_toks in enumerate(sent)]) for sent in sents_encoded ]
 	bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
 	bert_input_raw, index_map_raw = truncate_batch(bert_input_raw, tg_wrks, index_map_raw, max_length)
