@@ -81,9 +81,9 @@ if __name__ == '__main__':
 	freq_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=100)
 	rand_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=100)
 	
-	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma in zip(*train_examples):
+	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma, rank in zip(*train_examples):
 
-		if tg_wrk > 100:
+		if rank > 100:
 		
 			print(tokenizer.convert_ids_to_tokens(bert_input))
 			print(index_map)
