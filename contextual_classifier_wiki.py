@@ -75,7 +75,7 @@ def add_special_tokens_batch(sentences,index_map, cls_id=0, sep_id=1):
 def encoded_examples(datafile, set_, max_length=100):
 	df_examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
 	df_examples = df_examples[df_examples['supersense'].isin(SUPERSENSES)]
-	df_examples = df_examples[(df_examples['example'] != "") & (df_examples['examples'].notna())]
+	df_examples = df_examples[(df_examples['example'] != "") & (df_examples['example'].notna())]
 
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
