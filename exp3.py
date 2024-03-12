@@ -60,7 +60,9 @@ if __name__ == '__main__':
 		DEVICE = torch.device("cuda:" + args.device_id)
 	
 	clf_file = f"./clfs/clf_{device_id}.params"
-		
+	
+	MODEL_NAME = "flaubert/flaubert_large_cased"
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 	run = int(args.run)
 	patience = 2
@@ -83,7 +85,7 @@ if __name__ == '__main__':
 		i += 1
 		if i > 20: break
 		
-		print(convert_ids_to_tokens(bert_input))
+		print(tokenizer.convert_ids_to_tokens(bert_input))
 		print(index_map)
 		print(tg_wrk)
 		print(lemma)
