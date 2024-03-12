@@ -129,7 +129,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	
 	ranks = [1]*len(definitions)
 		
-	sentences_wrks = [ [sent[:max_length], ranks[i]] for i, sent in enumerate(examples) ]
+	sentences_wrks = [ [sent[:max_length], ranks[i]] for i, sent in enumerate(definitions) ]
 
 	sentences = [inner[0] for inner in sentences_wrks]
 	tg_wrks = [inner[1] for inner in sentences_wrks]
