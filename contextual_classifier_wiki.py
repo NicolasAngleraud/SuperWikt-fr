@@ -128,7 +128,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	senses_ids = df_senses[df_senses['set']==set_]['sense_id'].tolist()
 	
 	ranks = [1]*len(definitions)
-		
+	
 	sentences_wrks = [ [sent[:max_length], ranks[i]] for i, sent in enumerate(definitions) ]
 
 	sentences = [inner[0] for inner in sentences_wrks]
