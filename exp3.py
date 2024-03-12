@@ -2,6 +2,7 @@ import pandas as pd
 import argparse
 import torch
 import contextual_classifier_wiki as cclfw
+from transformers import AutoModel, AutoTokenizer
 import datetime
 
 
