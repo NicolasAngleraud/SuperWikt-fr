@@ -75,11 +75,11 @@ if __name__ == '__main__':
 	
 	params_ids = flatten_list([[[f"CCLFDEXP3LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
-	train_examples = encoded_examples(datafile=args.data_file, set_='train', max_length=100)
-	freq_dev_examples = encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=100)
-	rand_dev_examples = encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=100)
-	freq_test_examples = encoded_examples(datafile=args.data_file, set_='freq-test', max_length=100)
-	rand_test_examples = encoded_examples(datafile=args.data_file, set_='rand-test', max_length=100)
+	train_examples = cclfw.encoded_examples(datafile=args.data_file, set_='train', max_length=100)
+	freq_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=100)
+	rand_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=100)
+	freq_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=100)
+	rand_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=100)
 	
 	i = 0
 	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma in zip(*train_examples):
