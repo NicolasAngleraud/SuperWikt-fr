@@ -102,7 +102,7 @@ def encoded_examples(datafile, set_, max_length=100):
 	bert_input_raw, index_map_raw = truncate_batch(bert_input_raw, tg_wrks, index_map_raw, max_length)
 	bert_input_raw, index_map_raw = pad_batch(bert_input_raw, index_map_raw, pad_id=2, max_length=max_length)
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
-	tg_wrks = [wrk+1 for wrk in tg_wrks]
+	# tg_wrks = [wrk+1 for wrk in tg_wrks]
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
 	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
