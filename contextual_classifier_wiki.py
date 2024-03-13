@@ -143,6 +143,21 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 
 	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
 
+"""
+def shuffle(examples):
+
+	X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas = zip(*examples)
+
+	combined_lists = list(zip(X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas))
+
+	random.shuffle(combined_lists)
+
+	X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas = zip(*combined_lists)
+
+	examples = zip(X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas)
+	
+"""
+
 
 class SupersenseTagger(nn.Module):
 
@@ -250,8 +265,12 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		freq_dev_epoch_accuracy = 0
 		rand_dev_epoch_loss = 0
 		rand_dev_epoch_accuracy = 0
-
+		
+		train_examples = list(train_examples)
 		shuffle(train_examples)
+		train_examples = zip(*train_examples)
+		
+		
 		i = 0
 		j = 0
 
