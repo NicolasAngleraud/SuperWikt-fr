@@ -189,11 +189,9 @@ class SupersenseTagger(nn.Module):
 		
 		# bert_target_word_embeddings = bert_tok_embeddings[:,1,:]
 
-		bert_target_word_embeddings = torch.index_select(bert_tok_embeddings, 1, X_rank)
+		selected_tensors = [bert_tok_embeddings[idx, X_rank[idx], :] for idx in range(bert_tok_embeddings.size(0))]
 
-		bert_target_word_embeddings = torch.squeeze(bert_target_word_embeddings, 1)
-						
-		# bert_target_word_embeddings = torch.index_select(bert_tok_embeddings, 1, X_rank)
+		bert_target_word_embeddings = torch.stack(selected_tensors, dim=0)
 		
 		print(f"shape after = {bert_target_word_embeddings.shape}")
 		
