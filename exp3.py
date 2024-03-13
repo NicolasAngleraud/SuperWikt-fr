@@ -2,14 +2,8 @@
 import subprocess
 import torch
 
-# Specify the PyTorch installation command
-pytorch_install_cmd = "pip install torch==1.10.2+cu102 torchvision==0.11.3+cu102 torchaudio==0.10.2+cu102 -f https://download.pytorch.org/whl/cu102/torch_stable.html"
-
 # Specify the torch-scatter installation command
 torch_scatter_install_cmd = f"pip install torch-scatter https://data.pyg.org/whl/torch-{torch.__version__}.html"
-
-# Run the PyTorch installation command
-subprocess.run(pytorch_install_cmd, shell=True)
 
 # Run the torch-scatter installation command
 subprocess.run(torch_scatter_install_cmd, shell=True)
