@@ -86,19 +86,12 @@ if __name__ == '__main__':
 	freq_test_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=100)
 	rand_test_definitions = cclfw.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=100)
 	
-	i = 0
-	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma in zip(*train_definitions):
-		
-		i += 1
-		if i > 50: break
-		
-		print(tokenizer.convert_ids_to_tokens(bert_input))
-		print(index_map)
-		print(tg_wrk)
-		print(lemma)
-		
-		print()
-		print()	
+	
+	print(len(train_definitions[0]))
+	print(len(freq_dev_definitions[0]))
+	print(len(rand_dev_definitions[0]))
+	print(len(freq_test_definitions[0]))
+	print(len(rand_test_definitions[0]))
 
 	
 	
