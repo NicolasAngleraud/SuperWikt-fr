@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torch_scatter
+# import torch_scatter
 import sacremoses
 from random import shuffle
 import numpy as np
@@ -182,10 +182,12 @@ class SupersenseTagger(nn.Module):
 		bert_emb_size = self.embedding_layer_size
 
 		bert_tok_embeddings = self.bert_model(input_ids=X_input).last_hidden_state # [batch_size, max_length, bert_emb_size]
-		bert_word_embeddings = bert_tok_embeddings.new_zeros((batch_size, max_length, bert_emb_size)).to(self.device) # [batch_size, max_length, bert_emb_size]
-		bert_word_embeddings = torch_scatter.scatter_mean(bert_tok_embeddings, X_idxmap, out=bert_word_embeddings, dim=1) # [batch_size, max_length, bert_emb_size]
-		bert_target_word_embeddings = bert_word_embeddings[torch.arange(bert_word_embeddings.size(0)), X_rank] # [batch_size, bert_emb_size]
-
+		# bert_word_embeddings = bert_tok_embeddings.new_zeros((batch_size, max_length, bert_emb_size)).to(self.device) # [batch_size, max_length, bert_emb_size]
+		# bert_word_embeddings = torch_scatter.scatter_mean(bert_tok_embeddings, X_idxmap, out=bert_word_embeddings, dim=1) # [batch_size, max_length, bert_emb_size]
+		# bert_target_word_embeddings = bert_word_embeddings[torch.arange(bert_word_embeddings.size(0)), X_rank] # [batch_size, bert_emb_size]
+		
+		bert_target_word_embeddings = bert_tok_embeddings[:,X_rank,:]
+		
 		out = self.linear_1(bert_target_word_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
 		out = self.dropout(out)
