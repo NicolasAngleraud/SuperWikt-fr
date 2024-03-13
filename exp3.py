@@ -93,11 +93,11 @@ if __name__ == '__main__':
 	print(list(freq_test_examples)[0])
 	print(list(rand_test_examples)[0])
 	
-	
+	"""
 	for lr in lrs:
 		for hidden_layer_size in hidden_layer_sizes:
 			for dropout in dropouts:
-				break
+
 				params_id = params_ids.pop(0)
 				clf_id = params_id + f"-{run}"
 				eval_data = {}
@@ -164,4 +164,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-
+	"""
