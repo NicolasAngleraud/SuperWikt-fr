@@ -142,7 +142,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
+	return bert_input[:16], tg_wrks[:16], index_map[:16], supersenses_encoded[16:], senses_ids[16:], lemmas[16:]
 
 
 
@@ -277,6 +277,9 @@ def training(parameters, train_inputs, train_ranks, train_idxmaps, train_superse
 			log_probs = my_supersense_tagger(X_train_input, X_train_rank, X_train_idxmap)
 
 			# predicted_indices = torch.argmax(log_probs, dim=1)
+			
+			print(f"log probs : shape = {log_probs.shape}")
+			print(f"Y train : shape = {Y_train.shape}")
 
 			loss = loss_function(log_probs, Y_train)
 			loss.backward()
