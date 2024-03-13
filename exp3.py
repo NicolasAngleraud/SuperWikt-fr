@@ -92,6 +92,8 @@ if __name__ == '__main__':
 	print(len(rand_dev_definitions[0]))
 	print(len(freq_test_definitions[0]))
 	print(len(rand_test_definitions[0]))
+	
+	print("PROCESS DONE.")
 
 	
 	
