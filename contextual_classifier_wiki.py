@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch_scatter import scatter_mean
+# from torch_scatter import scatter_mean
 import sacremoses
 from random import shuffle
 import numpy as np
