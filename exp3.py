@@ -134,7 +134,7 @@ if __name__ == '__main__':
 				
 				cclf.evaluation(rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, params, DEVICE, "rand-dev", eval_data, "exp3")
 
-				print(f"CLASSIFIER TRAINED ON {len(train_examples)} DEFINITIONS...")
+				print(f"CLASSIFIER TRAINED ON {len(train_inputs)} DEFINITIONS...")
 
 				sequoia_baseline = cclf.MostFrequentSequoia()
 				train_baseline = cclf.MostFrequentTrainingData()
