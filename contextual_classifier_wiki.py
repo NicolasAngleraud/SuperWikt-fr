@@ -185,13 +185,17 @@ class SupersenseTagger(nn.Module):
 		# bert_word_embeddings = bert_tok_embeddings.new_zeros((batch_size, max_length, bert_emb_size)).to(self.device) # [batch_size, max_length, bert_emb_size]
 		# bert_word_embeddings = torch_scatter.scatter_mean(bert_tok_embeddings, X_idxmap, out=bert_word_embeddings, dim=1) # [batch_size, max_length, bert_emb_size]
 		# bert_target_word_embeddings = bert_word_embeddings[torch.arange(bert_word_embeddings.size(0)), X_rank] # [batch_size, bert_emb_size]
-		print(f"shape before = {bert_tok_embeddings}")
+		print(f"shape before = {bert_tok_embeddings.shape}")
 		
 		# bert_target_word_embeddings = bert_tok_embeddings[:,1,:]
+
+		selected_tensors = [bert_tok_embeddings[:, idx, :] for idx in X_rank]
+
+		bert_target_word_embeddings = torch.stack(selected_tensors, dim=1)
+				
+		# bert_target_word_embeddings = torch.index_select(bert_tok_embeddings, 1, X_rank)
 		
-		bert_target_word_embeddings = torch.index_select(bert_tok_embeddings, 1, X_rank)
-		
-		print(f"shape after = {bert_target_word_embeddings}")
+		print(f"shape after = {bert_target_word_embeddings.shape}")
 		
 		out = self.linear_1(bert_target_word_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
