@@ -143,20 +143,6 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 
 	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
 
-"""
-def shuffle(examples):
-
-	X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas = zip(*examples)
-
-	combined_lists = list(zip(X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas))
-
-	random.shuffle(combined_lists)
-
-	X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas = zip(*combined_lists)
-
-	examples = zip(X_train_input, X_train_rank, X_train_idxmap, Y_train, senses_ids, lemmas)
-	
-"""
 
 
 class SupersenseTagger(nn.Module):
@@ -275,8 +261,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		j = 0
 
 		my_supersense_tagger.train()
-		while i < len(train_examples):
-			train_batch = train_examples[i: i + parameters["batch_size"]]
+		while i < len(list(train_examples)):
+			train_batch = zip(*list(train_examples)[i: i + parameters["batch_size"]])
 
 			i += parameters["batch_size"]
 			
@@ -304,8 +290,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(train_examples):
-				train_batch = train_examples[j: j + parameters["batch_size"]]
+			while j < len(list(train_examples)):
+				train_batch = zip(*list(train_examples)[j: j + parameters["batch_size"]])
 				j += parameters["batch_size"]
 				
 				
@@ -327,8 +313,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(freq_dev_examples):
-				freq_dev_batch = freq_dev_examples[j: j + parameters["batch_size"]]
+			while j < len(list(freq_dev_examples)):
+				freq_dev_batch = zip(*list(freq_dev_examples)[j: j + parameters["batch_size"]])
 				j += parameters["batch_size"]
 				
 				X_freq_dev_input, X_freq_dev_rank, X_freq_dev_idxmap, Y_freq_dev, _, _ = zip(*freq_dev_batch)
@@ -352,8 +338,8 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(rand_dev_examples):
-				rand_dev_batch = rand_dev_examples[j: j + parameters["batch_size"]]
+			while j < len(list(rand_dev_examples)):
+				rand_dev_batch = zip(*list(rand_dev_examples)[j: j + parameters["batch_size"]])
 				j += parameters["batch_size"]
 				
 				X_rand_dev_input, X_rand_dev_rank, X_rand_dev_idxmap, Y_rand_dev, _, _ = zip(*rand_dev_batch)
@@ -414,8 +400,8 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data, exp):
 	predictions = []
 	i = 0
 	nb_good_preds = 0
-	while i < len(examples):
-		evaluation_batch = examples[i: i + batch_size]
+	while i < len(list(examples)):
+		evaluation_batch = zip(*list(examples)[i: i + batch_size])
 		i += batch_size
 		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, dataset, predictions)
 		nb_good_preds += partial_nb_good_preds
@@ -439,7 +425,8 @@ class Baseline:
 		pass
 
 	def evaluation(self, eval_examples):
-		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for _, supersense in eval_examples])/len(eval_examples)
+		_, _, _, Y_eval, _, _ = zip(*eval_examples)
+		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for supersense in Y_eval])/len(eval_examples)
 
 
 
