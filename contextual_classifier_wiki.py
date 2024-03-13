@@ -242,6 +242,7 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
 	
 	freq_dev_examples = list(freq_dev_examples)
+	print(freq_dev_examples[0])
 	freq_dev_input, freq_dev_rank, freq_dev_idxmap, freq_dev_supersense, _, _ = zip(*freq_dev_examples)
 	rand_dev_examples = list(rand_dev_examples)
 	rand_dev_input, rand_dev_rank, rand_dev_idxmap, rand_dev_supersense, _, _ = zip(*rand_dev_examples)
