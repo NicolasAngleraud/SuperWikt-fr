@@ -87,17 +87,17 @@ if __name__ == '__main__':
 	freq_test_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=max_seq_length)
 	rand_test_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=max_seq_length)
 	
-	print(len(list(train_examples)))
-	print(len(list(freq_dev_examples)))
-	print(len(list(rand_dev_examples)))
-	print(len(list(freq_test_examples)))
-	print(len(list(rand_test_examples)))
+	print(list(train_examples)[0])
+	print(list(freq_dev_examples)[0])
+	print(list(rand_dev_examples)[0])
+	print(list(freq_test_examples)[0])
+	print(list(rand_test_examples)[0])
 	
 	
 	for lr in lrs:
 		for hidden_layer_size in hidden_layer_sizes:
 			for dropout in dropouts:
-			
+				break
 				params_id = params_ids.pop(0)
 				clf_id = params_id + f"-{run}"
 				eval_data = {}
