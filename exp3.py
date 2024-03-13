@@ -81,11 +81,11 @@ if __name__ == '__main__':
 	
 
 	
-	train_definitions = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=max_seq_length)
-	freq_dev_definitions = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-dev', max_length=max_seq_length)
-	rand_dev_definitions = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-dev', max_length=max_seq_length)
-	freq_test_definitions = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=max_seq_length)
-	rand_test_definitions = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=max_seq_length)
+	train_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=max_seq_length)
+	freq_dev_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-dev', max_length=max_seq_length)
+	rand_dev_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-dev', max_length=max_seq_length)
+	freq_test_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=max_seq_length)
+	rand_test_examples = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=max_seq_length)
 	
 	
 	for lr in lrs:
