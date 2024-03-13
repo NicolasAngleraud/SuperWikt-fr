@@ -120,7 +120,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	lemmas = df_senses[df_senses['set']==set_]['lemma'].tolist()
 	
-	definitions = df_senses[df_senses['set']==set_]['definition'].tolist()[:16]
+	definitions = df_senses[df_senses['set']==set_]['definition'].tolist()
 	# examples = [example.replace('{ { exemple|lang = fr|', '').replace('{ { exemple|', '').replace('{ { exemple', '').replace('<br', '').replace('lang = fr', '') for example in examples]
 	
 	definitions = [ [lemma]+[' : ']+[token.text for token in nlp(x)] for x, lemma in zip(definitions, lemmas) ]
@@ -142,7 +142,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input[:16], tg_wrks[:16], index_map[:16], supersenses_encoded[:16], senses_ids[:16], lemmas[:16]
+	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
 
 
 
