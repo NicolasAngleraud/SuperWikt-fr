@@ -114,6 +114,7 @@ if __name__ == '__main__':
 				params = {key: value for key, value in LPARAMETERS.items()}
 				params['lr'] = lr
 				params['patience'] = patience
+				params['max_seq_length'] = max_seq_length
 				params['frozen'] = frozen
 				params['batch_size'] = batch_size
 				params['dropout'] = dropout

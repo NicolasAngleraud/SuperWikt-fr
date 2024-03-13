@@ -177,7 +177,7 @@ class SupersenseTagger(nn.Module):
 	def forward(self, X_input, X_rank, X_idxmap):
 	
 		batch_size = self.params['batch_size']
-		max_length = self.params['max_length']
+		max_length = self.params['max_seq_length']
 		bert_emb_size = self.embedding_layer_size
 
 		bert_tok_embeddings = self.bert_model(input_ids=X_input).last_hidden_state # [batch_size, max_length, bert_emb_size]
