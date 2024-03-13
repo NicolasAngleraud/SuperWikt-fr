@@ -108,7 +108,7 @@ def encoded_examples(datafile, set_, max_length=100):
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas, ranks
+	return zip(bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas, ranks)
 
 
 def encoded_definitions(datafile, nlp, set_, max_length=100):
@@ -141,7 +141,7 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
+	return zip(bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas)
 
 
 
@@ -202,10 +202,9 @@ class SupersenseTagger(nn.Module):
 			predicted_indices = torch.argmax(log_probs, dim=1).tolist()
 		return [SUPERSENSES[i] for i in predicted_indices]
 
-	def evaluate(self, examples_batch_encodings, DEVICE, dataset, predictions):
+	def evaluate(self, X_input, X_rank, X_idxmap, Y, senses_ids, lemmas, DEVICE, dataset, predictions):
 		self.eval()
 		with torch.no_grad():
-			X_input, X_rank, X_idxmap, Y, senses_ids, lemmas = zip(*examples_batch_encodings)
 			
 			X_input = torch.tensor(X_input).to(DEVICE)
 			X_rank = torch.tensor(X_rank).to(DEVICE)
@@ -241,6 +240,11 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 	max_mean_dev_accuracy = 0
 	
 	optimizer = optim.Adam(my_supersense_tagger.parameters(), lr=parameters["lr"])
+	
+	freq_dev_examples = list(freq_dev_examples)
+	freq_dev_input, freq_dev_rank, freq_dev_idxmap, freq_dev_supersense, _, _ = zip(*freq_dev_examples)
+	rand_dev_examples = list(rand_dev_examples)
+	rand_dev_input, rand_dev_rank, rand_dev_idxmap, rand_dev_supersense, _, _ = zip(*rand_dev_examples)
 
 	for epoch in range(parameters["nb_epochs"]):
 		print("epoch: ", epoch+1)
@@ -254,25 +258,20 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		
 		train_examples = list(train_examples)
 		shuffle(train_examples)
-		train_examples = zip(*train_examples)
+		train_input, train_rank, train_idxmap, train_supersense, _, _ = zip(*train_examples)
 		
 		
 		i = 0
 		j = 0
 
 		my_supersense_tagger.train()
-		while i < len(list(train_examples)):
-			train_batch = zip(*list(train_examples)[i: i + parameters["batch_size"]])
-
+		while i < len(train_input):
+			X_train_input = torch.tensor(train_input[i: i + parameters["batch_size"]]).to(DEVICE)
+			X_train_rank = torch.tensor(train_rank[i: i + parameters["batch_size"]]).to(DEVICE)
+			X_train_idxmap = torch.tensor(train_idxmap[i: i + parameters["batch_size"]]).to(DEVICE)
+			Y_train = torch.tensor(train_supersense[i: i + parameters["batch_size"]]).to(DEVICE)
+			
 			i += parameters["batch_size"]
-			
-			
-			X_train_input, X_train_rank, X_train_idxmap, Y_train, _, _ = zip(*train_batch)
-			
-			X_train_input = torch.tensor(X_train_input).to(DEVICE)
-			X_train_rank = torch.tensor(X_train_rank).to(DEVICE)
-			X_train_idxmap = torch.tensor(X_train_idxmap).to(DEVICE)
-			Y_train = torch.tensor(Y_train).to(DEVICE)
 
 			my_supersense_tagger.zero_grad()
 			log_probs = my_supersense_tagger(X_train_input, X_train_rank, X_train_idxmap)
@@ -290,39 +289,32 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(list(train_examples)):
-				train_batch = zip(*list(train_examples)[j: j + parameters["batch_size"]])
+			while j < len(train_input):
+				X_train_input = torch.tensor(train_input[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_train_rank = torch.tensor(train_rank[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_train_idxmap = torch.tensor(train_idxmap[j: j + parameters["batch_size"]]).to(DEVICE)
+				Y_train = torch.tensor(train_supersense[j: j + parameters["batch_size"]]).to(DEVICE)
+				
 				j += parameters["batch_size"]
-				
-				
-				X_train_input, X_train_rank, X_train_idxmap, Y_train, _, _ = zip(*train_batch)
-			
-				X_train_input = torch.tensor(X_train_input).to(DEVICE)
-				X_train_rank = torch.tensor(X_train_rank).to(DEVICE)
-				X_train_idxmap = torch.tensor(X_train_idxmap).to(DEVICE)
-				Y_train = torch.tensor(Y_train).to(DEVICE)
 				
 				train_log_probs = my_supersense_tagger(X_train_input, X_train_rank, X_train_idxmap)
 
 				predicted_indices = torch.argmax(train_log_probs, dim=1)
 				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
-			train_accuracies.append(train_epoch_accuracy / len(train_examples))
+			train_accuracies.append(train_epoch_accuracy / len(train_input))
 
 
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(list(freq_dev_examples)):
-				freq_dev_batch = zip(*list(freq_dev_examples)[j: j + parameters["batch_size"]])
-				j += parameters["batch_size"]
+			while j < len(freq_dev_input):
+				X_freq_dev_input = torch.tensor(freq_dev_input[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_freq_dev_rank = torch.tensor(freq_dev_rank[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_freq_dev_idxmap = torch.tensor(freq_dev_idxmap[j: j + parameters["batch_size"]]).to(DEVICE)
+				Y_freq_dev = torch.tensor(freq_dev_supersense[j: j + parameters["batch_size"]]).to(DEVICE)
 				
-				X_freq_dev_input, X_freq_dev_rank, X_freq_dev_idxmap, Y_freq_dev, _, _ = zip(*freq_dev_batch)
-			
-				X_freq_dev_input = torch.tensor(X_freq_dev_input).to(DEVICE)
-				X_freq_dev_rank = torch.tensor(X_freq_dev_rank).to(DEVICE)
-				X_freq_dev_idxmap = torch.tensor(X_freq_dev_idxmap).to(DEVICE)
-				Y_freq_dev = torch.tensor(Y_freq_dev).to(DEVICE)
+				j += parameters["batch_size"]
 				
 				freq_dev_log_probs = my_supersense_tagger(X_freq_dev_input, X_freq_dev_rank, X_freq_dev_idxmap)
 
@@ -332,22 +324,19 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 				freq_dev_loss = loss_function(freq_dev_log_probs, Y_freq_dev)
 				freq_dev_epoch_loss += freq_dev_loss.item()
 
-			freq_dev_losses.append(freq_dev_epoch_loss / len(freq_dev_examples))
-			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_examples))
+			freq_dev_losses.append(freq_dev_epoch_loss / len(freq_dev_input))
+			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_input))
 		
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(list(rand_dev_examples)):
-				rand_dev_batch = zip(*list(rand_dev_examples)[j: j + parameters["batch_size"]])
-				j += parameters["batch_size"]
+			while j < len(rand_dev_input):
+				X_rand_dev_input = torch.tensor(rand_dev_input[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_rand_dev_rank = torch.tensor(rand_dev_rank[j: j + parameters["batch_size"]]).to(DEVICE)
+				X_rand_dev_idxmap = torch.tensor(rand_dev_idxmap[j: j + parameters["batch_size"]]).to(DEVICE)
+				Y_rand_dev = torch.tensor(rand_dev_supersense[j: j + parameters["batch_size"]]).to(DEVICE)
 				
-				X_rand_dev_input, X_rand_dev_rank, X_rand_dev_idxmap, Y_rand_dev, _, _ = zip(*rand_dev_batch)
-			
-				X_rand_dev_input = torch.tensor(X_rand_dev_input).to(DEVICE)
-				X_rand_dev_rank = torch.tensor(X_rand_dev_rank).to(DEVICE)
-				X_rand_dev_idxmap = torch.tensor(X_rand_dev_idxmap).to(DEVICE)
-				Y_rand_dev = torch.tensor(Y_rand_dev).to(DEVICE)
+				j += parameters["batch_size"]
 				
 				rand_dev_log_probs = my_supersense_tagger(X_rand_dev_input, X_rand_dev_rank, X_rand_dev_idxmap)
 
@@ -357,11 +346,11 @@ def training(parameters, train_examples, freq_dev_examples, rand_dev_examples, c
 				rand_dev_loss = loss_function(rand_dev_log_probs, Y_rand_dev)
 				rand_dev_epoch_loss += rand_dev_loss.item()
 
-			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_examples))
-			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_examples))
+			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_input))
+			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_input))
 
-		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_examples) + rand_dev_epoch_loss/len(rand_dev_examples) ) / 2)
-		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_examples) + rand_dev_epoch_accuracy/len(rand_dev_examples) ) / 2)
+		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_input) + rand_dev_epoch_loss/len(rand_dev_input) ) / 2)
+		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_input) + rand_dev_epoch_accuracy/len(rand_dev_input) ) / 2)
 		
 		if epoch >= parameters["patience"]:
 		
@@ -400,10 +389,20 @@ def evaluation(examples, classifier, parameters, DEVICE, dataset, data, exp):
 	predictions = []
 	i = 0
 	nb_good_preds = 0
-	while i < len(list(examples)):
-		evaluation_batch = zip(*list(examples)[i: i + batch_size])
+	examples = list(examples)
+	eval_input, eval_rank, eval_idxmap, eval_supersenses, eval_senses_ids, eval_lemmas = zip(*examples)
+	
+	while i < len(examples):
+
+		X_input = eval_input[i: i + batch_size]
+		X_rank = eval_rank[i: i + batch_size]
+		X_idxmap = eval_idxmap[i: i + batch_size]
+		Y = eval_supersenses[i: i + batch_size]
+		senses_ids = eval_senses_ids[i: i + batch_size]
+		lemmas = eval_lemmas[i: i + batch_size]
+		
 		i += batch_size
-		partial_nb_good_preds= classifier.evaluate(evaluation_batch, DEVICE, dataset, predictions)
+		partial_nb_good_preds= classifier.evaluate(X_input, X_rank, X_idxmap, Y, senses_ids, lemmas, DEVICE, dataset, predictions)
 		nb_good_preds += partial_nb_good_preds
 
 	data[f"{dataset}_accuracy"] = nb_good_preds/len(examples)
@@ -425,6 +424,7 @@ class Baseline:
 		pass
 
 	def evaluation(self, eval_examples):
+		eval_examples = list(eval_examples)
 		_, _, _, Y_eval, _, _ = zip(*eval_examples)
 		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for supersense in Y_eval])/len(eval_examples)
 
