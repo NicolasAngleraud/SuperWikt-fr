@@ -185,15 +185,12 @@ class SupersenseTagger(nn.Module):
 		# bert_word_embeddings = bert_tok_embeddings.new_zeros((batch_size, max_length, bert_emb_size)).to(self.device) # [batch_size, max_length, bert_emb_size]
 		# bert_word_embeddings = torch_scatter.scatter_mean(bert_tok_embeddings, X_idxmap, out=bert_word_embeddings, dim=1) # [batch_size, max_length, bert_emb_size]
 		# bert_target_word_embeddings = bert_word_embeddings[torch.arange(bert_word_embeddings.size(0)), X_rank] # [batch_size, bert_emb_size]
-		print(f"shape before = {bert_tok_embeddings.shape}")
 		
 		# bert_target_word_embeddings = bert_tok_embeddings[:,1,:]
 
 		selected_tensors = [bert_tok_embeddings[idx, X_rank[idx], :] for idx in range(bert_tok_embeddings.size(0))]
 
 		bert_target_word_embeddings = torch.stack(selected_tensors, dim=0)
-		
-		print(f"shape after = {bert_target_word_embeddings.shape}")
 		
 		out = self.linear_1(bert_target_word_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
@@ -284,9 +281,6 @@ def training(parameters, train_inputs, train_ranks, train_idxmaps, train_superse
 			log_probs = my_supersense_tagger(X_train_input, X_train_rank, X_train_idxmap)
 
 			# predicted_indices = torch.argmax(log_probs, dim=1)
-			
-			print(f"log probs : shape = {log_probs.shape}")
-			print(f"Y train : shape = {Y_train.shape}")
 
 			loss = loss_function(log_probs, Y_train)
 			loss.backward()
@@ -340,7 +334,7 @@ def training(parameters, train_inputs, train_ranks, train_idxmaps, train_superse
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(rand_dev_input):
+			while j < len(rand_dev_inputs):
 				X_rand_dev_input = torch.tensor(rand_dev_inputs[j: j + parameters["batch_size"]]).to(DEVICE)
 				X_rand_dev_rank = torch.tensor(rand_dev_ranks[j: j + parameters["batch_size"]]).to(DEVICE)
 				X_rand_dev_idxmap = torch.tensor(rand_dev_idxmaps[j: j + parameters["batch_size"]]).to(DEVICE)
