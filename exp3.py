@@ -1,3 +1,20 @@
+
+import subprocess
+
+# Specify the PyTorch installation command
+pytorch_install_cmd = "pip install torch==1.10.2+cu102 torchvision==0.11.3+cu102 torchaudio==0.10.2+cu102 -f https://download.pytorch.org/whl/cu102/torch_stable.html"
+
+# Specify the torch-scatter installation command
+torch_scatter_install_cmd = f"pip install torch-scatter https://data.pyg.org/whl/torch-{torch.__version__}.html"
+
+# Run the PyTorch installation command
+subprocess.run(pytorch_install_cmd, shell=True)
+
+# Run the torch-scatter installation command
+subprocess.run(torch_scatter_install_cmd, shell=True)
+
+
+
 import pandas as pd
 import argparse
 import torch
@@ -80,7 +97,7 @@ if __name__ == '__main__':
 	params_ids = flatten_list([[[f"CCLFDEXP3LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
 
-	
+	"""
 	train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=max_seq_length)
 	
 	freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-dev', max_length=max_seq_length)
@@ -170,4 +187,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-
+	"""
