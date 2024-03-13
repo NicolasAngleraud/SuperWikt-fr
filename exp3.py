@@ -79,6 +79,13 @@ if __name__ == '__main__':
 	
 	params_ids = flatten_list([[[f"CCLFDEXP3LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
+	import torch
+	print(torch.__version__)
+	print(torch.version.cuda)
+
+	
+	
+	"""
 	
 	train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas = cclf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=max_seq_length)
 	
@@ -169,4 +176,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-	
+	"""
