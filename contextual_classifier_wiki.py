@@ -425,10 +425,8 @@ class Baseline:
 	def training(self):
 		pass
 
-	def evaluation(self, eval_examples):
-		eval_examples = list(eval_examples)
-		_, _, _, Y_eval, _, _ = zip(*eval_examples)
-		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for supersense in Y_eval])/len(eval_examples)
+	def evaluation(self, eval_supersenses):
+		return sum([int(supersense == supersense2i[self.most_frequent_supersense]) for supersense in eval_supersenses])/len(eval_supersenses)
 
 
 
