@@ -1,7 +1,8 @@
 import pandas as pd
 import argparse
 import torch
-import contextual_classifier_wiki as cclfw
+import spacy
+import mono_target_multi_rank_classifier as clf
 from transformers import AutoModel, AutoTokenizer
 import datetime
 
@@ -53,6 +54,8 @@ def get_parser_args():
 if __name__ == '__main__':
 	args = get_parser_args()
 	
+	nlp = spacy.load("fr_core_news_lg")
+	
 	df_eval = []
 
 	# DEVICE setup
@@ -69,66 +72,30 @@ if __name__ == '__main__':
 	patience = 2
 	batch_size = int(args.batch_size)
 	frozen = False
-	lrs = [0.00001, 0.000005, 0.000001, 0.0000005]
-	dropouts = [0.1, 0.3]
-	hidden_layer_sizes = [512, 768]
+	max_seq_length = 100
+	lrs = [0.00001]
+	dropouts = [0.3]
+	hidden_layer_sizes = [512]
 	
-	params_ids = flatten_list([[[f"CCLFDEXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
-	
-	
-	train_examples = cclfw.encoded_examples(datafile=args.data_file, set_='train', max_length=100)
-	freq_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=100)
-	rand_dev_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=100)
-	freq_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=100)
-	rand_test_examples = cclfw.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=100)
-	
-	for bert_input, tg_wrk, index_map, supersense_encoded, sense_id, lemma, rank in zip(*train_examples):
-
-		if rank > 100:
-		
-			print(tokenizer.convert_ids_to_tokens(bert_input))
-			print(index_map)
-			print(tg_wrk)
-			print(lemma)
-			
-			print()
-			print()
+	params_ids = flatten_list([[[f"EXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
 
-	
 
-"""
-if __name__ == '__main__':
-	args = get_parser_args()
+	train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas = clf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='train', max_length=max_seq_length)
 	
-	df_eval = []
-
-	# DEVICE setup
-	device_id = args.device_id
-	if torch.cuda.is_available():
-		DEVICE = torch.device("cuda:" + args.device_id)
+	freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas = clf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-dev', max_length=max_seq_length)
 	
-	clf_file = f"./clfs/clf_{device_id}.params"
-		
-
-	run = int(args.run)
-	patience = 2
-	batch_size = int(args.batch_size)
-	frozen = False
-	lrs = [0.00001, 0.000005, 0.000001, 0.0000005]
-	dropouts = [0.1, 0.3]
-	hidden_layer_sizes = [512, 768]
+	rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas = clf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-dev', max_length=max_seq_length)
 	
-	params_ids = flatten_list([[[f"LCLFDEXP1LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
+	freq_test_inputs, freq_test_ranks, freq_test_idxmaps, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas = clf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='freq-test', max_length=max_seq_length)
 	
-	train_examples, freq_dev_examples, rand_dev_examples, freq_test_examples, rand_test_examples = lclf.encoded_examples(datafile=args.lexical_data_file)
-
+	rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_definitions(datafile=args.data_file, nlp=nlp, set_='rand-test', max_length=max_seq_length)
+	
+	
 	for lr in lrs:
 		for hidden_layer_size in hidden_layer_sizes:
 			for dropout in dropouts:
-			
-				
-			
+
 				params_id = params_ids.pop(0)
 				clf_id = params_id + f"-{run}"
 				eval_data = {}
@@ -144,56 +111,59 @@ if __name__ == '__main__':
 				params = {key: value for key, value in LPARAMETERS.items()}
 				params['lr'] = lr
 				params['patience'] = patience
+				params['max_seq_length'] = max_seq_length
 				params['frozen'] = frozen
 				params['batch_size'] = batch_size
 				params['dropout'] = dropout
 				params['hidden_layer_size'] = hidden_layer_size
 				eval_data["run"] = run
 
-				classifier = lclf.SupersenseTagger(params, DEVICE)
-				lclf.training(params, train_examples, freq_dev_examples, rand_dev_examples, classifier, DEVICE, eval_data, clf_file)
+				classifier = clf.SupersenseTagger(params, DEVICE)
+				clf.training(params, train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas, freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, DEVICE, eval_data, clf_file)
 				
-				classifier = lclf.SupersenseTagger(params, DEVICE)
+				print(f"CLASSIFIER TRAINED ON {len(train_inputs)} DEFINITIONS...")
+				
+				classifier = clf.SupersenseTagger(params, DEVICE)
 				classifier.load_state_dict(torch.load(clf_file))
 				
-				lclf.evaluation(train_examples, classifier, params, DEVICE, "train", eval_data)
-				lclf.evaluation(freq_dev_examples, classifier, params, DEVICE, "freq-dev", eval_data)
-				lclf.evaluation(rand_dev_examples, classifier, params, DEVICE, "rand-dev", eval_data)
+				clf.evaluation(train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas, classifier, params, DEVICE, "train", eval_data, "exp3")
+				
+				clf.evaluation(freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, classifier, params, DEVICE, "freq-dev", eval_data, "exp3")
+				
+				clf.evaluation(rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, params, DEVICE, "rand-dev", eval_data, "exp3")
 
-				print(f"CLASSIFIER TRAINED ON {len(train_examples)} EXAMPLES.")
-
-				sequoia_baseline = lclf.MostFrequentSequoia()
-				train_baseline = lclf.MostFrequentTrainingData()
-				wiki_baseline = lclf.MostFrequentWiktionary()
+				sequoia_baseline = clf.MostFrequentSequoia()
+				train_baseline = clf.MostFrequentTrainingData()
+				wiki_baseline = clf.MostFrequentWiktionary()
 
 				sequoia_baseline.training()
 				train_baseline.training()
 				wiki_baseline.training()
 				
-				eval_data["train-sequoia_baseline"] = sequoia_baseline.evaluation(train_examples)
-				eval_data["train-train_baseline"] =train_baseline.evaluation(train_examples)
-				eval_data["train-wiki_baseline"] = wiki_baseline.evaluation(train_examples)
+				eval_data["train-sequoia_baseline"] = sequoia_baseline.evaluation(train_supersenses)
+				eval_data["train-train_baseline"] =train_baseline.evaluation(train_supersenses)
+				eval_data["train-wiki_baseline"] = wiki_baseline.evaluation(train_supersenses)
 
-				eval_data["freq_dev-sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_examples)
-				eval_data["freq_dev-train_baseline"] =train_baseline.evaluation(freq_dev_examples)
-				eval_data["freq_dev-wiki_baseline"] = wiki_baseline.evaluation(freq_dev_examples)
+				eval_data["freq_dev-sequoia_baseline"] = sequoia_baseline.evaluation(freq_dev_supersenses)
+				eval_data["freq_dev-train_baseline"] =train_baseline.evaluation(freq_dev_supersenses)
+				eval_data["freq_dev-wiki_baseline"] = wiki_baseline.evaluation(freq_dev_supersenses)
 
-				eval_data["rand_dev-sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_examples)
-				eval_data["rand_dev-train_baseline"] =train_baseline.evaluation(rand_dev_examples)
-				eval_data["rand_dev-wiki_baseline"] = wiki_baseline.evaluation(rand_dev_examples)
+				eval_data["rand_dev-sequoia_baseline"] = sequoia_baseline.evaluation(rand_dev_supersenses)
+				eval_data["rand_dev-train_baseline"] =train_baseline.evaluation(rand_dev_supersenses)
+				eval_data["rand_dev-wiki_baseline"] = wiki_baseline.evaluation(rand_dev_supersenses)
 
-				print("BASELINES COMPUTED.")
+				print("BASELINES COMPUTED...")
 				
-				lclf.evaluation(freq_test_examples, classifier, params, DEVICE, "freq-test", eval_data)
-				lclf.evaluation(rand_test_examples, classifier, params, DEVICE, "rand-test", eval_data)
+				clf.evaluation(freq_test_inputs, freq_test_ranks, freq_test_idxmaps, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas, classifier, params, DEVICE, "freq-test", eval_data, "exp3")
+				
+				clf.evaluation(rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas, classifier, params, DEVICE, "rand-test", eval_data, "exp3")
 
 				df_eval.append(eval_data)
 
 	print("CREATION OF THE EVALUATION FILE...")
 	df = pd.DataFrame(df_eval)
-	excel_filename = f'./exp1/lexical_classifier_results-run{run}.xlsx'
+	excel_filename = f'./exp3/contextual_classifier_definitions_wiki_results-run{run}.xlsx'
 	df.to_excel(excel_filename, index=False)
 	
-	print("PROCESS DONE.")
-"""
+	print("PROCESS DONE.\n")
 

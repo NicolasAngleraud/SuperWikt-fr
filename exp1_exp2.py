@@ -1,6 +1,6 @@
 import argparse
 import torch
-import lexical_classifier as lclf
+import mono_target_unique_rank_classifier as lclf
 import pandas as pd
 import datetime
 
@@ -67,6 +67,7 @@ if __name__ == '__main__':
 	batch_size = int(args.batch_size)
 	frozen = False
 	lrs = [0.00001, 0.000005, 0.000001, 0.0000005]
+	rank = 0
 	dropouts = [0.1, 0.3]
 	hidden_layer_sizes = [512, 768]
 	
@@ -98,6 +99,7 @@ if __name__ == '__main__':
 				params['frozen'] = frozen
 				params['batch_size'] = batch_size
 				params['dropout'] = dropout
+				params['token_rank'] = rank
 				params['hidden_layer_size'] = hidden_layer_size
 				eval_data["run"] = run
 
