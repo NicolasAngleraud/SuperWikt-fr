@@ -90,17 +90,17 @@ if __name__ == '__main__':
 	freq_test_inputs, freq_test_ranks, freq_test_idxmaps, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=max_seq_length)
 	
 	rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
-	
+	"""
 	for i in range(100):
 		print(tokenizer.convert_ids_to_tokens(train_inputs[i])[train_ranks[i]])
 		print(train_lemmas[i])
 		print()
 		print()
-	
+	"""
 
 
 	
-"""	
+
 	for lr in lrs:
 		for hidden_layer_size in hidden_layer_sizes:
 			for dropout in dropouts:
@@ -175,4 +175,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-"""
+
