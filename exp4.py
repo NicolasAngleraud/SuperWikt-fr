@@ -81,15 +81,15 @@ if __name__ == '__main__':
 	
 
 
-	train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas = clf.encoded_examples(datafile=args.data_file, set_='train', max_length=max_seq_length)
+	train_inputs, train_ranks, train_supersenses, train_senses_ids, train_lemmas = clf.encoded_examples(datafile=args.data_file, set_='train', max_length=max_seq_length)
 	
-	freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=max_seq_length)
+	freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-dev', max_length=max_seq_length)
 	
-	rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=max_seq_length)
+	rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-dev', max_length=max_seq_length)
 	
-	freq_test_inputs, freq_test_ranks, freq_test_idxmaps, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=max_seq_length)
+	freq_test_inputs, freq_test_ranks, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=max_seq_length)
 	
-	rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
+	rand_test_inputs, rand_test_ranks, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
 	"""
 	for i in range(100):
 		print(tokenizer.convert_ids_to_tokens(train_inputs[i])[train_ranks[i]])
@@ -128,18 +128,18 @@ if __name__ == '__main__':
 				eval_data["run"] = run
 
 				classifier = clf.SupersenseTagger(params, DEVICE)
-				clf.training(params, train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas, freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, DEVICE, eval_data, clf_file)
+				clf.training(params, train_inputs, train_ranks, train_supersenses, train_senses_ids, train_lemmas, freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, DEVICE, eval_data, clf_file)
 				
 				print(f"CLASSIFIER TRAINED ON {len(train_inputs)} EXAMPLES...")
 				
 				classifier = clf.SupersenseTagger(params, DEVICE)
 				classifier.load_state_dict(torch.load(clf_file))
 				
-				clf.evaluation(train_inputs, train_ranks, train_idxmaps, train_supersenses, train_senses_ids, train_lemmas, classifier, params, DEVICE, "train", eval_data, "exp4")
+				clf.evaluation(train_inputs, train_ranks, train_supersenses, train_senses_ids, train_lemmas, classifier, params, DEVICE, "train", eval_data, "exp4")
 				
-				clf.evaluation(freq_dev_inputs, freq_dev_ranks, freq_dev_idxmaps, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, classifier, params, DEVICE, "freq-dev", eval_data, "exp4")
+				clf.evaluation(freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, classifier, params, DEVICE, "freq-dev", eval_data, "exp4")
 				
-				clf.evaluation(rand_dev_inputs, rand_dev_ranks, rand_dev_idxmaps, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, params, DEVICE, "rand-dev", eval_data, "exp4")
+				clf.evaluation(rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, params, DEVICE, "rand-dev", eval_data, "exp4")
 
 				sequoia_baseline = clf.MostFrequentSequoia()
 				train_baseline = clf.MostFrequentTrainingData()
@@ -163,9 +163,9 @@ if __name__ == '__main__':
 
 				print("BASELINES COMPUTED...")
 				
-				clf.evaluation(freq_test_inputs, freq_test_ranks, freq_test_idxmaps, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas, classifier, params, DEVICE, "freq-test", eval_data, "exp4")
+				clf.evaluation(freq_test_inputs, freq_test_ranks, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas, classifier, params, DEVICE, "freq-test", eval_data, "exp4")
 				
-				clf.evaluation(rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas, classifier, params, DEVICE, "rand-test", eval_data, "exp4")
+				clf.evaluation(rand_test_inputs, rand_test_ranks, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas, classifier, params, DEVICE, "rand-test", eval_data, "exp4")
 
 				df_eval.append(eval_data)
 
