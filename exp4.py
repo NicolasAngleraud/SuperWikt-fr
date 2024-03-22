@@ -25,7 +25,7 @@ LPARAMETERS = {
 	"nb_epochs": 100,
 	"batch_size": 16,
 	"hidden_layer_size": 512,
-	"patience": 2,
+	"patience": 1,
 	"lr": 0.00001,
 	"frozen": False,
 	"dropout": 0.1,
@@ -69,13 +69,13 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 	run = int(args.run)
-	patience = 2
+	patience = 1
 	batch_size = int(args.batch_size)
 	frozen = False
 	max_seq_length = 100
-	lrs = [0.00001] # [0.00001, 0.000005, 0.000001]
+	lrs = [0.00001, 0.000005, 0.000001]
 	dropouts = [0.2]
-	hidden_layer_sizes = [768] # [512, 768]
+	hidden_layer_sizes = [768]
 	
 	params_ids = flatten_list([[[f"EXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
