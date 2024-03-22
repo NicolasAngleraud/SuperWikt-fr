@@ -98,7 +98,7 @@ def pad_batch(sentences, index_map, pad_id=2, max_length=100):
 def add_special_tokens_batch(sentences, ranks, cls_id=0, sep_id=1):
 
 	sentences_with_special_tokens = [ [cls_id] + [tok for tok in sent] + [sep_id] for sent in sentences ]
-	index_map_with_special_tokens = [ [0] + [tok for tok in sent] + [0] for sent in index_map ]
+	# index_map_with_special_tokens = [ [0] + [tok for tok in sent] + [0] for sent in index_map ]
 	rks = [rk + 1 for rk in ranks]
 
 	return sentences_with_special_tokens, rks
@@ -139,7 +139,7 @@ def encoded_examples(datafile, set_, max_length=100):
 	bert_input, tg_trks = add_special_tokens_batch(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_trks, index_map, supersenses_encoded, senses_ids, lemmas#, ranks
+	return bert_input, tg_trks, index_map_raw, supersenses_encoded, senses_ids, lemmas#, ranks
 
 
 def encoded_definitions(datafile, nlp, set_, max_length=100):
