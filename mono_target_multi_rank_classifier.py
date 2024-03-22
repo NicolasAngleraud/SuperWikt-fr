@@ -43,13 +43,43 @@ def flatten_list(lst):
 
 
 
-def truncate_batch(sentences, word_ranks, index_map, max_length=100):
+def truncate_batch_def(sentences, word_ranks, index_map, max_length=100):
 
 	max_length = max_length - 2
 	trunc_sentences = [[tok for i, tok in enumerate(sent) if i<max_length] for sent in sentences]
 	trunc_index_map = [[id for i, id in enumerate(sent) if i<max_length] for sent in index_map]
 
 	return trunc_sentences, trunc_index_map
+
+def truncate_batch_ex(sentences, word_ranks, max_length=100):
+	# Adjust max_length to account for potential special tokens
+	max_length = max_length - 2
+
+	trunc_sentences = []
+	new_word_ranks = []
+
+	for sent, target_index in zip(sentences, word_ranks):
+		if len(sent) <= max_length:
+			# No truncation needed
+			trunc_sentences.append(sent)
+			new_word_ranks.append(target_index)  # The target index remains the same
+		else:
+			# Calculate the number of tokens to keep before and after the target_index
+			half_max_length = max_length // 2
+			start_index = max(0, min(len(sent) - max_length, target_index - half_max_length))
+			end_index = start_index + max_length
+
+			# Truncate the sentence
+			trunc_sent = sent[start_index:end_index]
+			trunc_sentences.append(trunc_sent)
+
+			# Adjust the target index based on truncation
+			new_target_index = target_index - start_index
+			# Ensure the new target index does not exceed the bounds of the truncated sentence
+			new_target_index = max(0, min(new_target_index, max_length-1))
+			new_word_ranks.append(new_target_index)
+
+	return trunc_sentences, new_word_ranks
 
 
 
@@ -65,13 +95,19 @@ def pad_batch(sentences, index_map, pad_id=2, max_length=100):
 
 
 
-def add_special_tokens_batch(sentences,index_map, cls_id=0, sep_id=1):
+def add_special_tokens_batch(sentences, ranks, cls_id=0, sep_id=1):
 
 	sentences_with_special_tokens = [ [cls_id] + [tok for tok in sent] + [sep_id] for sent in sentences ]
 	index_map_with_special_tokens = [ [0] + [tok for tok in sent] + [0] for sent in index_map ]
+	rks = [rk + 1 for rk in ranks]
 
-	return sentences_with_special_tokens, index_map_with_special_tokens
+	return sentences_with_special_tokens, rks
 
+def token_rank(lst, index):
+	count = 0
+	for i in range(index):
+		count += len(lst[i])
+	return count
 
 
 def encoded_examples(datafile, set_, max_length=100):
@@ -82,7 +118,7 @@ def encoded_examples(datafile, set_, max_length=100):
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	examples = df_examples[df_examples['set']==set_]['example'].tolist()
-	# examples = [example.replace('{ { exemple|lang = fr|', '').replace('{ { exemple|', '').replace('{ { exemple', '').replace('<br', '').replace('lang = fr', '') for example in examples]
+
 	examples = [ x.split(' ') for x in examples ]
 	for example in examples:
 		for x in example:
@@ -92,24 +128,20 @@ def encoded_examples(datafile, set_, max_length=100):
 	senses_ids = df_examples[df_examples['set']==set_]['sense_id'].tolist()
 	lemmas = df_examples[df_examples['set']==set_]['lemma'].tolist()
 	ranks = df_examples[df_examples['set']==set_]['word_rank'].tolist()
-	ranks = [rank + 1 for rank in ranks]
-		
-	sentences_wrks = [ [sent[:max_length], ranks[i]] if ranks[i]<max_length//2
-		    else [sent[-max_length:], ranks[i]-(len(sent)-max_length+1) -1*(max_length%2)] if ranks[i]>len(sent)-(max_length//2)
-		    else [sent[ranks[i]-(max_length//2):ranks[i]+(max_length//2)], (max_length//2)]
-		    for i, sent in enumerate(examples) ]
-
-	sentences = [inner[0] for inner in sentences_wrks]
-	tg_wrks = [inner[1] for inner in sentences_wrks]
-	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in sentences ]
+	
+	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
+	
+	print(sents_encoded[:10])
+	
+	tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, ranks)]
 	index_map_raw = [ flatten_list([len(word_toks)*[(i+1)] for i, word_toks in enumerate(sent)]) for sent in sents_encoded ]
 	bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
-	bert_input_raw, index_map_raw = truncate_batch(bert_input_raw, tg_wrks, index_map_raw, max_length)
+	bert_input_raw, tg_trks = truncate_batch_ex(bert_input_raw, tg_wrks, index_map_raw, max_length)
 	bert_input_raw, index_map_raw = pad_batch(bert_input_raw, index_map_raw, pad_id=2, max_length=max_length)
-	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
+	bert_input, tg_trks = add_special_tokens_batch(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
-	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas, ranks
+	return bert_input, tg_trks, index_map, supersenses_encoded, senses_ids, lemmas#, ranks
 
 
 def encoded_definitions(datafile, nlp, set_, max_length=100):
@@ -121,7 +153,6 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	lemmas = df_senses[df_senses['set']==set_]['lemma'].tolist()
 	
 	definitions = df_senses[df_senses['set']==set_]['definition'].tolist()
-	# examples = [example.replace('{ { exemple|lang = fr|', '').replace('{ { exemple|', '').replace('{ { exemple', '').replace('<br', '').replace('lang = fr', '') for example in examples]
 	
 	definitions = [ [lemma]+[' : ']+[token.text for token in nlp(x)] for x, lemma in zip(definitions, lemmas) ]
 	
@@ -137,9 +168,9 @@ def encoded_definitions(datafile, nlp, set_, max_length=100):
 	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in sentences ]
 	index_map_raw = [ flatten_list([len(word_toks)*[(i+1)] for i, word_toks in enumerate(sent)]) for sent in sents_encoded ]
 	bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
-	bert_input_raw, index_map_raw = truncate_batch(bert_input_raw, tg_wrks, index_map_raw, max_length)
+	bert_input_raw, index_map_raw = truncate_batch_def(bert_input_raw, tg_wrks, index_map_raw, max_length)
 	bert_input_raw, index_map_raw = pad_batch(bert_input_raw, index_map_raw, pad_id=2, max_length=max_length)
-	bert_input, index_map = add_special_tokens_batch(bert_input_raw, index_map_raw, cls_id=0, sep_id=1)
+	bert_input, tg_wrks = add_special_tokens_batch(bert_input_raw, tg_wrks, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
 	return bert_input, tg_wrks, index_map, supersenses_encoded, senses_ids, lemmas
