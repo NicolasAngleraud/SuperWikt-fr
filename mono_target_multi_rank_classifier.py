@@ -131,12 +131,10 @@ def encoded_examples(datafile, set_, max_length=100):
 	
 	sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 	
-	print(sents_encoded[:10])
-	
 	tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, ranks)]
 	index_map_raw = [ flatten_list([len(word_toks)*[(i+1)] for i, word_toks in enumerate(sent)]) for sent in sents_encoded ]
 	bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
-	bert_input_raw, tg_trks = truncate_batch_ex(bert_input_raw, tg_wrks, index_map_raw, max_length)
+	bert_input_raw, tg_trks = truncate_batch_ex(bert_input_raw, tg_trks, index_map_raw, max_length)
 	bert_input_raw, index_map_raw = pad_batch(bert_input_raw, index_map_raw, pad_id=2, max_length=max_length)
 	bert_input, tg_trks = add_special_tokens_batch(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
