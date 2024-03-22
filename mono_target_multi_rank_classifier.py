@@ -113,6 +113,7 @@ def token_rank(lst, index):
 def encoded_examples(datafile, set_, max_length=100):
 	df_examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
 	df_examples = df_examples[df_examples['supersense'].isin(SUPERSENSES)]
+	df_examples = df_examples[df_examples['word_rank'] >= 0]
 	df_examples = df_examples[(df_examples['example'] != "") & (df_examples['example'].notna())]
 
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)

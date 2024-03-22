@@ -74,8 +74,8 @@ if __name__ == '__main__':
 	frozen = False
 	max_seq_length = 100
 	lrs = [0.00001] # [0.00001, 0.000005, 0.000001]
-	dropouts = [0.3] # [0.1, 0.3]
-	hidden_layer_sizes = [512] # [512, 768]
+	dropouts = [0.2]
+	hidden_layer_sizes = [768] # [512, 768]
 	
 	params_ids = flatten_list([[[f"EXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
@@ -92,8 +92,7 @@ if __name__ == '__main__':
 	rand_test_inputs, rand_test_ranks, rand_test_idxmaps, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
 	
 	for i in range(100):
-		print(tokenizer.convert_ids_to_tokens(train_inputs[i]))
-		print(train_ranks[i])
+		print(tokenizer.convert_ids_to_tokens(train_inputs[i])[train_ranks[i]])
 		print(train_lemmas[i])
 		print()
 		print()
