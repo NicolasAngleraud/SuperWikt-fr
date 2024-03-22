@@ -73,9 +73,9 @@ if __name__ == '__main__':
 	batch_size = int(args.batch_size)
 	frozen = False
 	max_seq_length = 100
-	lrs = [0.00001, 0.000005, 0.000001]
-	dropouts = [0.2]
-	hidden_layer_sizes = [768]
+	lrs = [0.00001]# [0.0001, 0.00005, 0.00001, 0.000005, 0.000001]
+	dropouts = [0.1]
+	hidden_layer_sizes = [256, 512, 768]
 	
 	params_ids = flatten_list([[[f"EXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	

@@ -254,7 +254,7 @@ def training(parameters, train_inputs, train_ranks, train_supersenses, train_sen
 	my_supersense_tagger = classifier
 	eval_data["early_stopping"] = 0
 	train_losses = []
-	train_accuracies = []
+	# train_accuracies = []
 	mean_dev_losses = []
 	mean_dev_accuracies = []
 	freq_dev_losses = []
@@ -308,6 +308,7 @@ def training(parameters, train_inputs, train_ranks, train_supersenses, train_sen
 
 		train_losses.append(epoch_loss)
 		
+		"""
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
@@ -324,6 +325,7 @@ def training(parameters, train_inputs, train_ranks, train_supersenses, train_sen
 				train_epoch_accuracy += torch.sum((predicted_indices == Y_train).int()).item()
 
 			train_accuracies.append(train_epoch_accuracy / len(train_input))
+		"""
 
 
 		j = 0
@@ -390,7 +392,7 @@ def training(parameters, train_inputs, train_ranks, train_supersenses, train_sen
 			torch.save(my_supersense_tagger.state_dict(), clf_file)
 		
 	eval_data["train_losses"] = [train_loss for train_loss in train_losses]
-	eval_data["train_accuracies"] = [train_accuracy for train_accuracy in train_accuracies ]
+	# eval_data["train_accuracies"] = [train_accuracy for train_accuracy in train_accuracies ]
 	
 	eval_data["mean_dev_losses"] = [mean_dev_loss for mean_dev_loss in mean_dev_losses]
 	eval_data["mean_dev_accuracies"] = [mean_dev_accuracy for mean_dev_accuracy in mean_dev_accuracies]
