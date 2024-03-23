@@ -73,9 +73,9 @@ if __name__ == '__main__':
 	batch_size = int(args.batch_size)
 	frozen = False
 	max_seq_length = 100
-	lrs = [0.00001]# [0.0001, 0.00005, 0.00001, 0.000005, 0.000001]
-	dropouts = [0.1]
-	hidden_layer_sizes = [256, 512, 768]
+	lrs = [0.0001, 0.00005, 0.00001, 0.000005, 0.000001]
+	dropouts = [0.1, 0.3]
+	hidden_layer_sizes = [512, 768]
 	
 	params_ids = flatten_list([[[f"EXP4LR{k}DP{i}HL{j}" for i in range(len(dropouts))] for j in range(len(hidden_layer_sizes))] for k in range(len(lrs))])
 	
@@ -90,16 +90,31 @@ if __name__ == '__main__':
 	freq_test_inputs, freq_test_ranks, freq_test_supersenses, freq_test_senses_ids, freq_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='freq-test', max_length=max_seq_length)
 	
 	rand_test_inputs, rand_test_ranks, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
-	"""
-	for i in range(100):
+	
+	for i in range(len(train_lemmas)):
 		print(tokenizer.convert_ids_to_tokens(train_inputs[i])[train_ranks[i]])
 		print(train_lemmas[i])
 		print()
 		print()
+	for i in range(len(freq_dev_lemmas)):
+		print(tokenizer.convert_ids_to_tokens(freq_dev_inputs[i])[freq_dev_ranks[i]])
+		print(freq_dev_lemmas[i])
+		print()
+		print()
+	for i in range(len(rand_dev_lemmas)):
+		print(tokenizer.convert_ids_to_tokens(rand_dev_inputs[i])[rand_dev_ranks[i]])
+		print(rand_dev_lemmas[i])
+		print()
+		print()
+	for i in range(len(freq_test_lemmas)):
+		print(tokenizer.convert_ids_to_tokens(freq_test_inputs[i])[freq_test_ranks[i]])
+		print(freq_test_lemmas[i])
+		print()
+		print()
+	for i in range(len(rand_test_lemmas)):
+		print(tokenizer.convert_ids_to_tokens(rand_test_inputs[i])[rand_test_ranks[i]])
+		print(rand_test_lemmas[i])
 	"""
-
-
-	
 
 	for lr in lrs:
 		for hidden_layer_size in hidden_layer_sizes:
@@ -175,4 +190,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-
+	"""
