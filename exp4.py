@@ -91,6 +91,8 @@ if __name__ == '__main__':
 	
 	rand_test_inputs, rand_test_ranks, rand_test_supersenses, rand_test_senses_ids, rand_test_lemmas = clf.encoded_examples(datafile=args.data_file, set_='rand-test', max_length=max_seq_length)
 	
+	"""
+	
 	for i in range(len(train_lemmas)):
 		print(tokenizer.convert_ids_to_tokens(train_inputs[i])[train_ranks[i]])
 		print(train_lemmas[i])
@@ -190,4 +192,4 @@ if __name__ == '__main__':
 	df.to_excel(excel_filename, index=False)
 	
 	print("PROCESS DONE.\n")
-	"""
+
