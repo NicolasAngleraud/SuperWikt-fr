@@ -103,7 +103,7 @@ if __name__ == '__main__':
 		classifier = clf.SupersenseTagger(params, DEVICE)
 		classifier.load_state_dict(torch.load(clf_file))
 		
-		max_perf = clf.save_best_clf(max_perf, freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, classifier, parameters, path, DEVICE)
+		max_perf = clf.save_best_clf(max_perf, freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, classifier, params, path, DEVICE)
 		
 	print(f"BEST CLASSIFIER (mean accuracy = {max_perf}) SAVED...")
 
