@@ -86,6 +86,11 @@ if __name__ == '__main__':
 	path = './clfs/LexClfV1_def.params'
 
 	for run in range(10):
+		
+		print()
+		print()
+		print("RUN ", run+1)
+		print()
 
 		params = {key: value for key, value in LPARAMETERS.items()}
 		params['lr'] = lr_def

@@ -226,7 +226,7 @@ def training(parameters, train_defs, train_supersenses, freq_dev_defs, freq_dev_
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(freq_dev_examples):
+			while j < len(freq_dev_defs):
 			
 				X_freq_dev = freq_defs[i: i + parameters["batch_size"]]
 				Y_freq_dev = freq_dev_supersenses[i: i + parameters["batch_size"]]
@@ -243,13 +243,13 @@ def training(parameters, train_defs, train_supersenses, freq_dev_defs, freq_dev_
 				freq_dev_loss = loss_function(freq_dev_log_probs, Y_freq_dev)
 				freq_dev_epoch_loss += freq_dev_loss.item()
 
-			freq_dev_losses.append(freq_dev_epoch_loss / len(freq_dev_examples))
-			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_examples))
+			freq_dev_losses.append(freq_dev_epoch_loss / len(freq_dev_defs))
+			freq_dev_accuracies.append(freq_dev_epoch_accuracy / len(freq_dev_defs))
 		
 		j = 0
 		my_supersense_tagger.eval()
 		with torch.no_grad():
-			while j < len(rand_dev_examples):
+			while j < len(rand_dev_defs):
 				
 				X_rand_dev = rand_dev_defs[i: i + parameters["batch_size"]]
 				Y_rand_dev = rand_dev_supersenses[i: i + parameters["batch_size"]]
@@ -266,11 +266,11 @@ def training(parameters, train_defs, train_supersenses, freq_dev_defs, freq_dev_
 				rand_dev_loss = loss_function(rand_dev_log_probs, Y_rand_dev)
 				rand_dev_epoch_loss += rand_dev_loss.item()
 
-			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_examples))
-			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_examples))
+			rand_dev_losses.append(rand_dev_epoch_loss / len(rand_dev_defs))
+			rand_dev_accuracies.append(rand_dev_epoch_accuracy / len(rand_dev_defs))
 
-		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_examples) + rand_dev_epoch_loss/len(rand_dev_examples) ) / 2)
-		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_examples) + rand_dev_epoch_accuracy/len(rand_dev_examples) ) / 2)
+		mean_dev_losses.append( (freq_dev_epoch_loss/len(freq_dev_defs) + rand_dev_epoch_loss/len(rand_dev_defs) ) / 2)
+		mean_dev_accuracies.append( (freq_dev_epoch_accuracy/len(freq_dev_defs) + rand_dev_epoch_accuracy/len(rand_dev_defs) ) / 2)
 		
 		if epoch >= parameters["patience"]:
 		
