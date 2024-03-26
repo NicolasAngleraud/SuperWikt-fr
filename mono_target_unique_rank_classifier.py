@@ -228,8 +228,8 @@ def training(parameters, train_defs, train_supersenses, freq_dev_defs, freq_dev_
 		with torch.no_grad():
 			while j < len(freq_dev_defs):
 			
-				X_freq_dev = freq_dev_defs[i: i + parameters["batch_size"]]
-				Y_freq_dev = freq_dev_supersenses[i: i + parameters["batch_size"]]
+				X_freq_dev = freq_dev_defs[j: j + parameters["batch_size"]]
+				Y_freq_dev = freq_dev_supersenses[j: j + parameters["batch_size"]]
 				
 				j += parameters["batch_size"]
 
@@ -251,8 +251,8 @@ def training(parameters, train_defs, train_supersenses, freq_dev_defs, freq_dev_
 		with torch.no_grad():
 			while j < len(rand_dev_defs):
 				
-				X_rand_dev = rand_dev_defs[i: i + parameters["batch_size"]]
-				Y_rand_dev = rand_dev_supersenses[i: i + parameters["batch_size"]]
+				X_rand_dev = rand_dev_defs[j: j + parameters["batch_size"]]
+				Y_rand_dev = rand_dev_supersenses[j: j + parameters["batch_size"]]
 				
 				j += parameters["batch_size"]
 				
