@@ -246,7 +246,7 @@ class SupersenseTagger(nn.Module):
 
 		return torch.sum((Y_pred == Y_gold).int()).item()
 	
-	def evaluate_perf(X_input, X_rank, Y, DEVICE):
+	def evaluate_perf(self, X_input, X_rank, Y, DEVICE):
 		self.eval()
 		with torch.no_grad():
 			
