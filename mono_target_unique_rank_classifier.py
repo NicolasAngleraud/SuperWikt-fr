@@ -46,8 +46,8 @@ def encoded_examples(datafile, dataset):
 	supersenses = df_senses['supersense'].tolist()
 	lemmas = df_senses['lemma'].tolist()
 	senses_ids = df_senses['sense_id'].tolist()
-	definitions_encoded = [tokenizer.encode(text=f"{lemma} : {definition}", add_special_tokens=True) for definition, lemma in zip(train_definitions, train_lemmas)]
-	supersenses_encoded = [supersense2i[supersense] for supersense in train_supersenses]
+	definitions_encoded = [tokenizer.encode(text=f"{lemma} : {definition}", add_special_tokens=True) for definition, lemma in zip(definitions, lemmas)]
+	supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 	
 	return definitions_encoded, supersenses_encoded, lemmas, senses_ids
 
