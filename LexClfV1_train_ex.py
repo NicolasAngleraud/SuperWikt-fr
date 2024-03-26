@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	MODEL_NAME = "flaubert/flaubert_large_cased"
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-	run = int(args.run)
+
 	patience = 1
 	batch_size = int(args.batch_size)
 	frozen = False
