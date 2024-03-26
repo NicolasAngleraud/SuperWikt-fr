@@ -105,7 +105,7 @@ if __name__ == '__main__':
 		classifier = clf.SupersenseTagger(params, DEVICE)
 		clf.training(params, train_defs, train_supersenses, freq_dev_defs, freq_dev_supersenses, rand_dev_defs, rand_dev_supersenses, classifier, DEVICE, clf_file)
 		
-		print(f"CLASSIFIER TRAINED ON {len(train_inputs)} EXAMPLES...")
+		print(f"CLASSIFIER TRAINED ON {len(train_defs)} EXAMPLES...")
 		
 		classifier = clf.SupersenseTagger(params, DEVICE)
 		classifier.load_state_dict(torch.load(clf_file))
