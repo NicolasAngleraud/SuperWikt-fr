@@ -462,7 +462,7 @@ def save_best_clf(max_perf, freq_inputs, freq_ranks, freq_supersenses, rand_inpu
 	
 	
 	
-	current_perf = 0.6*(nb_good_preds_freq / len(freq_inputs)) + 0.4(nb_good_preds_rand / len(rand_inputs))
+	current_perf = 0.6*(nb_good_preds_freq / len(freq_inputs)) + 0.4*(nb_good_preds_rand / len(rand_inputs))
 	
 	if current_perf > max_perf:
 		torch.save(classifier.state_dict(), path)
