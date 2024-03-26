@@ -245,14 +245,24 @@ class SupersenseTagger(nn.Module):
 			predictions.extend(list(zip(examples, pred, gold, senses_ids, lemmas)))
 
 		return torch.sum((Y_pred == Y_gold).int()).item()
+	
+	def evaluate_perf(X_input, X_rank, Y, DEVICE):
+		self.eval()
+		with torch.no_grad():
+			
+			X_input = torch.tensor(X_input).to(DEVICE)
+			X_rank = torch.tensor(X_rank).to(DEVICE)
+			Y_gold = torch.tensor(Y).to(DEVICE)
+			Y_pred = torch.argmax(self.forward(X_input, X_rank), dim=1)
 
-def training(parameters, train_inputs, train_ranks, train_supersenses, train_senses_ids, train_lemmas, freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, DEVICE, eval_data, clf_file):
+		return torch.sum((Y_pred == Y_gold).int()).item()
 
-	for param, value in parameters.items():
-		eval_data[param] = value
+		
+
+def training(parameters, train_inputs, train_ranks, train_supersenses, train_senses_ids, train_lemmas, freq_dev_inputs, freq_dev_ranks, freq_dev_supersenses, freq_dev_senses_ids, freq_dev_lemmas, rand_dev_inputs, rand_dev_ranks, rand_dev_supersenses, rand_dev_senses_ids, rand_dev_lemmas, classifier, DEVICE, clf_file):
+
 
 	my_supersense_tagger = classifier
-	eval_data["early_stopping"] = 0
 	train_losses = []
 	# train_accuracies = []
 	mean_dev_losses = []
@@ -384,24 +394,12 @@ def training(parameters, train_inputs, train_ranks, train_supersenses, train_sen
 				patience = patience - 1
 			
 			if patience == 0:
-				eval_data["early_stopping"] = epoch+1
+				print("EARLY STOPPING : epoch ", epoch+1)
 				break
 		else:
 			if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
 				max_mean_dev_accuracy = mean_dev_accuracies[epoch]
 			torch.save(my_supersense_tagger.state_dict(), clf_file)
-		
-	eval_data["train_losses"] = [train_loss for train_loss in train_losses]
-	# eval_data["train_accuracies"] = [train_accuracy for train_accuracy in train_accuracies ]
-	
-	eval_data["mean_dev_losses"] = [mean_dev_loss for mean_dev_loss in mean_dev_losses]
-	eval_data["mean_dev_accuracies"] = [mean_dev_accuracy for mean_dev_accuracy in mean_dev_accuracies]
-	
-	eval_data["freq_dev_losses"] = [freq_dev_loss for freq_dev_loss in freq_dev_losses]
-	eval_data["freq_dev_accuracies"] = [freq_dev_accuracy for freq_dev_accuracy in freq_dev_accuracies]
-	
-	eval_data["rand_dev_losses"] = [rand_dev_loss for rand_dev_loss in rand_dev_losses]
-	eval_data["rand_dev_accuracies"] = [rand_dev_accuracy for rand_dev_accuracy in rand_dev_accuracies]
 
 
 def evaluation(eval_inputs, eval_ranks, eval_supersenses, eval_senses_ids, eval_lemmas, classifier, parameters, DEVICE, dataset, data, exp):
@@ -431,6 +429,46 @@ def evaluation(eval_inputs, eval_ranks, eval_supersenses, eval_senses_ids, eval_
 		for example, pred, gold, sense_id, lemma in predictions:
 			f.write(f"{example}\t{SUPERSENSES[pred]}\t{SUPERSENSES[gold]}\t{sense_id}\t{lemma}\n")
 
+
+def save_best_clf(max_perf, freq_inputs, freq_ranks, freq_supersenses, rand_inputs, rand_ranks, rand_supersenses, classifier, parameters, path, DEVICE):
+	batch_size = parameters['batch_size']
+	i = 0
+	nb_good_preds_freq = 0
+	
+	while i < len(freq_inputs):
+
+		X_freq_input = freq_inputs[i: i + batch_size]
+		X_freq_rank = freq_ranks[i: i + batch_size]
+		Y_freq = freq_supersenses[i: i + batch_size]
+
+		i += batch_size
+		
+		partial_nb_good_preds_freq = classifier.evaluate_perf(X_freq_input, X_freq_rank, Y_freq, DEVICE)
+		nb_good_preds_freq += partial_nb_good_preds_freq
+	
+	j = 0
+	nb_good_preds_rand = 0
+	
+	while j < len(rand_inputs):
+
+		X_rand_input = rand_inputs[j: j + batch_size]
+		X_rand_rank = rand_ranks[j: j + batch_size]
+		Y_rand = rand_supersenses[j: j + batch_size]
+
+		j += batch_size
+		
+		partial_nb_good_preds_rand = classifier.evaluate_perf(X_rand_input, X_rand_rank, Y_rand, DEVICE)
+		nb_good_preds_rand += partial_nb_good_preds_rand
+	
+	
+	
+	current_perf = 0.6*(nb_good_preds_freq / len(freq_inputs)) + 0.4(nb_good_preds_rand / len(rand_inputs))
+	
+	if current_perf > max_perf:
+		torch.save(classifier.state_dict(), path)
+		max_perf = current_perf
+		
+	return max_perf
 
 
 class Baseline:
