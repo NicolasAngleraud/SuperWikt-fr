@@ -98,7 +98,7 @@ if __name__ == '__main__':
 		params['hidden_layer_size'] = hidden_layer_size
 
 		classifier = clf.SupersenseTagger(params, DEVICE)
-		clf.training(params, train_defs, train_supersenses, freq_dev_defs, freq_dev_supersenses, rand_dev_inputs, rand_dev_supersenses, classifier, DEVICE, clf_file)
+		clf.training(params, train_defs, train_supersenses, freq_dev_defs, freq_dev_supersenses, rand_dev_defs, rand_dev_supersenses, classifier, DEVICE, clf_file)
 		
 		print(f"CLASSIFIER TRAINED ON {len(train_inputs)} EXAMPLES...")
 		
