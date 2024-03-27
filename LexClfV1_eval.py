@@ -38,6 +38,8 @@ LPARAMETERS = {
 
 params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr", "frozen", "dropout", "max_seq_length"]
 
+max_seq_length = 100
+max_length = 100
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
