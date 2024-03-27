@@ -106,7 +106,7 @@ def truncate_batch_ex(sentences, word_ranks, max_length=100):
 	return trunc_sentences, new_word_ranks
 
 
-def encoded_senses(dataset, datafile=args.data_file):
+def encoded_senses(dataset, datafile):
 
 	# DEFINITIONS
 	df_senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
@@ -165,8 +165,8 @@ if __name__ == '__main__':
 	hidden_layer_size = 768
 	token_rank = 1
 	
-	freq_dev_senses_ids, freq_dev_df_senses, freq_dev_df_examples = encoded_senses(dataset='freq-dev')
-	rand_dev_senses_ids, rand_dev_df_senses, rand_dev_df_examples = encoded_senses(dataset='rand-dev')
+	freq_dev_senses_ids, freq_dev_df_senses, freq_dev_df_examples = encoded_senses(dataset='freq-dev', datafile=args.data_file)
+	rand_dev_senses_ids, rand_dev_df_senses, rand_dev_df_examples = encoded_senses(dataset='rand-dev', datafile=args.data_file)
 	
 	examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
 	senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
