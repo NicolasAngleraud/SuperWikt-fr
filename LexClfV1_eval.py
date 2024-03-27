@@ -38,7 +38,7 @@ params_keys = ["nb_epochs", "batch_size", "hidden_layer_size", "patience", "lr",
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
+	parser.add_argument("-device_id", choices=['0', '1', '2', '3', 'cpu'], help="Id of the GPU.")
 	parser.add_argument("-data_file", default="./donnees.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
