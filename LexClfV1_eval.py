@@ -160,7 +160,6 @@ if __name__ == '__main__':
 
 
 	patience = 1
-	batch_size = int(args.batch_size)
 	frozen = False
 	max_seq_length = 100
 	lr_ex = 0.00001
