@@ -183,9 +183,10 @@ if __name__ == '__main__':
 	
 	"""
 	
+	for index, row in freq_dev_df_senses.iterrows():
+		print(row['definition_encoded'])
 	for index, row in freq_dev_df_examples.iterrows():
-		print(row['lemma'])
-		print(tokenizer.convert_ids_to_tokens(row['example_encoded'][row['token_rank']]))
+		print(row['example_encoded'])
 	
 	"""
 	for def_weight in [0.5, 0.6, 0.7, 0.8, 0.9, 1]:
