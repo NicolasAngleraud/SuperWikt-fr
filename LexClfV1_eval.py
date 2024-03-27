@@ -47,7 +47,7 @@ def get_parser_args():
 	args = parser.parse_args()
 	return args
 	
-def token_rank(lst, index):
+def word_to_token_rank(lst, index):
 	count = 0
 	for i in range(index):
 		count += len(lst[i])
@@ -129,7 +129,7 @@ def encoded_senses(dataset, datafile):
 	df_examples['example_encoded'] = df_examples['example'].apply(lambda x: x.split(' '))
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda x: [word.replace('##', ' ') for word in x])
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda example: [tokenizer(word, add_special_tokens=False)['input_ids'] for word in example])
-	df_examples['token_rank'] = df_examples.apply(lambda row: token_rank(row['example_encoded'], row['word_rank']), axis=1)
+	df_examples['token_rank'] = df_examples.apply(lambda row: word_to_token_rank(row['example_encoded'], row['word_rank']), axis=1)
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda x: flatten_list(x))
 	df_examples['example_encoded'], df_examples['token_rank'] = zip(*df_examples.apply(lambda row: truncate_batch_ex(row['example_encoded'], row['token_rank'], max_length=100), axis=1))
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda example: pad_batch(example, pad_id=2, max_length=max_length))
