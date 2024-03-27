@@ -127,7 +127,7 @@ def encoded_senses(dataset, datafile):
 	df_examples = df_examples[(df_examples['example'] != "") & (df_examples['example'].notna())]
 	df_examples = df_examples[df_examples['set']==dataset]
 	df_examples['example_encoded'] = df_examples['example'].apply(lambda x: x.split(' '))
-	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda x: [word.replace('##', ' ') for word in x.split(' ')])
+	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda x: [word.replace('##', ' ') for word in x])
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda example: [tokenizer(word, add_special_tokens=False)['input_ids'] for word in example])
 	df_examples['token_rank'] = df_examples.apply(lambda row: token_rank(row['example_encoded'], row['word_rank']), axis=1)
 	df_examples['example_encoded'] = df_examples['example_encoded'].apply(lambda x: flatten_list(x))
