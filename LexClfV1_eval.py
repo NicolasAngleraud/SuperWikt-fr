@@ -154,7 +154,7 @@ if __name__ == '__main__':
 	
 	MODEL_NAME = "flaubert/flaubert_large_cased"
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-
+	datafile = args.data_file
 
 	patience = 1
 	frozen = False
