@@ -21,7 +21,10 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                "quantification": ["quantity", "part", "group"],
                "other": ["institution", "possession", "time"]
                }
-               
+                      
+supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
+
+
 LPARAMETERS = {
 	"nb_epochs": 100,
 	"batch_size": 16,
