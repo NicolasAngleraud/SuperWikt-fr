@@ -170,6 +170,7 @@ if __name__ == '__main__':
 	examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
 	senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	
+	"""
 	freq_dev_df_senses = freq_dev_df_senses[['definition_encoded', 'supersense_encoded', 'lemma']]
 	print(freq_dev_df_senses.sample(n=20))
 	
@@ -179,6 +180,12 @@ if __name__ == '__main__':
 	freq_dev_df_examples = freq_dev_df_examples[['example_encoded', 'token_rank', 'lemma']]
 	freq_dev_df_examples['ex_tokens'] = freq_dev_df_examples['example_encoded'].apply(lambda x: tokenizer.convert_ids_to_tokens(x))
 	print(freq_dev_df_examples.sample(n=20))
+	
+	"""
+	
+	for index, row in freq_dev_df_examples.iterrows():
+		print(row['lemma'])
+		print(tokenizer.convert_ids_to_tokens(row['example_encoded'][row['token_rank']]))
 	
 	"""
 	for def_weight in [0.5, 0.6, 0.7, 0.8, 0.9, 1]:
@@ -206,9 +213,9 @@ if __name__ == '__main__':
 		ex_classifier = ex_clf.SupersenseTagger(params, DEVICE)
 		ex_classifier.load_state_dict(torch.load(ex_clf_file))
 		
+		
+		
+		
 	"""
-		
-		
-		
 
 	print("PROCESS DONE.\n")
