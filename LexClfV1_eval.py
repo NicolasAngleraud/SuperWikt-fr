@@ -73,11 +73,11 @@ def pad_batch(sentences, pad_id=2, max_length=100):
 
 
 
-def add_special_tokens_batch(sentences, cls_id=0, sep_id=1):
+def add_special_tokens_batch(sentence, cls_id=0, sep_id=1):
 
-	sentences_with_special_tokens = [ [cls_id] + [tok for tok in sent] + [sep_id] for sent in sentences ]
+	sentence_with_special_tokens = [cls_id] + [tok for tok in sentence] + [sep_id]
 
-	return sentences_with_special_tokens
+	return sentence_with_special_tokens
 
 
 def truncate_batch_ex(sent, target_index, max_length=100):
