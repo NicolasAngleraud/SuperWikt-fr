@@ -147,7 +147,7 @@ if __name__ == '__main__':
 	# DEVICE setup
 	device_id = args.device_id
 	
-	if args.device_if == 'cpu': DEVICE = torch.device(args.device_id)
+	if args.device_id == 'cpu': DEVICE = torch.device(args.device_id)
 	else:
 		if torch.cuda.is_available():
 			DEVICE = torch.device("cuda:" + args.device_id)
