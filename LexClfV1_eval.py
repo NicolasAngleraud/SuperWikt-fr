@@ -78,35 +78,27 @@ def add_special_tokens_batch(sentences, cls_id=0, sep_id=1):
 	return sentences_with_special_tokens
 
 
-def truncate_batch_ex(sentences, word_ranks, max_length=100):
+def truncate_batch_ex(sent, target_index, max_length=100):
 	# Adjust max_length to account for potential special tokens
 	max_length = max_length - 2
 
-	trunc_sentences = []
-	new_word_ranks = []
+	if len(sent) <= max_length:
+		return sent, target_index
+	else:
+		# Calculate the number of tokens to keep before and after the target_index
+		half_max_length = max_length // 2
+		start_index = max(0, min(len(sent) - max_length, target_index - half_max_length))
+		end_index = start_index + max_length
 
-	for sent, target_index in zip(sentences, word_ranks):
-		if len(sent) <= max_length:
-			# No truncation needed
-			trunc_sentences.append(sent)
-			new_word_ranks.append(target_index)  # The target index remains the same
-		else:
-			# Calculate the number of tokens to keep before and after the target_index
-			half_max_length = max_length // 2
-			start_index = max(0, min(len(sent) - max_length, target_index - half_max_length))
-			end_index = start_index + max_length
+		# Truncate the sentence
+		trunc_sent = sent[start_index:end_index]
 
-			# Truncate the sentence
-			trunc_sent = sent[start_index:end_index]
-			trunc_sentences.append(trunc_sent)
+		# Adjust the target index based on truncation
+		new_target_index = target_index - start_index
+		# Ensure the new target index does not exceed the bounds of the truncated sentence
+		new_target_index = max(0, min(new_target_index, max_length-1))
 
-			# Adjust the target index based on truncation
-			new_target_index = target_index - start_index
-			# Ensure the new target index does not exceed the bounds of the truncated sentence
-			new_target_index = max(0, min(new_target_index, max_length-1))
-			new_word_ranks.append(new_target_index)
-
-	return trunc_sentences, new_word_ranks
+	return trunc_sent, new_target_index
 
 
 def encoded_senses(dataset, datafile):
