@@ -146,8 +146,11 @@ if __name__ == '__main__':
 	
 	# DEVICE setup
 	device_id = args.device_id
-	if torch.cuda.is_available():
-		DEVICE = torch.device("cuda:" + args.device_id)
+	
+	if args.device_if == 'cpu': DEVICE = torch.device(args.device_id)
+	else:
+		if torch.cuda.is_available():
+			DEVICE = torch.device("cuda:" + args.device_id)
 	
 	def_clf_file = "./clfs/LexClfV1_def.params"
 	ex_clf_file = "./clfs/LexClfV1_ex.params"
