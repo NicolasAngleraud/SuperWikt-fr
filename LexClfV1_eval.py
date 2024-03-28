@@ -6,8 +6,8 @@ import mono_target_multi_rank_classifier as ex_clf
 import mono_target_unique_rank_classifier as def_clf
 from transformers import AutoModel, AutoTokenizer
 import datetime
-import logging
-logging.basicConfig(level=logging.ERROR)
+import warnings
+warnings.filterwarnings("ignore")
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
