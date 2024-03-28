@@ -222,7 +222,7 @@ if __name__ == '__main__':
 			else:
 				example_score = 0
 			definition_score = (freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'])
-			sense_eval_data['pred'] = SUPERSENSES[torch.argmax(def_weight * definition_score + ex_weight * example_score, dim=1) ]
+			sense_eval_data['pred'] = SUPERSENSES[torch.argmax(torch.add(def_weight * definition_score, ex_weight * example_score), dim=1) ]
 			sense_eval_data['definition'] = freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['definition']
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
 			eval_data.append(sense_eval_data)
