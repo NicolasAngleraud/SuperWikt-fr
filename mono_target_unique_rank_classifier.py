@@ -113,7 +113,6 @@ class SupersenseTagger(nn.Module):
 		return F.log_softmax(out, dim=1)
 		
 	def forward_encoding(self, encoding):
-		self.eval()
 		with torch.no_grad():
 			encoding = torch.tensor(encoding).to(self.device)
 			bert_output = self.bert_model(encoding.unsqueeze(0), return_dict=True)

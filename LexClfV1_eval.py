@@ -199,7 +199,7 @@ if __name__ == '__main__':
 		ex_classifier.load_state_dict(torch.load(ex_clf_file))
 		
 		# FREQ-DEV
-		freq_dev_df_senses['probs'] = freq_dev_df_senses['definition_encoded'].apply(def_classifier.forward_encoding)
+		freq_dev_df_senses['probs'] = freq_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
 		freq_dev_df_senses['probs'] = freq_dev_df_senses['probs'].apply(lambda x: x.squeeze())
