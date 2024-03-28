@@ -187,7 +187,6 @@ if __name__ == '__main__':
 		params['patience'] = patience
 		params['max_seq_length'] = max_seq_length
 		params['frozen'] = frozen
-		params['batch_size'] = batch_size
 		params['dropout'] = dropout
 		params['hidden_layer_size'] = hidden_layer_size
 		params['token_rank_def'] = token_rank
