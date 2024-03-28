@@ -189,7 +189,7 @@ if __name__ == '__main__':
 		params['frozen'] = frozen
 		params['dropout'] = dropout
 		params['hidden_layer_size'] = hidden_layer_size
-		params['token_rank_def'] = token_rank
+		params['token_rank'] = token_rank
 		
 		def_classifier = def_clf.SupersenseTagger(params, DEVICE)
 		def_classifier.load_state_dict(torch.load(def_clf_file))
