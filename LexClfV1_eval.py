@@ -175,7 +175,7 @@ if __name__ == '__main__':
 		ex_weight = 1 - def_weight
 		
 		freq_dev_senses_ids, freq_dev_df_senses, freq_dev_df_examples = encoded_senses(dataset='freq-dev', datafile=args.data_file)
-		rand_dev_senses_ids, rand_dev_df_senses, rand_dev_df_examples = encoded_senses(dataset='rand-dev', datafile=args.data_file)
+		# rand_dev_senses_ids, rand_dev_df_senses, rand_dev_df_examples = encoded_senses(dataset='rand-dev', datafile=args.data_file)
 		
 		print()
 		print()
@@ -203,8 +203,8 @@ if __name__ == '__main__':
 		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
 		# RAND-DEV
-		rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
-		rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
+		# rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
+		# rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
 		
 		# SENSES PRED
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
 			eval_data.append(sense_eval_data)
 		
-		
+		"""
 		for sense_id in rand_dev_senses_ids:
 			sense_eval_data = {}
 			sense_eval_data['sense_id'] = sense_id
@@ -238,10 +238,10 @@ if __name__ == '__main__':
 			sense_eval_data['definition'] = rand_dev_df_senses[rand_dev_df_senses['sense_id'] == sense_id]['definition']
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  rand_dev_df_senses[rand_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
 			eval_data.append(sense_eval_data)
-		
+		"""
 		
 		df_eval = pd.DataFrame(eval_data)
-		df_eval.to_excel(f'LexClfV1_Wdef{def_weight*100}.xlsx', index=False)
+		df_eval.to_excel(f'./LexClfV1_Wdef_{def_weight*100}_freq_dev.xlsx', index=False)
 		
 		
 	print("PROCESS DONE.\n")
