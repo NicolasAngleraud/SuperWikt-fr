@@ -135,7 +135,7 @@ def encoded_senses(dataset, datafile):
 	# SENSES
 	senses_ids = df_senses['sense_id'].tolist()
 	
-	return senses_ids, df_senses.head, df_examples.head
+	return senses_ids, df_senses, df_examples
 	
 
 
