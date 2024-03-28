@@ -169,7 +169,7 @@ if __name__ == '__main__':
 	senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	
 
-	for def_weight in range(1,2)#[0.5, 0.6, 0.7, 0.8, 0.9, 1]:
+	for def_weight in range(1,2):#[0.5, 0.6, 0.7, 0.8, 0.9, 1]:
 		
 		eval_data = []
 		ex_weight = 1 - def_weight
