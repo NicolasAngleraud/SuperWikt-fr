@@ -169,7 +169,7 @@ if __name__ == '__main__':
 	senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	
 
-	for def_weight in range(1):# [0.5, 0.6, 0.7, 0.8, 0.9, 1]:
+	for def_weight in [0.5, 0.6, 0.7, 0.8, 0.9, 1]:
 		
 		eval_data = []
 		ex_weight = 1 - def_weight
@@ -202,16 +202,15 @@ if __name__ == '__main__':
 		freq_dev_df_senses['probs'] = freq_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
-		print(freq_dev_df_senses.loc[freq_dev_df_senses['sense_id'] == 'ws_5_lapin__nom__1', 'probs'].iloc[0])
-		print()
-		print()
-		print(freq_dev_df_senses.loc[freq_dev_df_senses['sense_id'] == 'ws_5_lapin__nom__1', 'probs'])
+		freq_dev_df_senses['probs'] = freq_dev_df_senses['probs'].apply(lambda x: x.squeeze())
+		freq_dev_df_examples['probs'] = freq_dev_df_examples['probs'].apply(lambda x: x.squeeze())
+		
 		
 		# RAND-DEV
 		# rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		# rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
-		"""
+		
 		# SENSES PRED
 		for sense_id in freq_dev_senses_ids:
 			sense_eval_data = {}
@@ -233,7 +232,7 @@ if __name__ == '__main__':
 			eval_data.append(sense_eval_data)
 		
 		
-		"""
+		
 		"""
 		for sense_id in rand_dev_senses_ids:
 			sense_eval_data = {}
@@ -255,8 +254,8 @@ if __name__ == '__main__':
 			eval_data.append(sense_eval_data)
 		"""
 		
-		# df_eval = pd.DataFrame(eval_data)
-		# df_eval.to_excel(f'./LexClfV1_Wdef_{def_weight*100}_freq_dev.xlsx', index=False)
+		df_eval = pd.DataFrame(eval_data)
+		df_eval.to_excel(f'./LexClfV1_Wdef_{def_weight*100}_freq_dev.xlsx', index=False)
 		
 		
 	print("PROCESS DONE.\n")
