@@ -135,7 +135,7 @@ def encoded_senses(dataset, datafile):
 	# SENSES
 	senses_ids = df_senses['sense_id'].tolist()
 	
-	return senses_ids[:20], df_senses.head(20), df_examples.head(20)
+	return senses_ids, df_senses.head, df_examples.head
 	
 
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 	senses = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	
 
-	for def_weight in range(1,2):#[0.5, 0.6, 0.7, 0.8, 0.9, 1]:
+	for def_weight in [0.5, 0.6, 0.7, 0.8, 0.9, 1]:
 		
 		eval_data = []
 		ex_weight = 1 - def_weight
@@ -210,6 +210,8 @@ if __name__ == '__main__':
 		# rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		# rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
+		freq_dev_df_examples.reset_index(drop=True, inplace=True)
+		freq_dev_df_senses.reset_index(drop=True, inplace=True)
 		
 		# SENSES PRED
 		for sense_id in freq_dev_senses_ids:
@@ -217,26 +219,21 @@ if __name__ == '__main__':
 			sense_eval_data['sense_id'] = sense_id
 			sense_eval_data['dataset'] = 'freq-dev'
 			sense_eval_data['gold'] = freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['supersense']
-			
-			freq_dev_df_examples.reset_index(drop=True, inplace=True)
-			freq_dev_df_senses.reset_index(drop=True, inplace=True)
 
 			if not freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().empty:
 				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().tolist()), dim=0).detach()
 			else:
 				example_score = 0
+				
 			definition_score = torch.tensor([prob.item() for prob in freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'].iloc[0]])
 			
-			print(definition_score)
-			print()
-			print()
-			print(example_score)
-			"""
 			sense_eval_data['pred'] = SUPERSENSES[torch.argmax(torch.add(def_weight * definition_score, ex_weight * example_score), dim=1) ]
+			
 			sense_eval_data['definition'] = freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['definition']
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
+			
 			eval_data.append(sense_eval_data)
-			"""
+			
 		
 		
 		"""
@@ -259,9 +256,9 @@ if __name__ == '__main__':
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  rand_dev_df_senses[rand_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
 			eval_data.append(sense_eval_data)
 		"""
-		"""
+		
 		df_eval = pd.DataFrame(eval_data)
 		df_eval.to_excel(f'./LexClfV1_Wdef_{def_weight*100}_freq_dev.xlsx', index=False)
-		"""
+		
 		
 	print("PROCESS DONE.\n")
