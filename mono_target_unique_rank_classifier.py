@@ -9,7 +9,8 @@ from random import shuffle
 import numpy as np
 from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
-
+import logging
+logging.basicConfig(level=logging.ERROR)
 
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',

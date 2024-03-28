@@ -10,7 +10,8 @@ import numpy as np
 import spacy
 from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
-
+import logging
+logging.basicConfig(level=logging.ERROR)
 
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
