@@ -202,8 +202,11 @@ if __name__ == '__main__':
 		freq_dev_df_senses['probs'] = freq_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
-		print(freq_dev_df_senses['probs'].dtype)
-		print(freq_dev_df_examples['probs'].dtype)
+		print(freq_dev_df_senses['probs'].sample(20))
+		print()
+		print()
+		print(freq_dev_df_examples['probs'].sample(20))
+		
 		# RAND-DEV
 		# rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
 		# rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
@@ -220,7 +223,7 @@ if __name__ == '__main__':
 			freq_dev_df_senses.reset_index(drop=True, inplace=True)
 
 			if not freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().empty:
-				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].tolist()), dim=0)
+				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().tolist()), dim=0)
 			else:
 				example_score = 0
 			definition_score = (freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'])
@@ -228,9 +231,9 @@ if __name__ == '__main__':
 			sense_eval_data['definition'] = freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['definition']
 			for i in range(23): sense_eval_data[f'example_{i+1}'] =  freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id][f'example_{i+1}']
 			eval_data.append(sense_eval_data)
+		
+		
 		"""
-		
-		
 		"""
 		for sense_id in rand_dev_senses_ids:
 			sense_eval_data = {}
