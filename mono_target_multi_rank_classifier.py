@@ -221,6 +221,14 @@ class SupersenseTagger(nn.Module):
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 
 		return F.log_softmax(out, dim=1)
+		
+	def forward_encoding(self, encoding, trk):
+		bert_output = self.bert_model(encoding, return_dict=True)
+		contextual_embeddings = bert_output.last_hidden_state[trk,:]
+		out = self.linear_1(contextual_embeddings)
+		out = torch.relu(out)
+		out = self.linear_2(out)
+		return F.softmax(out, dim=1)
 
 	def predict(self, examples_batch_encodings):
 		self.eval()
