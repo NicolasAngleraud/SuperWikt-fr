@@ -200,11 +200,11 @@ if __name__ == '__main__':
 		
 		# FREQ-DEV
 		freq_dev_df_senses['probs'] = freq_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
-		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: def_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
+		freq_dev_df_examples['probs'] = freq_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
 		# RAND-DEV
 		rand_dev_df_senses['probs'] = rand_dev_df_senses['definition_encoded'].apply(lambda x: def_classifier.forward_encoding(x))
-		rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: def_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
+		rand_dev_df_examples['probs'] = rand_dev_df_examples.apply(lambda row: ex_classifier.forward_encoding(row['example_encoded'], row['token_rank']), axis=1)
 		
 		
 		# SENSES PRED
