@@ -135,7 +135,7 @@ def encoded_senses(dataset, datafile):
 	# SENSES
 	senses_ids = df_senses['sense_id'].tolist()
 	
-	return senses_ids, df_senses, df_examples
+	return senses_ids[:20], df_senses.head(20), df_examples.head(20)
 	
 
 
@@ -222,14 +222,11 @@ if __name__ == '__main__':
 			freq_dev_df_senses.reset_index(drop=True, inplace=True)
 
 			if not freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().empty:
-				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().tolist()), dim=0)
+				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().tolist()), dim=0).detach()
 			else:
 				example_score = 0
 			definition_score = (freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'])
 			
-			print(freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'])
-			print()
-			print()
 			print(definition_score)
 			print()
 			print()
