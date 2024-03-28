@@ -84,6 +84,8 @@ class SupersenseTagger(nn.Module):
 		self.token_rank = params['token_rank']
 
 		self.output_size = NB_CLASSES
+		
+		self.device = DEVICE
 
 		self.linear_1 = nn.Linear(self.embedding_layer_size, self.hidden_layer_size).to(DEVICE)
 
