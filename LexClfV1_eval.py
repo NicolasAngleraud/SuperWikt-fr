@@ -217,8 +217,8 @@ if __name__ == '__main__':
 			freq_dev_df_examples.reset_index(drop=True, inplace=True)
 			freq_dev_df_senses.reset_index(drop=True, inplace=True)
 
-			if not freq_dev_df_examples[freq_dev_df_senses['sense_id'] == sense_id]['probs'].dropna().empty:
-				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_senses['sense_id'] == sense_id]['probs'].tolist()), dim=0)
+			if not freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().empty:
+				example_score = torch.mean(torch.stack(freq_dev_df_examples[freq_dev_df_examples['sense_id'] == sense_id]['probs'].tolist()), dim=0)
 			else:
 				example_score = 0
 			definition_score = (freq_dev_df_senses[freq_dev_df_senses['sense_id'] == sense_id]['probs'])
@@ -237,8 +237,8 @@ if __name__ == '__main__':
 			rand_dev_df_examples.reset_index(drop=True, inplace=True)
 			rand_dev_df_senses.reset_index(drop=True, inplace=True)
 			
-			if not rand_dev_df_examples[rand_dev_df_senses['sense_id'] == sense_id]['probs'].dropna().empty:
-				example_score = torch.mean(torch.stack(rand_dev_df_examples[rand_dev_df_senses['sense_id'] == sense_id]['probs'].tolist()), dim=0)
+			if not rand_dev_df_examples[rand_dev_df_examples['sense_id'] == sense_id]['probs'].dropna().empty:
+				example_score = torch.mean(torch.stack(rand_dev_df_examples[rand_dev_df_examples['sense_id'] == sense_id]['probs'].tolist()), dim=0)
 			else:
 				example_score = 0
 			definition_score = (rand_dev_df_senses[rand_dev_df_senses['sense_id'] == sense_id]['probs'])
