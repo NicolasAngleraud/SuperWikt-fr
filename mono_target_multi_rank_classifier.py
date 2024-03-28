@@ -226,7 +226,7 @@ class SupersenseTagger(nn.Module):
 	def forward_encoding(self, encoding, trk):
 		encoding = torch.tensor(encoding).to(self.device)
 		bert_output = self.bert_model(encoding.unsqueeze(0), return_dict=True)
-		contextual_embeddings = bert_output.last_hidden_state[trk,:]
+		contextual_embeddings = bert_output.last_hidden_state[:,trk,:]
 		out = self.linear_1(contextual_embeddings)
 		out = torch.relu(out)
 		out = self.linear_2(out)
