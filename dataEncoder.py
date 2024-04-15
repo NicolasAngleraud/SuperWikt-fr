@@ -65,7 +65,7 @@ class Encoder:
 		self.df_definitions = self.df_definitions[self.df_definitions['set']==dataset]
 		self.df_examples = self.df_examples[self.df_examples['set']==dataset]
 	
-	def truncate(sentences, word_ranks=[], max_length=100):
+	def truncate(self, sentences, word_ranks=[], max_length=100):
 		# Adjust max_length to account for potential special tokens
 		max_length = max_length - 2
 
@@ -99,7 +99,7 @@ class Encoder:
 
 
 
-	def pad(sentences, pad_id=2, max_length=100):
+	def pad(self, sentences, pad_id=2, max_length=100):
 
 		max_length = max_length - 2
 		pad_lengths = [ max_length - len(sent) if max_length >= len(sent) else 0 for sent in sentences ]
@@ -110,7 +110,7 @@ class Encoder:
 		
 	
 	
-	def add_special_tokens(sentences, ranks=[], cls_id=0, sep_id=1):
+	def add_special_tokens(self, sentences, ranks=[], cls_id=0, sep_id=1):
 	
 		sentences_with_special_tokens = [ [cls_id] + [tok for tok in sent] + [sep_id] for sent in sentences ]
 		if ranks: rks = [rk + 1 for rk in ranks]
@@ -150,12 +150,6 @@ class definitionEncoder(Encoder):
 		
 		definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
 		definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
-		
-		print(definitions_with_lemma_encoded[:2])
-		print(definitions_without_lemma_encoded[:2])
-		
-		print(len(definitions_with_lemma_encoded))
-		print(len(definitions_without_lemma_encoded))
 		
 		definitions_with_lemma_encoded, _ = self.truncate(definitions_with_lemma_encoded)
 		definitions_with_lemma_encoded = self.pad(definitions_with_lemma_encoded, pad_id=2)
