@@ -150,13 +150,13 @@ class definitionEncoder(Encoder):
 		definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
 		definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
 		
-		definitions_with_lemma_encoded, _ = truncate(definitions_with_lemma_encoded, max_length)
-		definitions_with_lemma_encoded = pad(definitions_with_lemma_encoded, pad_id=2, max_length=max_length)
-		definitions_with_lemma_encoded, _ = add_special_tokens(definitions_with_lemma_encoded, cls_id=0, sep_id=1)
+		definitions_with_lemma_encoded, _ = self.truncate(definitions_with_lemma_encoded, max_length)
+		definitions_with_lemma_encoded = self.pad(definitions_with_lemma_encoded, pad_id=2, max_length=max_length)
+		definitions_with_lemma_encoded, _ = self.add_special_tokens(definitions_with_lemma_encoded, cls_id=0, sep_id=1)
 		
-		definitions_without_lemma_encoded, _ = truncate(definitions_without_lemma_encoded, max_length)
-		definitions_without_lemma_encoded = pad(definitions_without_lemma_encoded, pad_id=2, max_length=max_length)
-		definitions_without_lemma_encoded, _ = add_special_tokens(definitions_without_lemma_encoded, cls_id=0, sep_id=1)
+		definitions_without_lemma_encoded, _ = self.truncate(definitions_without_lemma_encoded, max_length)
+		definitions_without_lemma_encoded = self.pad(definitions_without_lemma_encoded, pad_id=2, max_length=max_length)
+		definitions_without_lemma_encoded, _ = self.add_special_tokens(definitions_without_lemma_encoded, cls_id=0, sep_id=1)
 		
 		supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 		
