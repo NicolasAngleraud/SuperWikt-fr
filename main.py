@@ -63,18 +63,18 @@ if __name__ == '__main__':
 	i = 0
 	for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas in train_definitions_encoder.make_batches(batch_size=2, device=DEVICE, shuffle=True):
 	
-	if i <= 1:
-		print(b_definitions_with_lemma_encoded)
-		print()
-		print(b_definitions_without_lemma_encoded)
-		print()
-		print(b_supersenses_encoded)
-		print()
-		print(b_senses_ids)
-		print()
-		print(b_lemmas)
-		print()
-		print()
-		i+=1
-	else: break
+		if i <= 1:
+			print(b_definitions_with_lemma_encoded)
+			print()
+			print(b_definitions_without_lemma_encoded)
+			print()
+			print(b_supersenses_encoded)
+			print()
+			print(b_senses_ids)
+			print()
+			print(b_lemmas)
+			print()
+			print()
+			i+=1
+		else: break
 	
