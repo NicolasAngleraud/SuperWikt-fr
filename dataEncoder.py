@@ -129,8 +129,8 @@ class Encoder:
 
 class definitionEncoder(Encoder):
 	
-	def __init__(self, datafile):
-		super().__init__(datafile)
+	def __init__(self, datafile, dataset):
+		super().__init__(datafile, dataset)
 		
 	
 	def encode(self):
@@ -202,8 +202,8 @@ class definitionEncoder(Encoder):
 
 
 class exampleEncoder(Encoder):
-	def __init__(self, datafile):
-		super().__init__(datafile)
+	def __init__(self, datafile, dataset):
+		super().__init__(datafile, dataset)
 	
 		
 	
