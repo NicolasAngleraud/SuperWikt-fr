@@ -231,8 +231,8 @@ class exampleEncoder(Encoder):
 		
 		tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, ranks)]
 		bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
-		bert_input_raw, tg_trks = self.truncate(bert_input_raw, tg_trks, max_length)
-		bert_input_raw = self.pad(bert_input_raw, pad_id=2, max_length=max_length)
+		bert_input_raw, tg_trks = self.truncate(bert_input_raw, tg_trks)
+		bert_input_raw = self.pad(bert_input_raw, pad_id=2)
 		bert_input, tg_trks = self.add_special_tokens(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 		supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
 
