@@ -73,6 +73,9 @@ class Encoder:
 		new_word_ranks = []
 		
 		if not word_ranks: word_ranks = [0]*len(sentences)
+		
+		print(sentences)
+		print(word_ranks)
 
 		for sent, target_index in zip(sentences, word_ranks):
 			if len(sent) <= max_length:
