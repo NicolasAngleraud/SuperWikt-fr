@@ -211,7 +211,7 @@ class exampleEncoder(Encoder):
 	
 		
 	
-	def encode(self, dataset):
+	def encode(self):
 		df_examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
 		df_examples = df_examples[df_examples['supersense'].isin(SUPERSENSES)]
 		df_examples = df_examples[df_examples['word_rank'] >= 0]
@@ -264,17 +264,17 @@ class exampleEncoder(Encoder):
 		if shuffle_data: self.shuffle_data()
 
 		k = 0
-		while k < len(self.supersenses):
+		while k < len(self.supersenses_encoded):
 
 			start_idx = k
-			end_idx = k+batch_size if k+batch_size <= len(self.sentences) else len(self.sentences)
+			end_idx = k+batch_size if k+batch_size <= len(self.supersenses_encoded) else len(self.supersenses_encoded)
 			k += batch_size
 
 			b_bert_input = self.bert_input[start_idx:end_idx]
 			b_tg_trks = self.tg_trks[start_idx:end_idx]
 			b_supersenses_encoded = self.supersenses_encoded[start_idx:end_idx]
-			b_senses_ids = self.index_map[start_idx:end_idx]
-			b_lemmas = self.attention_masks[start_idx:end_idx]
+			b_senses_ids = self.senses_ids[start_idx:end_idx]
+			b_lemmas = self.lemmas[start_idx:end_idx]
 
 			b_bert_input = torch.tensor(b_bert_input).to(device)
 			b_tg_trks = torch.tensor(b_tg_trks).to(device)
@@ -285,8 +285,8 @@ class exampleEncoder(Encoder):
 
 
 class senseEncoder(Encoder):
-	def __init__(self, datafile):
-		super().__init__(datafile)
+	def __init__(self, datafile, dataset):
+		super().__init__(datafile, dataset)
 	
 	def encode(self):
 		pass
