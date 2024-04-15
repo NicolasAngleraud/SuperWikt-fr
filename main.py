@@ -31,7 +31,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                }
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
-
+MODEL_NAME = "flaubert/flaubert_large_cased"
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
@@ -50,15 +50,16 @@ if __name__ == '__main__':
 	device_id = args.device_id
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
+		
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
-	
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train")
+	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
 	train_examples_encoder.encode()
 	
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev")
+	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
 	freq_dev_examples_encoder.encode()
 	
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev")
+	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
 	rand_dev_examples_encoder.encode()
 	
 	i = 0

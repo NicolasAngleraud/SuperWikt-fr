@@ -46,9 +46,9 @@ def token_rank(lst, index):
 
 class Encoder:
 	
-	def __init__(self, datafile, dataset):
+	def __init__(self, datafile, dataset, tokenizer):
 	
-		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+		self.tokenizer = tokenizer
 		self.datafile = datafile
 		
 		self.df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
@@ -133,8 +133,8 @@ class Encoder:
 
 class definitionEncoder(Encoder):
 	
-	def __init__(self, datafile, dataset):
-		super().__init__(datafile, dataset)
+	def __init__(self, datafile, dataset, tokenizer):
+		super().__init__(datafile, dataset, tokenizer)
 		
 	
 	def encode(self):
@@ -206,8 +206,8 @@ class definitionEncoder(Encoder):
 
 
 class exampleEncoder(Encoder):
-	def __init__(self, datafile, dataset):
-		super().__init__(datafile, dataset)
+	def __init__(self, datafile, dataset, tokenizer):
+		super().__init__(datafile, dataset, tokenizer)
 	
 		
 	
@@ -281,8 +281,8 @@ class exampleEncoder(Encoder):
 
 
 class senseEncoder(Encoder):
-	def __init__(self, datafile, dataset):
-		super().__init__(datafile, dataset)
+	def __init__(self, datafile, dataset, tokenizer):
+		super().__init__(datafile, dataset, tokenizer)
 	
 	def encode(self):
 		pass
