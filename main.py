@@ -52,14 +52,14 @@ if __name__ == '__main__':
 		DEVICE = torch.device("cuda:" + args.device_id)
 	
 	
-	train_definitions_encoder = data.definitionEncoder(args.data_file)
-	train_definitions_encoder.encode("train")
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train")
+	train_definitions_encoder.encode()
 	
-	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file)
-	freq_dev_definitions_encoder.encode("freq-dev")
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev")
+	freq_dev_definitions_encoder.encode()
 	
-	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file)
-	rand_dev_definitions_encoder.encode("rand-dev")
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev")
+	rand_dev_definitions_encoder.encode()
 	
 	i = 0
 	for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas in train_definitions_encoder.make_batches(batch_size=2, device=DEVICE, shuffle=True):
