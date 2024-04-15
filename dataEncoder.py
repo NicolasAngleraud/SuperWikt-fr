@@ -185,10 +185,10 @@ class definitionEncoder(Encoder):
 		if shuffle_data: self.shuffle_data()
 
 		k = 0
-		while k < len(self.supersenses):
+		while k < len(self.supersenses_encoded):
 
 			start_idx = k
-			end_idx = k+batch_size if k+batch_size <= len(self.sentences) else len(self.sentences)
+			end_idx = k+batch_size if k+batch_size <= len(self.supersenses_encoded) else len(self.supersenses_encoded)
 			k += batch_size
 
 			b_definitions_with_lemma_encoded = self.definitions_with_lemma_encoded[start_idx:end_idx]
