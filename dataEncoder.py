@@ -222,10 +222,10 @@ class exampleEncoder(Encoder):
 			for x in example:
 				x = x.replace('##', ' ')
 		
-		supersenses = df_examples[df_examples['set']==set_]['supersense'].tolist()
-		senses_ids = df_examples[df_examples['set']==set_]['sense_id'].tolist()
-		lemmas = df_examples[df_examples['set']==set_]['lemma'].tolist()
-		ranks = df_examples[df_examples['set']==set_]['word_rank'].tolist()
+		supersenses = df_examples['supersense'].tolist()
+		senses_ids = df_examples['sense_id'].tolist()
+		lemmas = df_examples['lemma'].tolist()
+		ranks = df_examples['word_rank'].tolist()
 		
 		sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 		
