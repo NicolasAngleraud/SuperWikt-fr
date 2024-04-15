@@ -28,6 +28,9 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                }
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
+NB_CLASSES = len(supersense2i)
+MODEL_NAME = "flaubert/flaubert_large_cased"
+PADDING_TOKEN_ID = 2
 
 
 def flatten_list(lst):
