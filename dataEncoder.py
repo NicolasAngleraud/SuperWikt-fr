@@ -212,16 +212,12 @@ class exampleEncoder(Encoder):
 		
 	
 	def encode(self):
-		df_examples = pd.read_excel(datafile, sheet_name='examples', engine='openpyxl')
-		df_examples = df_examples[df_examples['supersense'].isin(SUPERSENSES)]
-		df_examples = df_examples[df_examples['word_rank'] >= 0]
-		df_examples = df_examples[(df_examples['example'] != "") & (df_examples['example'].notna())]
-
+		df_definitions = self.df_definitions
+		df_examples = self.df_examples
+		
 		tokenizer = self.tokenizer
 		
-		examples = df_examples[df_examples['set']==set_]['example'].tolist()
-
-		examples = [ x.split(' ') for x in examples ]
+		examples = [ x.split(' ') for x in df_examples['example'].tolist() ]
 		for example in examples:
 			for x in example:
 				x = x.replace('##', ' ')
