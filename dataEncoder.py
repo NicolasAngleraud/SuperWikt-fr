@@ -194,8 +194,8 @@ class definitionEncoder(Encoder):
 			b_definitions_with_lemma_encoded = self.definitions_with_lemma_encoded[start_idx:end_idx]
 			b_definitions_without_lemma_encoded = self.definitions_without_lemma_encoded[start_idx:end_idx]
 			b_supersenses_encoded = self.supersenses_encoded[start_idx:end_idx]
-			b_senses_ids = self.index_map[start_idx:end_idx]
-			b_lemmas = self.attention_masks[start_idx:end_idx]
+			b_senses_ids = self.b_senses_ids[start_idx:end_idx]
+			b_lemmas = self.b_lemmas[start_idx:end_idx]
 
 			b_definitions_with_lemma_encoded = torch.tensor(b_definitions_with_lemma_encoded).to(device)
 			b_definitions_without_lemma_encoded = torch.tensor(b_definitions_without_lemma_encoded).to(device)
