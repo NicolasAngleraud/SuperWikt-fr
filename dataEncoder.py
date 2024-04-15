@@ -73,9 +73,6 @@ class Encoder:
 		new_word_ranks = []
 		
 		if len(word_ranks) == 0: word_ranks = [0]*len(sentences)
-		
-		print(len(sentences))
-		print(len(word_ranks))
 
 		for sent, target_index in zip(sentences, word_ranks):
 			if len(sent) <= max_length:
@@ -153,6 +150,12 @@ class definitionEncoder(Encoder):
 		
 		definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
 		definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
+		
+		print(definitions_with_lemma_encoded[:2])
+		print(definitions_without_lemma_encoded[:2])
+		
+		print(len(definitions_with_lemma_encoded))
+		print(len(definitions_without_lemma_encoded))
 		
 		definitions_with_lemma_encoded, _ = self.truncate(definitions_with_lemma_encoded)
 		definitions_with_lemma_encoded = self.pad(definitions_with_lemma_encoded, pad_id=2)
