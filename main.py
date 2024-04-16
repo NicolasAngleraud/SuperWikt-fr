@@ -53,28 +53,25 @@ if __name__ == '__main__':
 		
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
-	train_examples_encoder.encode()
-	
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
-	freq_dev_examples_encoder.encode()
-	
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
-	rand_dev_examples_encoder.encode()
+	train_senses_encoder = data.senseEncoder(args.data_file, "train", tokenizer)
 	
 	i = 0
-	for b_bert_input, b_tg_trks, b_supersenses_encoded, b_senses_ids, b_lemmas in train_examples_encoder.make_batches(batch_size=2, device=DEVICE, shuffle_data=True):
+	for definitions_with_lemma_encoded, definitions_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense_encoded, sense_id, lemma in train_senses_encoder.encoded_senses(device=DEVICE):
 	
 		if i <= 1:
-			print(b_bert_input)
+			print(definitions_with_lemma_encoded)
 			print()
-			print(b_tg_trks)
+			print(definitions_without_lemma_encoded)
 			print()
-			print(b_supersenses_encoded)
+			for bert_input_example in bert_input_examples: print(bert_input_example)
 			print()
-			print(b_senses_ids)
+			print(tg_trks_examples)
 			print()
-			print(b_lemmas)
+			print(supersense_encoded)
+			print()
+			print(sense_id)
+			print()
+			print(lemma)
 			print()
 			print()
 			i+=1

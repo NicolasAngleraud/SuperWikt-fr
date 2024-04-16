@@ -94,6 +94,16 @@ class monoRankClf(nn.Module):
 		self.eval()
 		with torch.no_grad():
 			pass
+	
+	def predict(self, data_encoder):
+		self.eval()
+		with torch.no_grad():
+			pass
+	
+	def evaluate_and_predict(self, data_encoder)
+		self.eval()
+		with torch.no_grad():
+			pass
 		
 
 
@@ -161,7 +171,16 @@ class multiRankClf(nn.Module):
 		self.eval()
 		with torch.no_grad():
 			pass
-		
+	
+	def predict(self, data_encoder):
+		self.eval()
+		with torch.no_grad():
+			pass
+	
+	def evaluate_and_predict(self, data_encoder)
+		self.eval()
+		with torch.no_grad():
+			pass
 
 
 class lexicalClf_V1():
@@ -178,7 +197,13 @@ class lexicalClf_V1():
 		self.def_lem_clf.train(train_encoder, dev_encoder)
 		self.ex_clf.train(train_encoder, dev_encoder)
 
-	def evaluate(self, sense_encoder):	
+	def evaluate(self, sense_encoder):
+		pass
+		
+	def predict(self, sense_encoder):
+		pass
+		
+	def evaluate_and_predict(self, sense_encoder):
 		pass
 
 
@@ -194,8 +219,13 @@ class lexicalClf_V2(nn.Module):
 	def training(self, train_encoder, dev_encoder):
 		pass
 	
-
 	def evaluate(self, sense_encoder):
+		pass
+		
+	def predict(self, sense_encoder):
+		pass
+		
+	def evaluate_and_predict(self, sense_encoder):
 		pass
 
 
