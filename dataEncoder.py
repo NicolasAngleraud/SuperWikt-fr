@@ -294,11 +294,14 @@ class senseEncoder(Encoder):
 		
 		for sense_id in self.senses_ids:
 			
-			definition = df_definitions[df_definitions['sense_id'] == sense_id]["definition"]
-			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"]
-			supersense = df_definitions[df_definitions['sense_id'] == sense_id]["supersense"]
+			definition = df_definitions[df_definitions['sense_id'] == sense_id]["definition"].iloc[0]
+			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
+			supersense = df_definitions[df_definitions['sense_id'] == sense_id]["supersense"].iloc[0]
+			
 			supersenses_encoded = supersense2i[supersense]
+			
 			definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True) for definition, lemma in zip(definitions, lemmas)]
+			
 			definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=True) for definition, lemma in zip(definitions, lemmas)]
 			
 			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
