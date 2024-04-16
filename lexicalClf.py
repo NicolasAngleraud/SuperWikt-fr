@@ -100,7 +100,7 @@ class monoRankClf(nn.Module):
 		with torch.no_grad():
 			pass
 	
-	def evaluate_and_predict(self, data_encoder)
+	def evaluate_and_predict(self, data_encoder):
 		self.eval()
 		with torch.no_grad():
 			pass
@@ -177,7 +177,7 @@ class multiRankClf(nn.Module):
 		with torch.no_grad():
 			pass
 	
-	def evaluate_and_predict(self, data_encoder)
+	def evaluate_and_predict(self, data_encoder):
 		self.eval()
 		with torch.no_grad():
 			pass
