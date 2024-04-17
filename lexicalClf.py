@@ -301,7 +301,7 @@ class multiRankClf(nn.Module):
 		return F.log_softmax(out, dim=1)
 
 
-	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
+	def train_clf(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
 		self.train()
 		
 		train_losses = []
