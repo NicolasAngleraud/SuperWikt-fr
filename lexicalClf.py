@@ -102,6 +102,7 @@ class monoRankClf(nn.Module):
 		
 		patience = params["patience"]
 		max_mean_dev_accuracy = 0
+		min_mean_dev_loss = 10000000000
 		
 		optimizer = optim.Adam(self.parameters(), lr=params["lr"])
 		
@@ -169,13 +170,13 @@ class monoRankClf(nn.Module):
 				rand_dev_accuracies.append(rand_dev_epoch_accuracy / rand_dev_encoder.length)
 
 
-			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + 0*rand_dev_epoch_loss/rand_dev_encoder.length ) )
-			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + 0*rand_dev_epoch_accuracy/rand_dev_encoder.length ) )
+			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + rand_dev_epoch_loss/rand_dev_encoder.length ) / 2)
+			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + rand_dev_epoch_accuracy/rand_dev_encoder.length ) / 2)
 			
 			if epoch >= params["patience"]:
 			
-				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
-					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				if mean_dev_losses[epoch] < min_mean_dev_loss:
+					min_mean_dev_loss = mean_dev_losses[epoch]
 					torch.save(self.state_dict(), clf_file)
 					patience = params["patience"]
 					
@@ -186,8 +187,8 @@ class monoRankClf(nn.Module):
 					print("EARLY STOPPING : epoch ", epoch+1)
 					break
 			else:
-				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
-					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				if mean_dev_losses[epoch] < min_mean_dev_loss:
+					min_mean_dev_loss = mean_dev_losses[epoch]
 				torch.save(self.state_dict(), clf_file)
 	
 	def save_clf(self, clf_save_file):

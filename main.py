@@ -72,7 +72,7 @@ if __name__ == '__main__':
 	
 	params = {
 	"nb_epochs": 100,
-	"batch_size": 8,
+	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
 	"lr": 0.000005,
