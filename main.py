@@ -91,7 +91,7 @@ if __name__ == '__main__':
 	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 
-
+	"""
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 	
 	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_df.to_excel(rand_dev_def_pred_file, index=False)
-	"""
+	
 	
 	
 	"""
