@@ -84,14 +84,14 @@ if __name__ == '__main__':
 	coeff_def = 1
 	coeff_ex = 1
 	
-	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=True)
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
-	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 	freq_dev_definitions_encoder.encode()
-	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 
-	"""
+
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
@@ -114,8 +114,9 @@ if __name__ == '__main__':
 	
 	rand_dev_def_lem_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_lem_df.to_excel(rand_dev_def_lem_pred_file, index=False)
-	"""
 	
+	
+	"""
 	def_clf = clf.monoRankClf(params, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
 	def_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_clf_file)
 	def_clf = clf.monoRankClf(params, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
@@ -138,6 +139,8 @@ if __name__ == '__main__':
 	
 	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_df.to_excel(rand_dev_def_pred_file, index=False)
+	"""
+	
 	
 	"""
 	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=True)
