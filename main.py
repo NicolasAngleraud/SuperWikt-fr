@@ -70,13 +70,13 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
-	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer)
-	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer)
-	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer)
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=True)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
 	
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
+	# train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
+	# freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
+	# rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
 	
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
 	def_lem_clf.training(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)

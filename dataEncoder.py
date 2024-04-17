@@ -46,7 +46,7 @@ def token_rank(lst, index):
 
 class Encoder:
 	
-	def __init__(self, datafile, dataset, tokenizer):
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
 	
 		self.tokenizer = tokenizer
 		self.datafile = datafile
@@ -64,6 +64,10 @@ class Encoder:
 		
 		self.df_definitions = self.df_definitions[self.df_definitions['set']==dataset]
 		self.df_examples = self.df_examples[self.df_examples['set']==dataset]
+		
+		if use_sample:
+			self.df_definitions = self.df_definitions[self.df_definitions['set']==dataset].sample(sample_size)
+			self.df_examples = self.df_examples[self.df_examples['set']==dataset].sample(sample_size)
 	
 	def truncate(self, sentences, word_ranks=[], max_length=100):
 		# Adjust max_length to account for potential special tokens
@@ -133,8 +137,8 @@ class Encoder:
 
 class definitionEncoder(Encoder):
 	
-	def __init__(self, datafile, dataset, tokenizer):
-		super().__init__(datafile, dataset, tokenizer)
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
+		super().__init__(datafile, dataset, tokenizer, use_sample, sample_size)
 
 		
 	
@@ -210,8 +214,8 @@ class definitionEncoder(Encoder):
 
 
 class exampleEncoder(Encoder):
-	def __init__(self, datafile, dataset, tokenizer):
-		super().__init__(datafile, dataset, tokenizer)
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
+		super().__init__(datafile, dataset, tokenizer, use_sample, sample_size)
 	
 		
 	
@@ -287,8 +291,8 @@ class exampleEncoder(Encoder):
 
 
 class senseEncoder(Encoder):
-	def __init__(self, datafile, dataset, tokenizer):
-		super().__init__(datafile, dataset, tokenizer)
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
+		super().__init__(datafile, dataset, tokenizer, use_sample, sample_size)
 		self.senses_ids = self.df_definitions['sense_id'].tolist()
 	
 	def encoded_senses(self, device):
