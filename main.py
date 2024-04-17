@@ -72,12 +72,12 @@ if __name__ == '__main__':
 	
 	params = {
 	"nb_epochs": 100,
-	"batch_size": 16,
+	"batch_size": 8,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.00001,
+	"lr": 0.000005,
 	"frozen": False,
-	"dropout": 0.2,
+	"dropout": 0.1,
 	"max_seq_length": 100
 	}
 	
