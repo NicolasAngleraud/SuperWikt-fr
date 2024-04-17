@@ -92,7 +92,7 @@ if __name__ == '__main__':
 	freq_dev_predictions = def_lem_clf.predict(freq_dev_definitions_encoder)
 	rand_dev_predictions = def_lem_clf.predict(rand_dev_definitions_encoder)
 	
-	print("train dev accurcay = ", percentage(train_dev_accuracy))
+	print("train dev accurcay = ", percentage(train_accuracy))
 	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
 	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
 	print()
