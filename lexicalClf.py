@@ -413,7 +413,7 @@ class multiRankClf(nn.Module):
 		with torch.no_grad():
 			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
-				log_probs = self.forward(b_def_encoded, b_target_ranks)
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
 				predicted_indices = torch.argmax(log_probs, dim=1)
 				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
 				
@@ -426,7 +426,7 @@ class multiRankClf(nn.Module):
 		with torch.no_grad():
 			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
-				log_probs = self.forward(b_def_encoded, b_target_ranks)
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
 				predicted_indices = torch.argmax(log_probs, dim=1).tolist()
 				
 				pred = [SUPERSENSES[i] for i in predicted_indices]
