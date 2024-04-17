@@ -35,7 +35,7 @@ PADDING_TOKEN_ID = 2
 
 class monoRankClf(nn.Module):
 
-	def __init__(self, params, DEVICE, use_lemma=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME):
 		super(monoRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
@@ -85,25 +85,166 @@ class monoRankClf(nn.Module):
 		
 
 
-	def training(self, train_encoder, dev_encoder):
+	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
 		self.train()
-		pass
+		
+		train_losses = []
+		mean_dev_losses = []
+		mean_dev_accuracies = []
+		freq_dev_losses = []
+		freq_dev_accuracies = []
+		rand_dev_losses = []
+		rand_dev_accuracies = []
+		
+		use_lemma = self.use_lemma
+		
+		params = self.params
+		
+		loss_function = nn.NLLLoss()
+		
+		patience = params["patience"]
+		max_mean_dev_accuracy = 0
+		
+		optimizer = optim.Adam(self.parameters(), lr=params["lr"])
+		
+
+		for epoch in range(params["nb_epochs"]):
+			print("epoch: ", epoch+1)
+			
+			epoch_loss = 0
+			train_epoch_accuracy = 0
+			freq_dev_epoch_loss = 0
+			freq_dev_epoch_accuracy = 0
+			rand_dev_epoch_loss = 0
+			rand_dev_epoch_accuracy = 0
+			
+			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
+				
+				if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
+				else: b_def_encoded = b_definitions_without_lemma_encoded
+				
+				self.zero_grad()
+				
+				log_probs = self.forward(b_def_encoded)
+				
+				loss = loss_function(log_probs, b_supersenses_encoded)
+				loss.backward()
+				optimizer.step()
+
+				epoch_loss += loss.item()/params["batch_size"]
+
+			train_losses.append(epoch_loss)
+			
+			with torch.no_grad():
+			
+				for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in freq_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+					
+					if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
+					else: b_def_encoded = b_definitions_without_lemma_encoded
+					
+					freq_dev_log_probs = self.forward(b_def_encoded)
+
+					predicted_indices = torch.argmax(freq_dev_log_probs, dim=1)
+					freq_dev_epoch_accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+
+					freq_dev_loss = loss_function(freq_dev_log_probs, b_supersenses_encoded)
+					freq_dev_epoch_loss += freq_dev_loss.item()
+
+				freq_dev_losses.append(freq_dev_epoch_loss / freq_dev_encoder.length)
+				freq_dev_accuracies.append(freq_dev_epoch_accuracy / freq_dev_encoder.length)
+				
+				
+				for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in rand_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+					
+					if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
+					else: b_def_encoded = b_definitions_without_lemma_encoded
+					
+					rand_dev_log_probs = self.forward(b_def_encoded)
+
+					predicted_indices = torch.argmax(rand_dev_log_probs, dim=1)
+					rand_dev_epoch_accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+
+					rand_dev_loss = loss_function(rand_dev_log_probs, b_supersenses_encoded)
+					rand_dev_epoch_loss += rand_dev_loss.item()
+
+				rand_dev_losses.append(rand_dev_epoch_loss / rand_dev_encoder.length)
+				rand_dev_accuracies.append(rand_dev_epoch_accuracy / rand_dev_encoder.length)
+
+
+			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + rand_dev_epoch_loss/rand_dev_encoder.length ) / 2)
+			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + rand_dev_epoch_accuracy/rand_dev_encoder.length ) / 2)
+			
+			if epoch >= params["patience"]:
+			
+				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+					torch.save(self.state_dict(), clf_file)
+					patience = params["patience"]
+					
+				else:
+					patience = patience - 1
+				
+				if patience == 0:
+					print("EARLY STOPPING : epoch ", epoch+1)
+					break
+			else:
+				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				torch.save(self.state_dict(), clf_file)
 	
+	def save_clf(self, clf_save_file):
+		torch.save(self.state_dict(), clf_save_file)
+	
+	def load_clf(self, clf_save_file):
+		self.load_state_dict(torch.load(clf_save_file))
+		
 
 	def evaluate(self, data_encoder):
 		self.eval()
+		accuracy = 0
 		with torch.no_grad():
-			pass
+			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+				
+				if self.use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
+				else: b_def_encoded = b_definitions_without_lemma_encoded
+				
+				log_probs = self.forward(b_def_encoded)
+				predicted_indices = torch.argmax(log_probs, dim=1)
+				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				
+			return accuracy / data_encoder.length
+			
 	
 	def predict(self, data_encoder):
 		self.eval()
+		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
 		with torch.no_grad():
-			pass
+			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+				
+				if self.use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
+				else: b_def_encoded = b_definitions_without_lemma_encoded
+				
+				log_probs = self.forward(b_def_encoded)
+				predicted_indices = torch.argmax(log_probs, dim=1).tolist()
+				
+				pred = [SUPERSENSES[i] for i in predicted_indices]
+				gold = [SUPERSENSES[i] for i in b_supersenses_encoded.tolist()]
+				definitions = [self.tokenizer.decode(token_ids.tolist()) for token_ids in b_def_encoded]
+				
+				predictions['lemma'].extend(b_lemmas)
+				predictions['sense_id'].extend(b_senses_ids)
+				predictions['gold'].extend(gold)
+				predictions['pred'].extend(pred)
+				predictions['definition'].extend(definitions)
+				
+			return predictions
 	
 	def evaluate_and_predict(self, data_encoder):
-		self.eval()
-		with torch.no_grad():
-			pass
+	
+		accuracy = self.evaluate(data_encoder)
+		predictions = self.predict(data_encoder)
+		
+		return accuracy, predictions	
 		
 
 
@@ -162,40 +303,174 @@ class multiRankClf(nn.Module):
 		return F.log_softmax(out, dim=1)
 
 
-	def training(self, train_encoder, dev_encoder):
+	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
 		self.train()
-		pass
+		
+		train_losses = []
+		mean_dev_losses = []
+		mean_dev_accuracies = []
+		freq_dev_losses = []
+		freq_dev_accuracies = []
+		rand_dev_losses = []
+		rand_dev_accuracies = []
+		
+		use_lemma = self.use_lemma
+		
+		params = self.params
+		
+		loss_function = nn.NLLLoss()
+		
+		patience = params["patience"]
+		max_mean_dev_accuracy = 0
+		
+		optimizer = optim.Adam(self.parameters(), lr=params["lr"])
+		
+
+		for epoch in range(params["nb_epochs"]):
+			print("epoch: ", epoch+1)
+			
+			epoch_loss = 0
+			train_epoch_accuracy = 0
+			freq_dev_epoch_loss = 0
+			freq_dev_epoch_accuracy = 0
+			rand_dev_epoch_loss = 0
+			rand_dev_epoch_accuracy = 0
+			
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
+				
+				self.zero_grad()
+				
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
+				
+				loss = loss_function(log_probs, b_supersenses_encoded)
+				loss.backward()
+				optimizer.step()
+
+				epoch_loss += loss.item()/params["batch_size"]
+
+			train_losses.append(epoch_loss)
+			
+			with torch.no_grad():
+			
+				for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in freq_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+					
+					freq_dev_log_probs = self.forward(b_bert_encodings, b_target_ranks)
+
+					predicted_indices = torch.argmax(freq_dev_log_probs, dim=1)
+					freq_dev_epoch_accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+
+					freq_dev_loss = loss_function(freq_dev_log_probs, b_supersenses_encoded)
+					freq_dev_epoch_loss += freq_dev_loss.item()
+
+				freq_dev_losses.append(freq_dev_epoch_loss / freq_dev_encoder.length)
+				freq_dev_accuracies.append(freq_dev_epoch_accuracy / freq_dev_encoder.length)
+				
+				
+				for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in rand_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+					
+					rand_dev_log_probs = self.forward(b_bert_encodings, b_target_ranks)
+
+					predicted_indices = torch.argmax(rand_dev_log_probs, dim=1)
+					rand_dev_epoch_accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+
+					rand_dev_loss = loss_function(rand_dev_log_probs, b_supersenses_encoded)
+					rand_dev_epoch_loss += rand_dev_loss.item()
+
+				rand_dev_losses.append(rand_dev_epoch_loss / rand_dev_encoder.length)
+				rand_dev_accuracies.append(rand_dev_epoch_accuracy / rand_dev_encoder.length)
+
+
+			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + rand_dev_epoch_loss/rand_dev_encoder.length ) / 2)
+			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + rand_dev_epoch_accuracy/rand_dev_encoder.length ) / 2)
+			
+			if epoch >= params["patience"]:
+			
+				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+					torch.save(self.state_dict(), clf_file)
+					patience = params["patience"]
+					
+				else:
+					patience = patience - 1
+				
+				if patience == 0:
+					print("EARLY STOPPING : epoch ", epoch+1)
+					break
+			else:
+				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
+					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				torch.save(self.state_dict(), clf_file)
+	
+	
+	def save_clf(self, clf_save_file):
+		torch.save(self.state_dict(), clf_save_file)
+		
+	def load_clf(self, clf_save_file):
+		self.load_state_dict(torch.load(clf_save_file))
 		
 
 	def evaluate(self, data_encoder):
 		self.eval()
+		accuracy = 0
 		with torch.no_grad():
-			pass
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+				
+				log_probs = self.forward(b_def_encoded, b_target_ranks)
+				predicted_indices = torch.argmax(log_probs, dim=1)
+				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				
+			return accuracy / data_encoder.length
+			
 	
 	def predict(self, data_encoder):
 		self.eval()
+		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
 		with torch.no_grad():
-			pass
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+				
+				log_probs = self.forward(b_def_encoded, b_target_ranks)
+				predicted_indices = torch.argmax(log_probs, dim=1).tolist()
+				
+				pred = [SUPERSENSES[i] for i in predicted_indices]
+				gold = [SUPERSENSES[i] for i in b_supersenses_encoded.tolist()]
+				sentences = [self.tokenizer.decode(token_ids.tolist()) for token_ids in b_def_encoded]
+				
+				predictions['lemma'].extend(b_lemmas)
+				predictions['sense_id'].extend(b_senses_ids)
+				predictions['gold'].extend(gold)
+				predictions['pred'].extend(pred)
+				predictions['sentence'].extend(sentences)
+				
+			return predictions
 	
 	def evaluate_and_predict(self, data_encoder):
-		self.eval()
-		with torch.no_grad():
-			pass
+		
+		accuracy = self.evaluate(data_encoder)
+		predictions = self.predict(data_encoder)
+		
+		return accuracy, predictions	
 
 
 class lexicalClf_V1():
 
-	def __init__(self, params, DEVICE, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+	def __init__(self, params_def, params_ex, DEVICE, coeff_ex, coeff_def, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
 	
-		if multi_clf: self.def_clf = monoRankClf(params, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.def_lem_clf = monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.ex_clf = multiRankClf(params, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
+		if multi_clf: self.def_clf = monoRankClf(params_def, DEVICE, use_lemma=False, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
+		self.def_lem_clf = monoRankClf(params_def, DEVICE, use_lemma=True, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
+		self.ex_clf = multiRankClf(params_ex, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
 		self.multi_clf = multi_clf
+		self.coeff_ex = coeff_ex
+		self.coeff_def = coeff_def
 
-	def training(self, train_encoder, dev_encoder):
-		if self.multi_clf: self.def_clf.train(train_encoder, dev_encoder)
-		self.def_lem_clf.train(train_encoder, dev_encoder)
-		self.ex_clf.train(train_encoder, dev_encoder)
+	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
+		if self.multi_clf: self.def_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+		self.def_lem_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+		self.ex_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+	
+	def load_clf(self, clf_def_lem_file, clf_ex_file, clf_def_file=None):
+		if self.multi_clf: self.def_clf.load_state_dict(torch.load(clf_def_file))
+		self.def_lem_clf.load_state_dict(torch.load(clf_def_lem_file))
+		self.ex_clf.load_state_dict(torch.load(clf_ex_file))
 
 	def evaluate(self, sense_encoder):
 		pass
@@ -204,20 +479,29 @@ class lexicalClf_V1():
 		pass
 		
 	def evaluate_and_predict(self, sense_encoder):
-		pass
+		accuracy = self.evaluate(sense_encoder)
+		predictions = self.predict(sense_encoder)
+		
+		return accuracy, predictions	
 
 
 
 class lexicalClf_V2(nn.Module):
 
-	def __init__(self, params, DEVICE, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
-		if multi_clf: self.clf = multiRankClf(params, DEVICE, dropout_rate=0.1, bert_model_name=MODEL_NAME)
-		self.clf_lem = multiRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
+	def __init__(self, params, DEVICE, coeff_ex, coeff_def, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+		if multi_clf: self.clf = multiRankClf(params, DEVICE, use_lemma=False, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
+		self.clf_lem = multiRankClf(params, DEVICE, use_lemma=True, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
 		self.multi_clf = multi_clf
-		
+		self.coeff_ex = coeff_ex
+		self.coeff_def = coeff_def
 
-	def training(self, train_encoder, dev_encoder):
-		pass
+	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
+		if self.multi_clf: self.clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+		self.clf_lem.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+	
+	def load_clf(self, clf_lem_file, clf_file=None):
+		if self.multi_clf: self.clf.load_state_dict(torch.load(clf_file))
+		self.clf_lem.load_state_dict(torch.load(clf_lem_file))
 	
 	def evaluate(self, sense_encoder):
 		pass
@@ -226,6 +510,12 @@ class lexicalClf_V2(nn.Module):
 		pass
 		
 	def evaluate_and_predict(self, sense_encoder):
+		accuracy = self.evaluate(sense_encoder)
+		predictions = self.predict(sense_encoder)
+		
+		return accuracy, predictions
+		
+	def grid_search(self, parameters, train_encoder, freq_dev_encoder, rand_dev_encoder):
 		pass
 
 

@@ -33,6 +33,10 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
 MODEL_NAME = "flaubert/flaubert_large_cased"
 
+def percentage(decimal):
+    percentage = decimal * 100
+    return f"{percentage:.2f}%"
+
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
@@ -53,27 +57,33 @@ if __name__ == '__main__':
 		
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
-	train_senses_encoder = data.senseEncoder(args.data_file, "train", tokenizer)
+	def_lem_clf_file = './def_lem_clf.params'
 	
-	i = 0
-	for definitions_with_lemma_encoded, definitions_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense_encoded, sense_id, lemma in train_senses_encoder.encoded_senses(device=DEVICE):
+	params = {
+	"nb_epochs": 100,
+	"batch_size": 16,
+	"hidden_layer_size": 768,
+	"patience": 1,
+	"lr": 0.00001,
+	"frozen": False,
+	"dropout": 0.1,
+	"max_seq_length": 100
+	}
 	
-		if i <= 1:
-			print(definitions_with_lemma_encoded)
-			print()
-			print(definitions_without_lemma_encoded)
-			print()
-			for bert_input_example in bert_input_examples: print(bert_input_example)
-			print()
-			print(tg_trks_examples)
-			print()
-			print(supersense_encoded)
-			print()
-			print(sense_id)
-			print()
-			print(lemma)
-			print()
-			print()
-			i+=1
-		else: break
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer)
 	
+	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
+	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
+	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
+	
+	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
+	def_lem_clf.training(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
+	def_lem_clf.load_clf(def_lem_clf_file)
+	
+	freq_dev_accuracy = def_lem_clf.evaluate(freq_dev_examples_encoder)
+	rand_dev_accuracy = def_lem_clf.evaluate(rand_dev_examples_encoder)
+	
+	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
+	print("rand dev accurcay = ", percentage(rand_dev_accuracy))

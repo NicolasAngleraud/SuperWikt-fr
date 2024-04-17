@@ -135,6 +135,7 @@ class definitionEncoder(Encoder):
 	
 	def __init__(self, datafile, dataset, tokenizer):
 		super().__init__(datafile, dataset, tokenizer)
+
 		
 	
 	def encode(self):
@@ -147,6 +148,8 @@ class definitionEncoder(Encoder):
 		supersenses = df_definitions['supersense'].tolist()
 		lemmas = df_definitions['lemma'].tolist()
 		senses_ids = df_definitions['sense_id'].tolist()
+		
+		self.length = len(supersenses)
 		
 		definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
 		definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
@@ -200,6 +203,7 @@ class definitionEncoder(Encoder):
 			b_definitions_with_lemma_encoded = torch.tensor(b_definitions_with_lemma_encoded).to(device)
 			b_definitions_without_lemma_encoded = torch.tensor(b_definitions_without_lemma_encoded).to(device)
 			b_supersenses_encoded = torch.tensor(b_supersenses_encoded).to(device)
+			
 
 			yield b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas
 		
@@ -226,6 +230,8 @@ class exampleEncoder(Encoder):
 		senses_ids = df_examples['sense_id'].tolist()
 		lemmas = df_examples['lemma'].tolist()
 		ranks = df_examples['word_rank'].tolist()
+		
+		self.length = len(supersenses)
 		
 		sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 		
@@ -322,4 +328,16 @@ class senseEncoder(Encoder):
 			for bert_input in bert_input_examples: bert_input = torch.tensor(bert_input).to(device)
 			
 			yield definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma
+
+
+class multiEncoder(Encoder):
+	def __init__(self, datafile, dataset, tokenizer):
+		super().__init__(datafile, dataset, tokenizer)
+	
+	def encode(self):
+		pass
+	def shuffle_data(self):
+		pass
+	def make_batches(self):
+		pass
 		
