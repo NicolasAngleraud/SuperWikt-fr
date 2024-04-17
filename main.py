@@ -77,7 +77,7 @@ if __name__ == '__main__':
 	"patience": 2,
 	"lr": 0.000005,
 	"frozen": False,
-	"dropout": 0.1,
+	"dropout": 0.5,
 	"max_seq_length": 100
 	}
 	
