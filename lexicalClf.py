@@ -206,8 +206,6 @@ class monoRankClf(nn.Module):
 				if self.use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
 				else: b_def_encoded = b_definitions_without_lemma_encoded
 				
-				print(b_supersenses_encoded.shape)
-				
 				log_probs = self.forward(b_def_encoded)
 				predicted_indices = torch.argmax(log_probs, dim=1)
 				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
