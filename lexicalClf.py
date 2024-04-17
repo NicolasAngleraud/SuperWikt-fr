@@ -201,7 +201,7 @@ class monoRankClf(nn.Module):
 		self.eval()
 		accuracy = 0
 		with torch.no_grad():
-			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				if self.use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
 				else: b_def_encoded = b_definitions_without_lemma_encoded
@@ -217,7 +217,7 @@ class monoRankClf(nn.Module):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
 		with torch.no_grad():
-			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				if self.use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
 				else: b_def_encoded = b_definitions_without_lemma_encoded
@@ -411,7 +411,7 @@ class multiRankClf(nn.Module):
 		self.eval()
 		accuracy = 0
 		with torch.no_grad():
-			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				log_probs = self.forward(b_def_encoded, b_target_ranks)
 				predicted_indices = torch.argmax(log_probs, dim=1)
@@ -424,7 +424,7 @@ class multiRankClf(nn.Module):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
 		with torch.no_grad():
-			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				log_probs = self.forward(b_def_encoded, b_target_ranks)
 				predicted_indices = torch.argmax(log_probs, dim=1).tolist()
