@@ -83,7 +83,7 @@ class monoRankClf(nn.Module):
 		
 
 
-	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
+	def train_clf(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
 		self.train()
 		
 		train_losses = []

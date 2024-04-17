@@ -79,7 +79,7 @@ if __name__ == '__main__':
 	# rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
 	
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
-	def_lem_clf.training(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
+	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	def_lem_clf.load_clf(def_lem_clf_file)
 	
 	freq_dev_accuracy = def_lem_clf.evaluate(freq_dev_examples_encoder)
