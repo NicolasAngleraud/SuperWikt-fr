@@ -92,6 +92,7 @@ if __name__ == '__main__':
 
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
+	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
 	def_lem_clf.load_clf(def_lem_clf_file)
 	
 	train_accuracy = def_lem_clf.evaluate(train_definitions_encoder)
