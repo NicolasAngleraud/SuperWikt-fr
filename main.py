@@ -70,9 +70,9 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
-	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=True)
-	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
-	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=True).encode()
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True).encode()
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True).encode()
 	
 	# train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
 	# freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
