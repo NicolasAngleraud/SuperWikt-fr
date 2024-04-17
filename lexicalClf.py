@@ -431,7 +431,7 @@ class multiRankClf(nn.Module):
 				
 				pred = [SUPERSENSES[i] for i in predicted_indices]
 				gold = [SUPERSENSES[i] for i in b_supersenses_encoded.tolist()]
-				sentences = [self.tokenizer.decode(token_ids.tolist(), skip_special_tokens=True) for token_ids in b_def_encoded]
+				sentences = [self.tokenizer.decode(token_ids.tolist(), skip_special_tokens=True) for token_ids in b_bert_encodings]
 				
 				predictions['lemma'].extend(b_lemmas)
 				predictions['sense_id'].extend(b_senses_ids)
