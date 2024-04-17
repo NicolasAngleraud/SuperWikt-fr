@@ -85,8 +85,8 @@ if __name__ == '__main__':
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	def_lem_clf.load_clf(def_lem_clf_file)
 	
-	freq_dev_accuracy = def_lem_clf.evaluate(freq_dev_examples_encoder)
-	rand_dev_accuracy = def_lem_clf.evaluate(rand_dev_examples_encoder)
+	freq_dev_accuracy = def_lem_clf.evaluate(freq_dev_definitions_encoder)
+	rand_dev_accuracy = def_lem_clf.evaluate(rand_dev_definitions_encoder)
 	
 	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
 	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
