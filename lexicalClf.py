@@ -169,8 +169,8 @@ class monoRankClf(nn.Module):
 				rand_dev_accuracies.append(rand_dev_epoch_accuracy / rand_dev_encoder.length)
 
 
-			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + rand_dev_epoch_loss/rand_dev_encoder.length ) / 2)
-			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + rand_dev_epoch_accuracy/rand_dev_encoder.length ) / 2)
+			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + 0*rand_dev_epoch_loss/rand_dev_encoder.length ) )
+			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + 0*rand_dev_epoch_accuracy/rand_dev_encoder.length ) )
 			
 			if epoch >= params["patience"]:
 			
