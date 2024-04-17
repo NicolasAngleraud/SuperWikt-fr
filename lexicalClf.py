@@ -69,7 +69,7 @@ class monoRankClf(nn.Module):
 
 		bert_output = self.bert_model(padded_encodings, return_dict=True) # SHAPE [len(definitions), max_length, embedding_size]
 
-		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
+		batch_contextual_embeddings = bert_output.last_hidden_state[:,1,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
 
 		out = self.linear_1(batch_contextual_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		

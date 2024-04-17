@@ -344,4 +344,15 @@ class multiEncoder(Encoder):
 		pass
 	def make_batches(self):
 		pass
-		
+
+
+class corpusEncoder(Encoder):
+	def __init__(self, datafile, dataset, tokenizer):
+		super().__init__(datafile, dataset, tokenizer)
+	
+	def encode(self):
+		pass
+	def shuffle_data(self):
+		pass
+	def make_batches(self):
+		pass
