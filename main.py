@@ -58,6 +58,7 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	def_lem_clf_file = './def_lem_clf.params'
+	ex_clf_file = './ex_clf.params'
 	
 	params = {
 	"nb_epochs": 100,
@@ -70,17 +71,23 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	coeff_def = 1
+	coeff_ex = 1
+	"""
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=True)
 	train_definitions_encoder.encode()
 	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
 	freq_dev_definitions_encoder.encode()
 	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
 	rand_dev_definitions_encoder.encode()
-	
-	# train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer)
-	# freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer)
-	# rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer)
-	
+	"""
+	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=True)
+	train_examples_encoder.encode()
+	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
+	freq_dev_examples_encoder.encode()
+	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
+	rand_dev_examples_encoder.encode()
+	"""
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	def_lem_clf.load_clf(def_lem_clf_file)
@@ -91,6 +98,26 @@ if __name__ == '__main__':
 	
 	freq_dev_predictions = def_lem_clf.predict(freq_dev_definitions_encoder)
 	rand_dev_predictions = def_lem_clf.predict(rand_dev_definitions_encoder)
+	
+	print("train dev accurcay = ", percentage(train_accuracy))
+	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
+	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
+	print()
+	
+	print(freq_dev_predictions)
+	print(rand_dev_predictions)
+	"""
+	
+	ex_clf = clf.multiRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
+	ex_clf.train_clf(train_examples_encoder, freq_dev_examples_encoder, rand_dev_examples_encoder, ex_clf_file)
+	ex_clf.load_clf(ex_clf_file)
+	
+	train_accuracy = ex_clf.evaluate(train_examples_encoder)
+	freq_dev_accuracy = ex_clf.evaluate(freq_dev_examples_encoder)
+	rand_dev_accuracy = ex_clf.evaluate(rand_dev_examples_encoder)
+	
+	freq_dev_predictions = ex_clf.predict(freq_dev_examples_encoder)
+	rand_dev_predictions = ex_clf.predict(rand_dev_examples_encoder)
 	
 	print("train dev accurcay = ", percentage(train_accuracy))
 	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
