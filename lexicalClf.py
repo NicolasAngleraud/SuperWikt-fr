@@ -104,7 +104,7 @@ class monoRankClf(nn.Module):
 		max_mean_dev_accuracy = 0
 		min_mean_dev_loss = 10000000000
 		
-		optimizer = optim.Adam(self.parameters(), lr=params["lr"])
+		optimizer = optim.AdamW(self.parameters(), lr=params["lr"], weight_decay=params["weight_decay"])
 		
 
 		for epoch in range(params["nb_epochs"]):
