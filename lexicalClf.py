@@ -35,7 +35,7 @@ PADDING_TOKEN_ID = 2
 
 class monoRankClf(nn.Module):
 
-	def __init__(self, params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, use_lemma=True, dropout_hidden=0.5, dropout_input=0.2, bert_model_name=MODEL_NAME):
 		super(monoRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
@@ -59,8 +59,10 @@ class monoRankClf(nn.Module):
 		self.linear_1 = nn.Linear(self.embedding_layer_size, self.hidden_layer_size).to(DEVICE)
 
 		self.linear_2 = nn.Linear(self.hidden_layer_size, self.output_size).to(DEVICE)
+		
+		self.dropout_input = nn.Dropout(dropout_input).to(DEVICE)
 
-		self.dropout = nn.Dropout(params['dropout']).to(DEVICE)
+		self.dropout_hidden = nn.Dropout(dropout_hidden).to(DEVICE)
 
 		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 		
@@ -70,12 +72,14 @@ class monoRankClf(nn.Module):
 		bert_output = self.bert_model(padded_encodings, return_dict=True) # SHAPE [len(definitions), max_length, embedding_size]
 
 		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
-
-		out = self.linear_1(batch_contextual_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
-		out = self.dropout(out)
+		out = self.dropout_input(batch_contextual_embeddings)
 
+		out = self.linear_1(out) # SHAPE [len(definitions), hidden_layer_size]
+		
 		out = torch.relu(out) # SHAPE [len(definitions), hidden_layer_size]
+		
+		out = self.dropout_hidden(out)
 
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 
