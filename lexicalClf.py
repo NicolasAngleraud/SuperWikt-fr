@@ -73,13 +73,13 @@ class monoRankClf(nn.Module):
 
 		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
 		
-		out = self.dropout_input(batch_contextual_embeddings)
+		# out = self.dropout_input(batch_contextual_embeddings)
 
-		out = self.linear_1(out) # SHAPE [len(definitions), hidden_layer_size]
-		
-		out = torch.relu(out) # SHAPE [len(definitions), hidden_layer_size]
+		out = self.linear_1(batch_contextual_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
 		out = self.dropout_hidden(out)
+		
+		out = torch.relu(out) # SHAPE [len(definitions), hidden_layer_size]
 
 		out = self.linear_2(out) # SHAPE [len(definitions), nb_classes]
 

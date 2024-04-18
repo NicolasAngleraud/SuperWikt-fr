@@ -76,7 +76,7 @@ if __name__ == '__main__':
 	"hidden_layer_size": 768,
 	"patience": 2,
 	"lr": 0.000005,
-	"weight_decay": 0.001,
+	"weight_decay": 0.005,
 	"frozen": False,
 	"max_seq_length": 100
 	}
