@@ -180,7 +180,9 @@ if __name__ == '__main__':
 	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
 	print()
 	
-	print(freq_dev_predictions)
-	print(rand_dev_predictions)
-	print()
+	freq_dev_def_df = pd.DataFrame(freq_dev_predictions)
+	freq_dev_def_df.to_excel(freq_dev_ex_pred_file, index=False)
+	
+	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
+	rand_dev_def_df.to_excel(rand_dev_ex_pred_file, index=False)
 	
