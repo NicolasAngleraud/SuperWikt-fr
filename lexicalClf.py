@@ -254,7 +254,7 @@ class monoRankClf(nn.Module):
 
 class multiRankClf(nn.Module):
 
-	def __init__(self, params, DEVICE, use_lemma=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, dropout_input=0.1, dropout_hidden=0.5, bert_model_name=MODEL_NAME):
 		super(multiRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
@@ -268,14 +268,14 @@ class multiRankClf(nn.Module):
 		self.hidden_layer_size = params['hidden_layer_size']
 
 		self.output_size = NB_CLASSES
-		
-		self.use_lemma = use_lemma
 
 		self.linear_1 = nn.Linear(self.embedding_layer_size, self.hidden_layer_size).to(DEVICE)
 
 		self.linear_2 = nn.Linear(self.hidden_layer_size, self.output_size).to(DEVICE)
 
-		self.dropout = nn.Dropout(params['dropout']).to(DEVICE)
+		self.dropout_input = nn.Dropout(dropout_input).to(DEVICE)
+		
+		self.dropout_hidden = nn.Dropout(dropout_hidden).to(DEVICE)
 
 		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 		
@@ -295,9 +295,11 @@ class multiRankClf(nn.Module):
 
 		bert_target_word_embeddings = torch.stack(selected_tensors, dim=0)
 		
+		# out = self.dropout_input(bert_target_word_embeddings)
+		
 		out = self.linear_1(bert_target_word_embeddings) # SHAPE [len(definitions), hidden_layer_size]
 		
-		out = self.dropout(out)
+		out = self.dropout_hidden(out)
 
 		out = torch.relu(out) # SHAPE [len(definitions), hidden_layer_size]
 
@@ -317,7 +319,6 @@ class multiRankClf(nn.Module):
 		rand_dev_losses = []
 		rand_dev_accuracies = []
 		
-		use_lemma = self.use_lemma
 		
 		params = self.params
 		
@@ -325,8 +326,9 @@ class multiRankClf(nn.Module):
 		
 		patience = params["patience"]
 		max_mean_dev_accuracy = 0
+		min_mean_dev_loss = 10000000000
 		
-		optimizer = optim.Adam(self.parameters(), lr=params["lr"])
+		optimizer = optim.AdamW(self.parameters(), lr=params["lr"], weight_decay=params["weight_decay"])
 		
 
 		for epoch in range(params["nb_epochs"]):
@@ -388,8 +390,8 @@ class multiRankClf(nn.Module):
 			
 			if epoch >= params["patience"]:
 			
-				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
-					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				if mean_dev_losses[epoch] < min_mean_dev_loss:
+					min_mean_dev_loss = mean_dev_losses[epoch]
 					torch.save(self.state_dict(), clf_file)
 					patience = params["patience"]
 					
@@ -400,8 +402,8 @@ class multiRankClf(nn.Module):
 					print("EARLY STOPPING : epoch ", epoch+1)
 					break
 			else:
-				if mean_dev_accuracies[epoch] > max_mean_dev_accuracy:
-					max_mean_dev_accuracy = mean_dev_accuracies[epoch]
+				if mean_dev_losses[epoch] < min_mean_dev_loss:
+					min_mean_dev_loss = mean_dev_losses[epoch]
 				torch.save(self.state_dict(), clf_file)
 	
 	

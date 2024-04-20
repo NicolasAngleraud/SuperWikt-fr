@@ -84,14 +84,15 @@ if __name__ == '__main__':
 	coeff_def = 1
 	coeff_ex = 1
 	
-	
+	"""
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
 	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 	freq_dev_definitions_encoder.encode()
 	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
-
+	"""
+	
 	"""
 	def_lem_clf = clf.monoRankClf(params, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 	
 	rand_dev_def_lem_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_lem_df.to_excel(rand_dev_def_lem_pred_file, index=False)
-	"""
+	
 	
 	
 	def_clf = clf.monoRankClf(params, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
@@ -140,18 +141,30 @@ if __name__ == '__main__':
 	
 	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_df.to_excel(rand_dev_def_pred_file, index=False)
-	
-	
-	
 	"""
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=True)
+	
+	
+	
+	params = {
+	"nb_epochs": 100,
+	"batch_size": 16,
+	"hidden_layer_size": 768,
+	"patience": 2,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
+	
+	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_examples_encoder.encode()
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=True)
+	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 	freq_dev_examples_encoder.encode()
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=True)
+	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_examples_encoder.encode()
 	
-	ex_clf = clf.multiRankClf(params, DEVICE, use_lemma=True, dropout_rate=0.1, bert_model_name=MODEL_NAME)
+	ex_clf = clf.multiRankClf(params, DEVICE, use_lemma=True, dropout_input=0.1, dropout_hidden=0.5, bert_model_name=MODEL_NAME)
 	ex_clf.train_clf(train_examples_encoder, freq_dev_examples_encoder, rand_dev_examples_encoder, ex_clf_file)
 	ex_clf.load_clf(ex_clf_file)
 	
@@ -170,4 +183,4 @@ if __name__ == '__main__':
 	print(freq_dev_predictions)
 	print(rand_dev_predictions)
 	print()
-	"""
+	
