@@ -169,4 +169,5 @@ if __name__ == '__main__':
 	
 	print(freq_dev_predictions)
 	print(rand_dev_predictions)
+	print()
 	"""
