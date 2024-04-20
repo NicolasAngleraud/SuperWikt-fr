@@ -164,7 +164,7 @@ if __name__ == '__main__':
 	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_examples_encoder.encode()
 	
-	ex_clf = clf.multiRankClf(params, DEVICE, use_lemma=True, dropout_input=0.1, dropout_hidden=0.5, bert_model_name=MODEL_NAME)
+	ex_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.5, bert_model_name=MODEL_NAME)
 	ex_clf.train_clf(train_examples_encoder, freq_dev_examples_encoder, rand_dev_examples_encoder, ex_clf_file)
 	ex_clf.load_clf(ex_clf_file)
 	
