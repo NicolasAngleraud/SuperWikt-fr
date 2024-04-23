@@ -195,7 +195,7 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.00001,
+	"lr": 0.00005,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=False)
 	dev_examples_encoder.encode()
 	
-	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.1, bert_model_name=MODEL_NAME)
 	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
 	clf.load_clf(corpus_clf_file)
 	
