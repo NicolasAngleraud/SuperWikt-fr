@@ -204,9 +204,12 @@ if __name__ == '__main__':
 	
 	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
 	train_examples_encoder.encode()
-	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor",use_sample=True)
+	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
 	dev_examples_encoder.encode()
 	
+	print(train_encoder.df_examples['sense_id'])
+	print(dev_encoder.df_examples['sense_id'])
+	"""
 	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
 	clf.load_clf(corpus_clf_file)
@@ -222,5 +225,5 @@ if __name__ == '__main__':
 	
 	dev_df = pd.DataFrame(dev_predictions)
 	dev_df.to_excel(corpus_dev_pred_file, index=False)
-	
+	"""
 	
