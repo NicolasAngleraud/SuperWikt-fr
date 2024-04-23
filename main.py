@@ -207,8 +207,8 @@ if __name__ == '__main__':
 	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
 	dev_examples_encoder.encode()
 	
-	print(train_encoder.df_examples['sense_id'])
-	print(dev_encoder.df_examples['sense_id'])
+	print(train_examples_encoder.df_examples['sense_id'])
+	print(dev_examples_encoder.df_examples['sense_id'])
 	"""
 	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
