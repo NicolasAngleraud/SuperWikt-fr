@@ -335,19 +335,103 @@ class senseEncoder(Encoder):
 
 
 class multiEncoder(Encoder):
-	def __init__(self, datafile, dataset, tokenizer):
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
 		super().__init__(datafile, dataset, tokenizer)
+		
 	
 	def encode(self):
-		pass
+		df_definitions = self.df_definitions
+		df_examples = self.df_examples
+		
+		tokenizer = self.tokenizer
+		
+		definitions = df_definitions['definition'].tolist()
+		def_supersenses = df_definitions['supersense'].tolist()
+		def_lemmas = df_definitions['lemma'].tolist()
+		def_senses_ids = df_definitions['sense_id'].tolist()
+		
+		definitions_with_lemma_encoded = [tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
+		definitions_without_lemma_encoded = [tokenizer.encode(text=definition, add_special_tokens=False) for definition, lemma in zip(definitions, lemmas)]
+		
+		definitions_with_lemma_encoded, _ = self.truncate(definitions_with_lemma_encoded)
+		definitions_with_lemma_encoded = self.pad(definitions_with_lemma_encoded, pad_id=2)
+		definitions_with_lemma_encoded, _ = self.add_special_tokens(definitions_with_lemma_encoded, cls_id=0, sep_id=1)
+		
+		definitions_without_lemma_encoded, _ = self.truncate(definitions_without_lemma_encoded)
+		definitions_without_lemma_encoded = self.pad(definitions_without_lemma_encoded, pad_id=2)
+		definitions_without_lemma_encoded, _ = self.add_special_tokens(definitions_without_lemma_encoded, cls_id=0, sep_id=1)
+		
+		def_supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
+		def_tg_trks = [0]*len(def_supersenses_encoded)
+		def_bert_input = definitions_with_lemma_encoded
+		
+		examples = [ x.split(' ') for x in df_examples['example'].tolist() ]
+		for example in examples:
+			for x in example:
+				x = x.replace('##', ' ')
+		
+		ex_supersenses = df_examples['supersense'].tolist()
+		ex_senses_ids = df_examples['sense_id'].tolist()
+		ex_lemmas = df_examples['lemma'].tolist()
+		ex_ranks = df_examples['word_rank'].tolist()
+
+		ex_sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]		
+		ex_tg_trks = [token_rank(sent, rank) for sent, rank in zip(ex_sents_encoded, ex_ranks)]
+		ex_bert_input_raw = [ flatten_list(sent) for sent in ex_sents_encoded ]
+		ex_bert_input_raw, ex_tg_trks = self.truncate(ex_bert_input_raw, ex_tg_trks)
+		ex_bert_input_raw = self.pad(ex_bert_input_raw, pad_id=2)
+		ex_bert_input, ex_tg_trks = self.add_special_tokens(ex_bert_input_raw, ex_tg_trks, cls_id=0, sep_id=1)
+		ex_supersenses_encoded = [supersense2i[supersense] for supersense in supersenses]
+
+		self.bert_input = def_bert_input + ex_bert_input
+		self.tg_trks = def_tg_trks + ex_tg_trks
+		self.supersenses_encoded = def_supersenses_encoded + ex_supersenses_encoded
+		self.senses_ids = def_senses_ids + ex_senses_ids
+		self.lemmas = def_lemmas + ex_lemmas
+
+		self.length = len(self.supersenses_encoded)
+		
+		
 	def shuffle_data(self):
-		pass
+	
+		data = zip(self.bert_input, self.tg_trks, self.supersenses_encoded, self.senses_ids, self.lemmas)
+		data = list(data)
+		shuffle(data)
+		bert_input, tg_trks, supersenses_encoded, senses_ids, lemmas = zip(*data)
+		
+		self.bert_input = bert_input
+		self.tg_trks = tg_trks
+		self.supersenses_encoded = supersenses_encoded
+		self.senses_ids = senses_ids
+		self.lemmas = lemmas
+		
+		
 	def make_batches(self):
-		pass
+		if shuffle_data: self.shuffle_data()
+		
+		k = 0
+		
+		while k < len(self.supersenses_encoded):
+
+			start_idx = k
+			end_idx = k+batch_size if k+batch_size <= len(self.supersenses_encoded) else len(self.supersenses_encoded)
+			k += batch_size
+
+			b_bert_input = self.bert_input[start_idx:end_idx]
+			b_tg_trks = self.tg_trks[start_idx:end_idx]
+			b_supersenses_encoded = self.supersenses_encoded[start_idx:end_idx]
+			b_senses_ids = self.senses_ids[start_idx:end_idx]
+			b_lemmas = self.lemmas[start_idx:end_idx]
+
+			b_bert_input = torch.tensor(b_bert_input).to(device)
+			b_tg_trks = torch.tensor(b_tg_trks).to(device)
+			b_supersenses_encoded = torch.tensor(b_supersenses_encoded).to(device)
+
+			yield b_bert_input, b_tg_trks, b_supersenses_encoded, b_senses_ids, b_lemmas
 
 
 class corpusEncoder(exampleEncoder):
-	def __init__(self, datafile, dataset, tokenizer, ann_stage):
+	def __init__(self, datafile, dataset, tokenizer, ann_stage, use_sample=False, sample_size=32):
 		super().__init__(datafile, dataset, tokenizer)
 		self.df_definitions = self.df_definitions[self.df_definitions['ann_stage']==ann_stage]
 		self.df_examples = self.df_examples[self.df_examples['ann']==ann_stage]

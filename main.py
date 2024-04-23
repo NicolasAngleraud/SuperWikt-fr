@@ -72,7 +72,7 @@ if __name__ == '__main__':
 	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
 	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
 
-	
+	"""
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 16,
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	coeff_def = 1
 	coeff_ex = 1
 	
-	"""
+	
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
 	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 	"""
 	
 	
-	
+	"""
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 16,
@@ -188,10 +188,8 @@ if __name__ == '__main__':
 	
 	rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
-	
-	
-	
 	"""
+	
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 16,
@@ -211,7 +209,7 @@ if __name__ == '__main__':
 	
 	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
-	clf.load_clf(corpus_dev_pred_file)
+	clf.load_clf(corpus_clf_file)
 	
 	train_accuracy = clf.evaluate(train_examples_encoder)
 	dev_accuracy = clf.evaluate(dev_examples_encoder)
@@ -224,5 +222,5 @@ if __name__ == '__main__':
 	
 	dev_df = pd.DataFrame(dev_predictions)
 	dev_df.to_excel(corpus_dev_pred_file, index=False)
-	"""
+	
 	
