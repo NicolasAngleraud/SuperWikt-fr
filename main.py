@@ -207,12 +207,13 @@ if __name__ == '__main__':
 	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
 	dev_examples_encoder.encode()
 	
-	print(train_examples_encoder.bert_input)
-	print(train_examples_encoder.tg_trks)
-	print(train_examples_encoder.supersenses_encoded)
-	print(train_examples_encoder.senses_ids)
-	print(train_examples_encoder.lemmas)
-
+	print(len(train_examples_encoder.bert_input))
+	print(len(train_examples_encoder.tg_trks))
+	print(len(train_examples_encoder.supersenses_encoded))
+	print(len(train_examples_encoder.senses_ids))
+	print(len(train_examples_encoder.lemmas))
+	
+	"""
 	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
 	clf.load_clf(corpus_clf_file)
@@ -228,5 +229,5 @@ if __name__ == '__main__':
 	
 	dev_df = pd.DataFrame(dev_predictions)
 	dev_df.to_excel(corpus_dev_pred_file, index=False)
-	
+	"""
 	
