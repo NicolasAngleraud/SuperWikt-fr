@@ -61,14 +61,17 @@ if __name__ == '__main__':
 	def_lem_clf_file = './def_lem_clf.params'
 	def_clf_file = './def_clf.params'
 	ex_clf_file = './ex_clf.params'
+	corpus_clf_file = './corpus_clf.params'
 	
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
 	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
+	corpus_dev_pred_file = './corpus_clf.params'
 	
 	rand_dev_def_lem_pred_file = './rand_dev_def_lem_clf.xlsx'
 	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
 	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
+
 	
 	params = {
 	"nb_epochs": 100,
@@ -150,7 +153,7 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.00001,
+	"lr": 0.000005,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
@@ -180,9 +183,46 @@ if __name__ == '__main__':
 	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
 	print()
 	
-	freq_dev_def_df = pd.DataFrame(freq_dev_predictions)
-	freq_dev_def_df.to_excel(freq_dev_ex_pred_file, index=False)
+	freq_dev_ex_df = pd.DataFrame(freq_dev_predictions)
+	freq_dev_ex_df.to_excel(freq_dev_ex_pred_file, index=False)
 	
-	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
-	rand_dev_def_df.to_excel(rand_dev_ex_pred_file, index=False)
+	rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
+	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
+	
+	
+	
+	"""
+	params = {
+	"nb_epochs": 100,
+	"batch_size": 16,
+	"hidden_layer_size": 768,
+	"patience": 2,
+	"lr": 0.00001,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
+	
+	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
+	train_examples_encoder.encode()
+	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor",use_sample=True)
+	dev_examples_encoder.encode()
+	
+	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
+	clf.load_clf(corpus_dev_pred_file)
+	
+	train_accuracy = clf.evaluate(train_examples_encoder)
+	dev_accuracy = clf.evaluate(dev_examples_encoder)
+	
+	dev_predictions = clf.predict(dev_examples_encoder)
+	
+	print("train dev accurcay = ", percentage(train_accuracy))
+	print("dev accurcay = ", percentage(dev_accuracy))
+	print()
+	
+	dev_df = pd.DataFrame(dev_predictions)
+	dev_df.to_excel(corpus_dev_pred_file, index=False)
+	"""
 	

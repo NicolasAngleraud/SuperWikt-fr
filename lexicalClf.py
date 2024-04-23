@@ -405,6 +405,81 @@ class multiRankClf(nn.Module):
 				if mean_dev_losses[epoch] < min_mean_dev_loss:
 					min_mean_dev_loss = mean_dev_losses[epoch]
 				torch.save(self.state_dict(), clf_file)
+				
+				
+	def train_contextual_clf(self, train_encoder, dev_encoder, clf_file):
+		self.train()
+		
+		train_losses = []
+		dev_losses = []
+		dev_accuracies = []
+		
+		params = self.params
+		
+		loss_function = nn.NLLLoss()
+		
+		patience = params["patience"]
+		max_dev_accuracy = 0
+		min_dev_loss = 10000000000
+		
+		optimizer = optim.AdamW(self.parameters(), lr=params["lr"], weight_decay=params["weight_decay"])
+		
+
+		for epoch in range(params["nb_epochs"]):
+			print("epoch: ", epoch+1)
+			
+			epoch_loss = 0
+			train_epoch_accuracy = 0
+			dev_epoch_loss = 0
+			dev_epoch_accuracy = 0
+			
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
+				
+				self.zero_grad()
+				
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
+				
+				loss = loss_function(log_probs, b_supersenses_encoded)
+				loss.backward()
+				optimizer.step()
+
+				epoch_loss += loss.item()/params["batch_size"]
+
+			train_losses.append(epoch_loss)
+			
+			with torch.no_grad():
+			
+				for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
+					
+					dev_log_probs = self.forward(b_bert_encodings, b_target_ranks)
+
+					predicted_indices = torch.argmax(dev_log_probs, dim=1)
+					dev_epoch_accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+
+					dev_loss = loss_function(dev_log_probs, b_supersenses_encoded)
+					dev_epoch_loss += dev_loss.item()
+
+				dev_losses.append(dev_epoch_loss / dev_encoder.length)
+				dev_accuracies.append(dev_epoch_accuracy / dev_encoder.length)
+
+			
+			if epoch >= params["patience"]:
+			
+				if dev_losses[epoch] < min_dev_loss:
+					min_dev_loss = dev_losses[epoch]
+					torch.save(self.state_dict(), clf_file)
+					patience = params["patience"]
+					
+				else:
+					patience = patience - 1
+				
+				if patience == 0:
+					print("EARLY STOPPING : epoch ", epoch+1)
+					break
+			else:
+				if dev_losses[epoch] < min_dev_loss:
+					min_dev_loss = dev_losses[epoch]
+				torch.save(self.state_dict(), clf_file)
 	
 	
 	def save_clf(self, clf_save_file):
@@ -454,6 +529,9 @@ class multiRankClf(nn.Module):
 		predictions = self.predict(data_encoder)
 		
 		return accuracy, predictions	
+
+
+
 
 
 class lexicalClf_V1():

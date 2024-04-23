@@ -346,13 +346,8 @@ class multiEncoder(Encoder):
 		pass
 
 
-class corpusEncoder(Encoder):
-	def __init__(self, datafile, dataset, tokenizer):
+class corpusEncoder(exampleEncoder):
+	def __init__(self, datafile, dataset, tokenizer, ann_stage):
 		super().__init__(datafile, dataset, tokenizer)
-	
-	def encode(self):
-		pass
-	def shuffle_data(self):
-		pass
-	def make_batches(self):
-		pass
+		self.df_definitions = self.df_definitions[self.df_definitions['ann_stage']==ann_stage]
+		self.df_examples = self.df_examples[self.df_examples['ann']==ann_stage]
