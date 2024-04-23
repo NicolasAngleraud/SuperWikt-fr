@@ -432,6 +432,6 @@ class multiEncoder(Encoder):
 
 class corpusEncoder(exampleEncoder):
 	def __init__(self, datafile, dataset, tokenizer, ann_stage, use_sample=False, sample_size=32):
-		super().__init__(datafile, dataset, tokenizer)
+		super().__init__(datafile, dataset, tokenizer, use_sample=use_sample, sample_size=sample_size)
 		self.df_definitions = self.df_definitions[self.df_definitions['ann_stage']==ann_stage]
 		self.df_examples = self.df_examples[self.df_examples['ann']==ann_stage]
