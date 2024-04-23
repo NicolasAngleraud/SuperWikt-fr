@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
 	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
-	corpus_dev_pred_file = './corpus_clf.params'
+	corpus_dev_pred_file = './dev_corpus_clf.xlsx'
 	
 	rand_dev_def_lem_pred_file = './rand_dev_def_lem_clf.xlsx'
 	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
