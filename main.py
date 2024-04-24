@@ -196,9 +196,9 @@ if __name__ == '__main__':
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
 	"""
 	
-	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
+	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=False)
 	train_examples_encoder.encode()
-	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
+	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=False)
 	dev_examples_encoder.encode()
 	
 	for run in range(5):
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 			}
 			
 			
-			print(f"LR {lr} - RUN {run}")
+			print(f"LR {lr} - RUN {run+1}")
 			print()
 			
 			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
@@ -231,7 +231,8 @@ if __name__ == '__main__':
 			print("train dev accurcay = ", percentage(train_accuracy))
 			print("dev accurcay = ", percentage(dev_accuracy))
 			print()
+			print()
 			
 			dev_df = pd.DataFrame(dev_predictions)
-			dev_df.to_excel(corpus_dev_pred_file.replace('.xlsx', f"{lr_id(lr)}_run_{run}.xlsx"), index=False)
+			dev_df.to_excel(corpus_dev_pred_file.replace('.xlsx', f"_lr_{lr_id(lr)}_run_{run+1}.xlsx"), index=False)
 
