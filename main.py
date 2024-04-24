@@ -41,7 +41,7 @@ def lr_id(lr):
 	lr = str(lr)
 	if 'e-' in lr:
 		return lr[0] + "_e_minus_" + lr.split('e-')[1].strip('0')
-	return lr.split('.')[1][-1] + "_e_" + str(len(lr.split('.')[1]))
+	return lr.split('.')[1][-1] + "_e_minus_" + str(len(lr.split('.')[1]))
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
@@ -201,13 +201,13 @@ if __name__ == '__main__':
 	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=False)
 	dev_examples_encoder.encode()
 	
-	for run in range(5):
-		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
+	for run in range(1):
+		for i, lr in enumerate([0.00005, 0.00001]):
 	
 			params = {
 			"nb_epochs": 100,
 			"batch_size": 16,
-			"hidden_layer_size": 768,
+			"hidden_layer_size": 128,
 			"patience": 2,
 			"lr": lr,
 			"weight_decay": 0.001,
