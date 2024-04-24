@@ -37,6 +37,12 @@ def percentage(decimal):
     percentage = decimal * 100
     return f"{percentage:.2f}%"
 
+def lr_id(lr):
+	lr = str(lr)
+	if 'e-' in lr:
+		return lr[0] + "_e_minus_" + lr.split('e-')[1].strip('0')
+	return lr.split('.')[1][-1] + "_e_" + str(len(lr.split('.')[1]))
+
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
@@ -190,36 +196,39 @@ if __name__ == '__main__':
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
 	"""
 	
-	params = {
-	"nb_epochs": 100,
-	"batch_size": 16,
-	"hidden_layer_size": 768,
-	"patience": 2,
-	"lr": 0.00005,
-	"weight_decay": 0.001,
-	"frozen": False,
-	"max_seq_length": 100
-	}
+	for run in range(5):
+		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
 	
-	
-	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=False)
-	train_examples_encoder.encode()
-	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=False)
-	dev_examples_encoder.encode()
-	
-	clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.1, bert_model_name=MODEL_NAME)
-	clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
-	clf.load_clf(corpus_clf_file)
-	
-	train_accuracy = clf.evaluate(train_examples_encoder)
-	dev_accuracy = clf.evaluate(dev_examples_encoder)
-	
-	dev_predictions = clf.predict(dev_examples_encoder)
-	
-	print("train dev accurcay = ", percentage(train_accuracy))
-	print("dev accurcay = ", percentage(dev_accuracy))
-	print()
-	
-	dev_df = pd.DataFrame(dev_predictions)
-	dev_df.to_excel(corpus_dev_pred_file, index=False)
+			params = {
+			"nb_epochs": 100,
+			"batch_size": 16,
+			"hidden_layer_size": 768,
+			"patience": 2,
+			"lr": lr,
+			"weight_decay": 0.001,
+			"frozen": False,
+			"max_seq_length": 100
+			}
+			
+			
+			train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
+			train_examples_encoder.encode()
+			dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
+			dev_examples_encoder.encode()
+			
+			clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+			clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
+			clf.load_clf(corpus_clf_file)
+			
+			train_accuracy = clf.evaluate(train_examples_encoder)
+			dev_accuracy = clf.evaluate(dev_examples_encoder)
+			
+			dev_predictions = clf.predict(dev_examples_encoder)
+			
+			print("train dev accurcay = ", percentage(train_accuracy))
+			print("dev accurcay = ", percentage(dev_accuracy))
+			print()
+			
+			dev_df = pd.DataFrame(dev_predictions)
+			dev_df.to_excel(corpus_dev_pred_file.replace('.xlsx', f"{lr_id(lr)}_run_{run}.xlsx"), index=False)
 
