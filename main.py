@@ -202,7 +202,7 @@ if __name__ == '__main__':
 	dev_examples_encoder.encode()
 	
 	for run in range(1):
-		for i, lr in enumerate([0.0005, 0.0001, 0.00005, 0.00001, 0.000005]):
+		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
 	
 			params = {
 			"nb_epochs": 100,
@@ -219,7 +219,7 @@ if __name__ == '__main__':
 			print(f"LR {lr} - RUN {run+1}")
 			print()
 			
-			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.1, bert_model_name=MODEL_NAME)
 			corpus_clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
 			corpus_clf.load_clf(corpus_clf_file)
 			
@@ -228,7 +228,7 @@ if __name__ == '__main__':
 			
 			dev_predictions = corpus_clf.predict(dev_examples_encoder)
 			
-			print("train dev accurcay = ", percentage(train_accuracy))
+			print("train accurcay = ", percentage(train_accuracy))
 			print("dev accurcay = ", percentage(dev_accuracy))
 			print()
 			print()
