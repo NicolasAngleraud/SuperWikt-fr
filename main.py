@@ -202,7 +202,7 @@ if __name__ == '__main__':
 	dev_examples_encoder.encode()
 	
 	for run in range(1):
-		for i, lr in enumerate([0.00005, 0.00001]):
+		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
 	
 			params = {
 			"nb_epochs": 100,
