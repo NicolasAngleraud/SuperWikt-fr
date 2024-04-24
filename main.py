@@ -202,12 +202,12 @@ if __name__ == '__main__':
 	dev_examples_encoder.encode()
 	
 	for run in range(1):
-		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
+		for i, lr in enumerate([0.0005, 0.0001, 0.00005, 0.00001, 0.000005]):
 	
 			params = {
 			"nb_epochs": 100,
 			"batch_size": 16,
-			"hidden_layer_size": 256,
+			"hidden_layer_size": 768,
 			"patience": 2,
 			"lr": lr,
 			"weight_decay": 0.001,
