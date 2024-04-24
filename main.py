@@ -196,6 +196,11 @@ if __name__ == '__main__':
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
 	"""
 	
+	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
+	train_examples_encoder.encode()
+	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
+	dev_examples_encoder.encode()
+	
 	for run in range(5):
 		for i, lr in enumerate([0.0001, 0.00005, 0.00001, 0.000005]):
 	
@@ -211,19 +216,17 @@ if __name__ == '__main__':
 			}
 			
 			
-			train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=True)
-			train_examples_encoder.encode()
-			dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=True)
-			dev_examples_encoder.encode()
+			print(f"LR {lr} - RUN {run}")
+			print()
 			
-			clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
-			clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
-			clf.load_clf(corpus_clf_file)
+			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+			corpus_clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
+			corpus_clf.load_clf(corpus_clf_file)
 			
-			train_accuracy = clf.evaluate(train_examples_encoder)
-			dev_accuracy = clf.evaluate(dev_examples_encoder)
+			train_accuracy = corpus_clf.evaluate(train_examples_encoder)
+			dev_accuracy = corpus_clf.evaluate(dev_examples_encoder)
 			
-			dev_predictions = clf.predict(dev_examples_encoder)
+			dev_predictions = corpus_clf.predict(dev_examples_encoder)
 			
 			print("train dev accurcay = ", percentage(train_accuracy))
 			print("dev accurcay = ", percentage(dev_accuracy))
