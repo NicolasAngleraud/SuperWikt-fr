@@ -571,20 +571,16 @@ class lexicalClf_V1():
 
 class lexicalClf_V2():
 
-	def __init__(self, params, DEVICE, coeff_ex, coeff_def, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
-		if multi_clf: self.clf = multiRankClf(params, DEVICE, use_lemma=False, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.clf_lem = multiRankClf(params, DEVICE, use_lemma=True, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.multi_clf = multi_clf
+	def __init__(self, params, DEVICE, coeff_ex, coeff_def, dropout_rate=0.1, bert_model_name=MODEL_NAME):
+		self.clf = multiRankClf(params, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
 		self.coeff_ex = coeff_ex
 		self.coeff_def = coeff_def
 
 	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
-		if self.multi_clf: self.clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
-		self.clf_lem.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+		self.clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
 	
-	def load_clf(self, clf_lem_file, clf_file=None):
-		if self.multi_clf: self.clf.load_state_dict(torch.load(clf_file))
-		self.clf_lem.load_state_dict(torch.load(clf_lem_file))
+	def load_clf(self, clf_file):
+		self.clf.load_state_dict(torch.load(clf_file))
 	
 	def evaluate(self, sense_encoder):
 		pass

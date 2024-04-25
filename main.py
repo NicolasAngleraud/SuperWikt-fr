@@ -219,7 +219,7 @@ if __name__ == '__main__':
 			print(f"LR {lr} - RUN {run+1}")
 			print()
 			
-			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.1, bert_model_name=MODEL_NAME)
+			corpus_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 			corpus_clf.train_contextual_clf(train_examples_encoder, dev_examples_encoder, corpus_clf_file)
 			corpus_clf.load_clf(corpus_clf_file)
 			
