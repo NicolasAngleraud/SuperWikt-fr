@@ -31,7 +31,7 @@ Task: Given the following definition, identify the category it best fits into by
 
 Definition: "A naturally occurring, typically inorganic substance having a definite chemical composition and usually a distinct crystalline form."
 
-Choose only one word from the given classes that best describes the definition provided.
+Choose only one word from the given classes that best describes the definition provided. Chosen class: 
 """
 
 inputs = tokenizer.encode(prompt, return_tensors="pt")
