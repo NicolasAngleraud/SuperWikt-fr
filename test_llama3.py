@@ -2,7 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 
 # Load tokenizer
-tokenizer = AutoTokenizer.from_pretrained("../Meta-Llama-3-8B/tokenizer.model")
+tokenizer = AutoTokenizer.from_pretrained("../Meta-Llama-3-8B")
 
 # Load model
 model = AutoModel.from_pretrained("../Meta-Llama-3-8B")
