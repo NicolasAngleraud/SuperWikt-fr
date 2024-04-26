@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModel
 tokenizer = AutoTokenizer.from_pretrained("../Meta-Llama-3-8B/tokenizer.model")
 
 # Load model
-model = AutoModel.from_pretrained("../Meta-Llama-3-8B/consolidated.00.pth")
+model = AutoModel.from_pretrained("../Meta-Llama-3-8B")
 
 # Set the model to evaluation mode
 model.eval()
