@@ -1,26 +1,20 @@
-import importlib.util
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-# Importing model.py
-spec = importlib.util.spec_from_file_location("llama_model", '../llama3/llama/model.py')
-llama_model = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(llama_model)
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained("lightblue/suzume-llama-3-8B-multilingual")
+model = AutoModelForCausalLM.from_pretrained("lightblue/suzume-llama-3-8B-multilingual")
 
-# Importing tokenizer.py
-spec = importlib.util.spec_from_file_location("llama_tokenizer", '../llama3/llama/tokenizer.py')
-llama_tokenizer = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(llama_tokenizer)
+# Define prompt
+prompt = "Once upon a time, there was a"
 
-# Importing generation.py
-spec = importlib.util.spec_from_file_location("llama_generation", '../llama3/llama/generation.py')
-llama_generation = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(llama_generation)
+# Tokenize prompt
+input_ids = tokenizer.encode(prompt, return_tensors="pt")
 
-# Now you can access classes/functions from the imported modules
-model = llama_generation.Llama.build(ckpt_dir="../Meta-Llama-3-8B",
-                                tokenizer_path="../Meta-Llama-3-8B/tokenizer.model",
-                                max_seq_len=100,
-                                max_batch_size=2)
+# Generate text based on prompt
+output = model.generate(input_ids, max_length=100, num_return_sequences=1, temperature=0.7)
 
+# Decode generated output
+generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 
-
-
+print("Generated Text:")
+print(generated_text)
