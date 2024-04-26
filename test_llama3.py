@@ -1,7 +1,7 @@
 import torch
 import importlib.util
 
-spec = importlib.util.spec_from_file_location("model", '../llama3/llama/model.py')
+spec = importlib.util.spec_from_file_location("llama", '../llama3/llama/model.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
