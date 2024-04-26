@@ -27,11 +27,11 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
 prompt = """
-Task: Given the following definition, identify the category it best fits into by choosing one of these semantic classes: [Animal, Vegetable, Mineral, Concept, Event]. Provide only the category name as your answer.
+Ecris en un mot la classe sémantique décrivant le mieux la définition suivante.
 
-Definition: "A naturally occurring, typically inorganic substance having a definite chemical composition and usually a distinct crystalline form."
+Définition: Végétal de couleur sombre.
 
-Choose only one word from the given classes that best describes the definition provided. Chosen class: 
+Classe sémantique: 
 """
 
 inputs = tokenizer(prompt, return_tensors="pt")
