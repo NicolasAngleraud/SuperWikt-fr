@@ -21,17 +21,7 @@ print("Generated Text:")
 print(generated_text)
 """
 
-import requests
-
 API_TOKEN = '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'
-headers = {
-    'Authorization': f'Bearer {API_TOKEN}'
-}
-
-response = requests.get('https://api-inference.huggingface.co/models', headers=headers)
-
-print(response.json())
-
 
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
