@@ -5,7 +5,7 @@ tokenizer = AutoTokenizer.from_pretrained("lightblue/suzume-llama-3-8B-multiling
 model = AutoModelForCausalLM.from_pretrained("lightblue/suzume-llama-3-8B-multilingual")
 
 # Define prompt
-prompt = "Pour la définition de 'chien : individu de la race des canidés', quelle est la classe sémantique ? Donne comme réponse une classe entre 'animal' et 'person'."
+prompt = "'chien : individu de la race des canidés'. Donne un seul mot correspondant à la classe sémantique de cette définition entre 'person' et 'animal'."
 
 # Tokenize prompt
 input_ids = tokenizer.encode(prompt, return_tensors="pt")
