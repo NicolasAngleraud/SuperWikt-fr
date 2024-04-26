@@ -1,25 +1,25 @@
-import torch
 import importlib.util
 
-spec = importlib.util.spec_from_file_location("llama", '../llama3/llama/model.py')
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+# Importing model.py
+spec = importlib.util.spec_from_file_location("llama_model", '../llama3/llama/model.py')
+llama_model = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(llama_model)
 
-spec = importlib.util.spec_from_file_location("tokenizer", '../llama3/llama/tokenizer.py')
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+# Importing tokenizer.py
+spec = importlib.util.spec_from_file_location("llama_tokenizer", '../llama3/llama/tokenizer.py')
+llama_tokenizer = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(llama_tokenizer)
 
-spec = importlib.util.spec_from_file_location("generation", '../llama3/llama/generation.py')
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+# Importing generation.py
+spec = importlib.util.spec_from_file_location("llama_generation", '../llama3/llama/generation.py')
+llama_generation = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(llama_generation)
 
-
-
-model = llama.Llama.build(ckpt_dir="../Meta-Llama-3-8B",
-					tokenizer_path="../Meta-Llama-3-8B/tokenizer.model",
-					max_seq_length=100,
-					max_batch_size=2,
-		    		)
+# Now you can access classes/functions from the imported modules
+model = llama_model.Llama.build(ckpt_dir="../Meta-Llama-3-8B",
+                                tokenizer_path="../Meta-Llama-3-8B/tokenizer.model",
+                                max_seq_length=100,
+                                max_batch_size=2)
 
 
 
