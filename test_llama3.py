@@ -21,22 +21,27 @@ print("Generated Text:")
 print(generated_text)
 """
 
+import requests
+
+API_TOKEN = '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'
+headers = {
+    'Authorization': f'Bearer {API_TOKEN}'
+}
+
+response = requests.get('https://api-inference.huggingface.co/models', headers=headers)
+
+print(response.json())
 
 
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B")
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
-# Define prompt
 prompt = "'chien : individu de la race des canidés'. Donne un seul mot correspondant à la classe sémantique de cette définition entre 'person' et 'animal'."
 
-# Tokenize prompt
 input_ids = tokenizer.encode(prompt, return_tensors="pt")
 
-# Generate text based on prompt
 output = model.generate(input_ids, max_length=100, num_return_sequences=1, temperature=0.7)
 
-# Decode generated output
 generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 
 print("Generated Text:")
