@@ -1,6 +1,10 @@
 import torch
-from transformers import AutoTokenizer, AutoModel
-from generation.py import Llama
+import importlib.util
+
+module_path = '..//file_to_import.py'
+spec = importlib.util.spec_from_file_location("module_name", module_path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
 
 
 model = Llama.build(ckpt_dir="../Meta-Llama-3-8B",
