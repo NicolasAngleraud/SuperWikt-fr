@@ -34,9 +34,11 @@ Definition: "A naturally occurring, typically inorganic substance having a defin
 Choose only one word from the given classes that best describes the definition provided. Chosen class: 
 """
 
-inputs = tokenizer.encode(prompt, return_tensors="pt")
-output = model.generate(inputs, max_length=inputs.shape[-1] + 10, num_return_sequences=1)
-decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
+inputs = tokenizer(prompt, return_tensors="pt")
+output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.8)
 
-print("Generated Text:")
-print(decoded_output)
+generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
+
+
+print("Generated Classification:", generated_classification)
+
