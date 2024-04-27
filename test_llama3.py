@@ -9,8 +9,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 API_TOKEN = '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'
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
+tokenizer = AutoTokenizer.from_pretrained("lightblue/suzume-llama-3-8B-multilingual", use_auth_token=API_TOKEN)
+model = AutoModelForCausalLM.from_pretrained("lightblue/suzume-llama-3-8B-multilingual", use_auth_token=API_TOKEN)
 
 
 def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
@@ -21,7 +21,7 @@ définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 
 
 inputs = tokenizer(prompt, return_tensors="pt")
-output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.5)
+output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
 
 generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
 
