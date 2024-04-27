@@ -13,11 +13,11 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct",
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 
 
-definition = "Auteur de lettres ou de coups de téléphone anonymes.  "
+definition = "Auteur de lettres ou de coups de téléphone anonymes."
 
 prompt = """Tu es un annotateur en sémantique lexciale qui doit attribuer à une définition la classe sémantique qui correspond le plus à ce qui est décrit par la définition. Le choix des classes est restreint aux quatre classes suivantes: person, animal, mineral, plant.
 
-Répond au format de la manière suivante, en ne donnant aucun autre information ou mot: {"definition": definition, "classe sémantique": classe sémantique}
+Répond au format de la manière suivante, en ne donnant aucun autre information ou mot: {"définition": définition, "classe sémantique": classe sémantique}
 
 Voici quelques exemples:
 {"définition": "riz : Céréale que l’on cultive dans les terres humides et marécageuses des pays chauds.", "classe sémantique": "plant"},
