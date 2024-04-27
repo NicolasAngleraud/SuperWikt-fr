@@ -13,7 +13,7 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct",
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 
 
-definition = "chien : Mammifère carnivore de la famille des Canidés, apparenté au loup (dont il est considéré comme une sous-espèce) et domestiqué par l’être humain, existant sous de nombreuses races aux morphologies variables, de nom scientifique 'Canis lupus familiaris'."
+definition = "corbeau : Nom vernaculaire du grand corbeau (Corvus corax), gros oiseau passereau carnassier à plumage noir et au bec fort et noir. "
 
 prompt = """<s>[INST] <<SYS>>
 Tu es un annotateur en sémantique lexciale qui doit attribuer à une définition la classe sémantique qui correspond le plus à ce qui est décrit par la définition. Le choix des classes est restreint aux quatre classes suivantes: person, animal, mineral, plant.
