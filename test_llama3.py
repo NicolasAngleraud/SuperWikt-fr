@@ -13,7 +13,7 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct",
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 
 
-def_ = "Auteur de lettres ou de coups de téléphone anonymes."
+def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
 
 prompt = """Tu es un annotateur en sémantique lexciale qui doit attribuer à une définition la classe sémantique qui correspond le plus à ce qui est décrit par la définition. Le choix des classes est restreint aux quatre classes suivantes: person, animal, mineral, plant.
 
