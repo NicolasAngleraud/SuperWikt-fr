@@ -38,7 +38,7 @@ Définition: {BODY}
 
 
 inputs = tokenizer(prompt, return_tensors="pt")
-output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.8)
+output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 100, num_return_sequences=1, temperature=0.8)
 
 generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
 
