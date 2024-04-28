@@ -56,17 +56,17 @@ class TextClassifier(nn.Module):
 
 
 class PrefixTuning(nn.Module):
-    def __init__(self, model_base, num_labels, prefix_length, prefix_size):
-        super(PrefixTuning, self).__init__()
-        self.model_base = model_base
-        self.prefix_length = prefix_length
-        self.prefix_size = prefix_size
-        self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, prefix_size))
-        self.dropout = nn.Dropout(0.1)
-        self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
-        
-        for param in self.model_base.parameters():
-        	param.requires_grad = False
+	def __init__(self, model_base, num_labels, prefix_length, prefix_size):
+		super(PrefixTuning, self).__init__()
+		self.model_base = model_base
+		self.prefix_length = prefix_length
+		self.prefix_size = prefix_size
+		self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, prefix_size))
+		self.dropout = nn.Dropout(0.1)
+		self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
+
+		for param in self.model_base.parameters():
+			param.requires_grad = False
 
 	def forward(self, input_ids, attention_mask=None):
 		# Generate the same batch size of prefix embeddings
@@ -87,6 +87,7 @@ class PrefixTuning(nn.Module):
 		logits = self.classifier(pooled_output)
 
 		return logits
+
 
 
 def freeze_model_parameters(model):
