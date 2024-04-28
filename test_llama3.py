@@ -187,7 +187,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
 # Define training arguments
 training_args = TrainingArguments(
     num_train_epochs=1,  # Number of training epochs
-    per_device_train_batch_size=4,  # Batch size per device during training
+    per_device_train_batch_size=2,  # Batch size per device during training
 )
 
 # Define trainer
