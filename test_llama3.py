@@ -127,7 +127,42 @@ class PrefixTuningGPT(nn.Module):
 
 ################################################################################################################
 
-"""
+import torch
+from torch.utils.data import Dataset
+
+
+
+if torch.cuda.is_available():
+	DEVICE = torch.device("cuda:1")
+
+
+class PrefixDataset(Dataset):
+    def __init__(self, sequences, labels, device):
+        self.sequences = [sequence.to(device) for sequence in sequences]
+        self.labels = labels.to(device)
+
+    def __len__(self):
+        return len(self.sequences)
+
+    def __getitem__(self, idx):
+        sequence = self.sequences[idx]
+        label = self.labels[idx]
+        return sequence, label
+
+# Define your training sequences and labels
+train_sequences = [torch.randint(0, 100, (sequence_length,)) for _ in range(num_training_sequences)]
+train_labels = torch.randint(0, 3, (num_training_sequences,))  # Assuming 3 classes for classification
+
+# Define your evaluation sequences and labels
+eval_sequences = [torch.randint(0, 100, (sequence_length,)) for _ in range(num_eval_sequences)]
+eval_labels = torch.randint(0, 3, (num_eval_sequences,))  # Assuming 3 classes for classification
+
+
+# Create training and evaluation datasets
+train_dataset = PrefixDataset(train_sequences, train_labels, DEVICE)
+eval_dataset = PrefixDataset(eval_sequences, eval_labels, DEVICE)
+
+
 # Assuming `model_base` is your pre-trained autoregressive model like LLaMA or GPT
 freeze_model_parameters(model_base)
 
@@ -139,10 +174,76 @@ optimizer = torch.optim.Adam([
     {'params': prefix_model.prefix_embeddings, 'lr': 1e-4},
     {'params': prefix_model.classifier.parameters(), 'lr': 1e-4}
 ])
-"""
+
+
+# Assuming you have defined train_dataset and eval_dataset
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+eval_loader = DataLoader(eval_dataset, batch_size=1)
+
+# Define your loss function (e.g., CrossEntropyLoss for classification)
+loss_fn = nn.CrossEntropyLoss()
+
+# Number of training epochs
+num_epochs = 3
+
+# Training loop
+for epoch in range(num_epochs):
+    prefix_model.train()  # Set the model to training mode
+    total_loss = 0.0
+    
+    for batch in train_loader:
+        input_ids, labels = batch
+        
+        optimizer.zero_grad()  # Clear gradients
+        
+        # Forward pass
+        logits = prefix_model(input_ids)
+        
+        # Compute loss
+        loss = loss_fn(logits, labels)
+        total_loss += loss.item()
+        
+        # Backward pass
+        loss.backward()
+        
+        # Update weights
+        optimizer.step()
+    
+    # Calculate average training loss
+    avg_train_loss = total_loss / len(train_loader)
+    print(f"Epoch {epoch+1}/{num_epochs}, Avg. Training Loss: {avg_train_loss:.4f}")
+    
+    # Evaluation loop
+    prefix_model.eval()  # Set the model to evaluation mode
+    total_eval_loss = 0.0
+    total_correct = 0
+    
+    with torch.no_grad():
+        for batch in eval_loader:
+            input_ids, labels = batch
+            
+            # Forward pass
+            logits = prefix_model(input_ids)
+            
+            # Compute loss
+            eval_loss = loss_fn(logits, labels)
+            total_eval_loss += eval_loss.item()
+            
+            # Compute accuracy
+            _, predicted = torch.max(logits, 1)
+            total_correct += (predicted == labels).sum().item()
+    
+    # Calculate average evaluation loss and accuracy
+    avg_eval_loss = total_eval_loss / len(eval_loader)
+    accuracy = total_correct / len(eval_dataset)
+    print(f"Avg. Eval Loss: {avg_eval_loss:.4f}, Accuracy: {accuracy:.2%}")
+
+# Training finished
+print("Training completed!")
 
 ################################################################################################################
 
+"""
 import torch
 from torch.utils.data import Dataset
 from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
@@ -188,8 +289,8 @@ model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
 # Define training arguments
 training_args = TrainingArguments(
     num_train_epochs=1,  # Number of training epochs
-    per_device_train_batch_size=1,  # Batch size per device during training
-    lora=0.5
+    per_device_train_batch_size=2,  # Batch size per device during training
+    lora=0.3
 )
 
 # Define trainer
@@ -202,4 +303,4 @@ trainer = Trainer(
 
 # Train the model
 trainer.train()
-
+"""
