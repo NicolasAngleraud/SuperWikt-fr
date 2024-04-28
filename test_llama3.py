@@ -13,10 +13,6 @@ import argparse
 API_TOKEN = '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'
 
 
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
-
-
 def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
@@ -41,7 +37,9 @@ if __name__ == '__main__':
 	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivant parmi les quatre classes suivantes: person, animal, mineral, plant.
 
 	définition: {BODY} --> classe sémantique: """.format(BODY=def_)
-
+	
+	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
+	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN).to(DEVICE)
 
 	inputs = tokenizer(prompt, return_tensors="pt")
 	output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
