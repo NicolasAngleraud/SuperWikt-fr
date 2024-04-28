@@ -1,4 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+import torch.nn as nn
+
 
 
 ## MODELS
@@ -9,13 +12,13 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 API_TOKEN = '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'
 
-tokenizer = AutoTokenizer.from_pretrained("lightblue/suzume-llama-3-8B-multilingual", use_auth_token=API_TOKEN)
-model = AutoModelForCausalLM.from_pretrained("lightblue/suzume-llama-3-8B-multilingual", use_auth_token=API_TOKEN)
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
 
 def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
 
-prompt = """Tu es un annotateur en sémantique lexciale qui doit attribuer à une définition la classe sémantique qui correspond le plus à ce qui est décrit par la définition. Le choix des classes est restreint aux quatre classes suivantes: person, animal, mineral, plant.
+prompt = """Choisis la classe sémantique décrivant le mieux la définition suivant parmi les quatre classes suivantes: person, animal, mineral, plant.
 
 définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 
@@ -28,3 +31,80 @@ generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
 
 print("Generated Classification:", generated_classification)
 
+
+##################################################################################################
+
+
+class TextClassifier(nn.Module):
+    def __init__(model_base, num_labels):
+        super(TextClassifier, self).__init__()
+        self.model_base = model_base  # pre-trained model
+        self.dropout = nn.Dropout(0.1)
+        self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
+
+    def forward(self, input_ids, attention_mask=None):
+        outputs = self.model_base(input_ids, attention_mask=attention_mask)
+        sequence_output = outputs.last_hidden_state
+        pooled_output = torch.mean(sequence_output, 1)  # mean pooling
+        pooled_output = self.dropout(pooled_output)
+        logits = self.classifier(pooled_output)
+
+        return logits
+
+
+
+
+class PrefixTuning(nn.Module):
+    def __init__(self, model_base, num_labels, prefix_length, prefix_size):
+        super(PrefixTuning, self).__init__()
+        self.model_base = model_base
+        self.prefix_length = prefix_length
+        self.prefix_size = prefix_size
+        self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, prefix_size))
+        self.dropout = nn.Dropout(0.1)
+        self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
+
+    def forward(self, input_ids, attention_mask=None):
+        # Generate the same batch size of prefix embeddings
+        batch_size = input_ids.shape[0]
+        prefix = self.prefix_embeddings.expand(batch_size, -1, -1)
+
+        # Get the embeddings from the base model
+        base_embeddings = self.model_base.transformer.wte(input_ids)
+
+        # Concatenate prefix embeddings with base embeddings
+        full_embeddings = torch.cat((prefix, base_embeddings), dim=1)
+        extended_attention_mask = torch.cat([torch.ones(batch_size, self.prefix_length).to(input_ids.device), attention_mask], dim=1)
+
+        # Pass the full sequence to the model
+        outputs = self.model_base(inputs_embeds=full_embeddings, attention_mask=extended_attention_mask)
+        sequence_output = outputs.last_hidden_state
+
+        # Use mean pooling over the sequence for classification
+        pooled_output = torch.mean(sequence_output, 1)
+        pooled_output = self.dropout(pooled_output)
+        logits = self.classifier(pooled_output)
+
+        return logits
+
+
+def freeze_model_parameters(model):
+    for param in model.parameters():
+        param.requires_grad = False
+        
+        
+################################################################################################################
+
+"""
+# Assuming `model_base` is your pre-trained autoregressive model like LLaMA or GPT
+freeze_model_parameters(model_base)
+
+# Create the PrefixTuning model which includes the prefix embeddings and a new classifier
+prefix_model = PrefixTuning(model_base, num_labels=3, prefix_length=10, prefix_size=model_base.config.hidden_size)
+
+# Assuming the use of an optimizer like Adam
+optimizer = torch.optim.Adam([
+    {'params': prefix_model.prefix_embeddings, 'lr': 1e-4},
+    {'params': prefix_model.classifier.parameters(), 'lr': 1e-4}
+])
+"""
