@@ -149,9 +149,7 @@ class PrefixTuning(nn.Module):
 
 		# Pass the full sequence to the model
 		outputs = self.model_base(input_ids=full_input_ids, attention_mask=extended_attention_mask)
-		outputs = self.model_base(inputs_embeds=embeddings)
 		hidden_states = outputs.hidden_states
-
 		# Access hidden states for the last token
 		last_token_hidden_states = hidden_states[-1][0]
 
