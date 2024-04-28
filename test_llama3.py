@@ -139,3 +139,69 @@ optimizer = torch.optim.Adam([
     {'params': prefix_model.classifier.parameters(), 'lr': 1e-4}
 ])
 """
+
+################################################################################################################
+
+import torch
+from torch.utils.data import Dataset
+from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
+
+
+
+
+if torch.cuda.is_available():
+	DEVICE = torch.device("cuda:1")
+
+class DummyDataset(Dataset):
+    def __init__(self, num_sequences, sequence_length):
+        self.num_sequences = num_sequences
+        self.sequence_length = sequence_length
+        self.data = self.generate_data()
+
+    def __len__(self):
+        return self.num_sequences
+
+    def __getitem__(self, idx):
+        return torch.tensor(self.data[idx])
+
+    def generate_data(self):
+        # Generate dummy sequences of integers
+        data = []
+        for _ in range(self.num_sequences):
+            sequence = torch.randint(0, 100, (self.sequence_length,))
+            data.append(sequence)
+        return data
+
+# Define parameters for the datasets
+num_training_sequences = 1000
+num_eval_sequences = 100
+sequence_length = 50
+
+# Create dummy training dataset
+train_dataset = DummyDataset(num_training_sequences, sequence_length).to(DEVICE)
+
+# Create dummy evaluation dataset
+eval_dataset = DummyDataset(num_eval_sequences, sequence_length).to(DEVICE)
+
+
+# Load your autoregressive model from Hugging Face
+model_name = "meta-llama/Meta-Llama-3-8B"
+model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
+
+# Define training arguments
+training_args = TrainingArguments(
+    num_train_epochs=1,  # Number of training epochs
+    per_device_train_batch_size=4,  # Batch size per device during training
+)
+
+# Define trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,  # Your training dataset
+    eval_dataset=eval_dataset,  # Your evaluation dataset
+)
+
+# Train the model
+trainer.train()
+
