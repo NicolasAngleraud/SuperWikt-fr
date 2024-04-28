@@ -28,8 +28,9 @@ if __name__ == '__main__':
 
 	# DEVICE setup
 	device_id = args.device_id
-	if torch.cuda.is_available():
-		DEVICE = torch.device("cuda:" + args.device_id)
+	if device_id == "cpu": DEVICE = "cpu"
+	else:
+		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 		
 	
 	def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
