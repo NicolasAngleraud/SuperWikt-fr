@@ -152,36 +152,32 @@ from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
 if torch.cuda.is_available():
 	DEVICE = torch.device("cuda:1")
 
+
 class DummyDataset(Dataset):
-    def __init__(self, num_sequences, sequence_length):
+    def __init__(self, num_sequences, sequence_length, device):
         self.num_sequences = num_sequences
         self.sequence_length = sequence_length
-        self.data = self.generate_data()
+        self.device = device
 
     def __len__(self):
         return self.num_sequences
 
     def __getitem__(self, idx):
-        return torch.tensor(self.data[idx])
-
-    def generate_data(self):
-        # Generate dummy sequences of integers
-        data = []
-        for _ in range(self.num_sequences):
-            sequence = torch.randint(0, 100, (self.sequence_length,))
-            data.append(sequence)
-        return data
+        # Generate dummy sequence of integers
+        sequence = torch.randint(0, 100, (self.sequence_length,), device=self.device)
+        return sequence
 
 # Define parameters for the datasets
 num_training_sequences = 1000
 num_eval_sequences = 100
 sequence_length = 50
 
+
 # Create dummy training dataset
-train_dataset = DummyDataset(num_training_sequences, sequence_length).to(DEVICE)
+train_dataset = DummyDataset(num_training_sequences, sequence_length, DEVICE)
 
 # Create dummy evaluation dataset
-eval_dataset = DummyDataset(num_eval_sequences, sequence_length).to(DEVICE)
+eval_dataset = DummyDataset(num_eval_sequences, sequence_length, DEVICE)
 
 
 # Load your autoregressive model from Hugging Face
