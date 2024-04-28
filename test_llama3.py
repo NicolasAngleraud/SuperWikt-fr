@@ -64,6 +64,9 @@ class PrefixTuning(nn.Module):
         self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, prefix_size))
         self.dropout = nn.Dropout(0.1)
         self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
+        
+        for param in self.model_base.parameters():
+        	param.requires_grad = False
 
     def forward(self, input_ids, attention_mask=None):
         # Generate the same batch size of prefix embeddings
@@ -130,6 +133,11 @@ class PrefixTuningGPT(nn.Module):
 import torch
 from torch.utils.data import Dataset
 
+
+API_TOKEN = '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'
+
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
+model_base = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
 
 if torch.cuda.is_available():
