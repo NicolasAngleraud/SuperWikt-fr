@@ -12,6 +12,7 @@ import torch.nn as nn
 
 API_TOKEN = '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'
 
+'''
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
@@ -30,7 +31,7 @@ generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
 
 
 print("Generated Classification:", generated_classification)
-
+'''
 
 ##################################################################################################
 
