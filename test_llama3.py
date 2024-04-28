@@ -149,6 +149,11 @@ class PrefixDataset(Dataset):
         label = self.labels[idx]
         return sequence, label
 
+# Define parameters for the datasets
+num_training_sequences = 1000
+num_eval_sequences = 100
+sequence_length = 50
+
 # Define your training sequences and labels
 train_sequences = [torch.randint(0, 100, (sequence_length,)) for _ in range(num_training_sequences)]
 train_labels = torch.randint(0, 3, (num_training_sequences,))  # Assuming 3 classes for classification
