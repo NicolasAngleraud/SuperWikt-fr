@@ -189,6 +189,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
 training_args = TrainingArguments(
     num_train_epochs=1,  # Number of training epochs
     per_device_train_batch_size=1,  # Batch size per device during training
+    lora=0.5
 )
 
 # Define trainer
@@ -196,7 +197,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,  # Your training dataset
-    eval_dataset=eval_dataset,  # Your evaluation dataset
+    eval_dataset=eval_dataset  # Your evaluation dataset
 )
 
 # Train the model
