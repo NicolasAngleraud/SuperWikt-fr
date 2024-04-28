@@ -8,6 +8,7 @@ import argparse
 #lightblue/suzume-llama-3-8B-multilingual
 #meta-llama/Meta-Llama-3-8B
 #meta-llama/Meta-Llama-3-8B-Instruct
+#mistralai/Mistral-7B-Instruct-v0.2
 
 
 API_TOKEN = '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'
@@ -31,16 +32,14 @@ if __name__ == '__main__':
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
-		
-	
+
 	def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
 
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivant parmi les quatre classes suivantes: person, animal, mineral, plant.
-
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les quatre classes suivantes: person, animal, mineral, plant. </s>
 	définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 	
-	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
-	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN).to(DEVICE)
+	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN)
+	model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN).to(DEVICE)
 
 	inputs = tokenizer(prompt, return_tensors="pt")
 	output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
