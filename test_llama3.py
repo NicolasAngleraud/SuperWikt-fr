@@ -199,23 +199,23 @@ class PrefixTuningGPT(nn.Module):
 ################################################################################################################
 
 import torch
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader, TensorDataset
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+from torch.nn.parallel import DistributedDataParallel as DDP
 
-API_TOKEN = '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'
+# Define the devices
+DEVICE1 = torch.device("cuda:0")
+DEVICE2 = torch.device("cuda:1")
+
+API_TOKEN = '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'
 
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 model_base = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
 
-
-if torch.cuda.is_available():
-	DEVICE = torch.device("cuda:1")
-
-
 class PrefixDataset(Dataset):
-    def __init__(self, sequences, labels, device):
-        self.sequences = [sequence.to(device) for sequence in sequences]
-        self.labels = labels.to(device)
+    def __init__(self, sequences, labels):
+        self.sequences = sequences
+        self.labels = labels
 
     def __len__(self):
         return len(self.sequences)
@@ -238,22 +238,24 @@ train_labels = torch.randint(0, 3, (num_training_sequences,))  # Assuming 3 clas
 eval_sequences = [torch.randint(0, 100, (sequence_length,)) for _ in range(num_eval_sequences)]
 eval_labels = torch.randint(0, 3, (num_eval_sequences,))  # Assuming 3 classes for classification
 
-
 # Create training and evaluation datasets
-train_dataset = PrefixDataset(train_sequences, train_labels, DEVICE)
-eval_dataset = PrefixDataset(eval_sequences, eval_labels, DEVICE)
+train_dataset = PrefixDataset(train_sequences, train_labels)
+eval_dataset = PrefixDataset(eval_sequences, eval_labels)
 
 freeze_model_parameters(model_base)
 
+# Move the base model to the device
+model_base.to(DEVICE1)
+
 # Create the PrefixTuning model which includes the prefix embeddings and a new classifier
-prefix_model = PrefixTuning(model_base, num_labels=3, prefix_length=10, prefix_size=model_base.config.hidden_size)
+prefix_model = PrefixTuning(model_base.to(DEVICE1), num_labels=3, prefix_length=10, prefix_size=model_base.config.hidden_size)
+prefix_model = DDP(prefix_model, device_ids=[DEVICE1, DEVICE2])
 
 # Assuming the use of an optimizer like Adam
 optimizer = torch.optim.Adam([
-    {'params': prefix_model.prefix_embeddings, 'lr': 1e-4},
-    {'params': prefix_model.classifier.parameters(), 'lr': 1e-4}
+    {'params': prefix_model.module.prefix_embeddings, 'lr': 1e-4},
+    {'params': prefix_model.module.classifier.parameters(), 'lr': 1e-4}
 ])
-
 
 # Assuming you have defined train_dataset and eval_dataset
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
@@ -276,10 +278,10 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()  # Clear gradients
         
         # Forward pass
-        logits = prefix_model(input_ids)
+        logits = prefix_model(input_ids.to(DEVICE1))
         
         # Compute loss
-        loss = loss_fn(logits, labels)
+        loss = loss_fn(logits, labels.to(DEVICE1))
         total_loss += loss.item()
         
         # Backward pass
@@ -291,33 +293,5 @@ for epoch in range(num_epochs):
     # Calculate average training loss
     avg_train_loss = total_loss / len(train_loader)
     print(f"Epoch {epoch+1}/{num_epochs}, Avg. Training Loss: {avg_train_loss:.4f}")
-    
-    # Evaluation loop
-    prefix_model.eval()  # Set the model to evaluation mode
-    total_eval_loss = 0.0
-    total_correct = 0
-    
-    with torch.no_grad():
-        for batch in eval_loader:
-            input_ids, labels = batch
-            
-            # Forward pass
-            logits = prefix_model(input_ids)
-            
-            # Compute loss
-            eval_loss = loss_fn(logits, labels)
-            total_eval_loss += eval_loss.item()
-            
-            # Compute accuracy
-            _, predicted = torch.max(logits, 1)
-            total_correct += (predicted == labels).sum().item()
-    
-    # Calculate average evaluation loss and accuracy
-    avg_eval_loss = total_eval_loss / len(eval_loader)
-    accuracy = total_correct / len(eval_dataset)
-    print(f"Avg. Eval Loss: {avg_eval_loss:.4f}, Accuracy: {accuracy:.2%}")
-
-# Training finished
-print("Training completed!")
 
 
