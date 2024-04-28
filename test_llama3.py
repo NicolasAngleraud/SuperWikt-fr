@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
 	def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
 
-	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les quatre classes suivantes: person, animal, mineral, plant. </s>
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les quatre classes suivantes: person, animal, mineral, plant. Donne simplement en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST] </s>
 	définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 	
 	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN)
