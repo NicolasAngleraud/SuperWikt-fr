@@ -36,6 +36,72 @@ print("Generated Classification:", generated_classification)
 ##################################################################################################
 
 
+"""
+import torch
+from torch.utils.data import Dataset
+from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
+
+
+
+
+if torch.cuda.is_available():
+	DEVICE = torch.device("cuda:1")
+
+
+class DummyDataset(Dataset):
+    def __init__(self, num_sequences, sequence_length, device):
+        self.num_sequences = num_sequences
+        self.sequence_length = sequence_length
+        self.device = device
+
+    def __len__(self):
+        return self.num_sequences
+
+    def __getitem__(self, idx):
+        # Generate dummy sequence of integers
+        sequence = torch.randint(0, 100, (self.sequence_length,), device=self.device)
+        return sequence
+
+# Define parameters for the datasets
+num_training_sequences = 1000
+num_eval_sequences = 100
+sequence_length = 50
+
+
+# Create dummy training dataset
+train_dataset = DummyDataset(num_training_sequences, sequence_length, DEVICE)
+
+# Create dummy evaluation dataset
+eval_dataset = DummyDataset(num_eval_sequences, sequence_length, DEVICE)
+
+
+# Load your autoregressive model from Hugging Face
+model_name = "meta-llama/Meta-Llama-3-8B"
+model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
+
+# Define training arguments
+training_args = TrainingArguments(
+    num_train_epochs=1,  # Number of training epochs
+    per_device_train_batch_size=2,  # Batch size per device during training
+    lora=0.3
+)
+
+# Define trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,  # Your training dataset
+    eval_dataset=eval_dataset  # Your evaluation dataset
+)
+
+# Train the model
+trainer.train()
+"""
+
+
+##################################################################################################
+
+
 class TextClassifier(nn.Module):
     def __init__(model_base, num_labels):
         super(TextClassifier, self).__init__()
@@ -177,8 +243,6 @@ eval_labels = torch.randint(0, 3, (num_eval_sequences,))  # Assuming 3 classes f
 train_dataset = PrefixDataset(train_sequences, train_labels, DEVICE)
 eval_dataset = PrefixDataset(eval_sequences, eval_labels, DEVICE)
 
-
-# Assuming `model_base` is your pre-trained autoregressive model like LLaMA or GPT
 freeze_model_parameters(model_base)
 
 # Create the PrefixTuning model which includes the prefix embeddings and a new classifier
@@ -192,8 +256,8 @@ optimizer = torch.optim.Adam([
 
 
 # Assuming you have defined train_dataset and eval_dataset
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
-eval_loader = DataLoader(eval_dataset, batch_size=4)
+train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
+eval_loader = DataLoader(eval_dataset, batch_size=2)
 
 # Define your loss function (e.g., CrossEntropyLoss for classification)
 loss_fn = nn.CrossEntropyLoss()
@@ -256,66 +320,4 @@ for epoch in range(num_epochs):
 # Training finished
 print("Training completed!")
 
-################################################################################################################
 
-"""
-import torch
-from torch.utils.data import Dataset
-from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
-
-
-
-
-if torch.cuda.is_available():
-	DEVICE = torch.device("cuda:1")
-
-
-class DummyDataset(Dataset):
-    def __init__(self, num_sequences, sequence_length, device):
-        self.num_sequences = num_sequences
-        self.sequence_length = sequence_length
-        self.device = device
-
-    def __len__(self):
-        return self.num_sequences
-
-    def __getitem__(self, idx):
-        # Generate dummy sequence of integers
-        sequence = torch.randint(0, 100, (self.sequence_length,), device=self.device)
-        return sequence
-
-# Define parameters for the datasets
-num_training_sequences = 1000
-num_eval_sequences = 100
-sequence_length = 50
-
-
-# Create dummy training dataset
-train_dataset = DummyDataset(num_training_sequences, sequence_length, DEVICE)
-
-# Create dummy evaluation dataset
-eval_dataset = DummyDataset(num_eval_sequences, sequence_length, DEVICE)
-
-
-# Load your autoregressive model from Hugging Face
-model_name = "meta-llama/Meta-Llama-3-8B"
-model = AutoModelForCausalLM.from_pretrained(model_name).to(DEVICE)
-
-# Define training arguments
-training_args = TrainingArguments(
-    num_train_epochs=1,  # Number of training epochs
-    per_device_train_batch_size=2,  # Batch size per device during training
-    lora=0.3
-)
-
-# Define trainer
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=train_dataset,  # Your training dataset
-    eval_dataset=eval_dataset  # Your evaluation dataset
-)
-
-# Train the model
-trainer.train()
-"""
