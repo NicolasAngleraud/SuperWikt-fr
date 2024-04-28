@@ -68,28 +68,25 @@ class PrefixTuning(nn.Module):
         for param in self.model_base.parameters():
         	param.requires_grad = False
 
-    def forward(self, input_ids, attention_mask=None):
-        # Generate the same batch size of prefix embeddings
-        batch_size = input_ids.shape[0]
-        prefix = self.prefix_embeddings.expand(batch_size, -1, -1)
+	def forward(self, input_ids, attention_mask=None):
+		# Generate the same batch size of prefix embeddings
+		batch_size = input_ids.shape[0]
+		prefix = self.prefix_embeddings.expand(batch_size, -1, -1)
 
-        # Get the embeddings from the base model
-        base_embeddings = self.model_base.transformer.wte(input_ids)
+		# Concatenate prefix embeddings with input_ids
+		full_input_ids = torch.cat((torch.zeros(batch_size, self.prefix_length).long().to(input_ids.device), input_ids), dim=1)
+		extended_attention_mask = torch.cat([torch.ones(batch_size, self.prefix_length).to(input_ids.device), attention_mask], dim=1)
 
-        # Concatenate prefix embeddings with base embeddings
-        full_embeddings = torch.cat((prefix, base_embeddings), dim=1)
-        extended_attention_mask = torch.cat([torch.ones(batch_size, self.prefix_length).to(input_ids.device), attention_mask], dim=1)
+		# Pass the full sequence to the model
+		outputs = self.model_base(input_ids=full_input_ids, attention_mask=extended_attention_mask)
+		sequence_output = outputs.last_hidden_state
 
-        # Pass the full sequence to the model
-        outputs = self.model_base(inputs_embeds=full_embeddings, attention_mask=extended_attention_mask)
-        sequence_output = outputs.last_hidden_state
+		# Use mean pooling over the sequence for classification
+		pooled_output = torch.mean(sequence_output, 1)
+		pooled_output = self.dropout(pooled_output)
+		logits = self.classifier(pooled_output)
 
-        # Use mean pooling over the sequence for classification
-        pooled_output = torch.mean(sequence_output, 1)
-        pooled_output = self.dropout(pooled_output)
-        logits = self.classifier(pooled_output)
-
-        return logits
+		return logits
 
 
 def freeze_model_parameters(model):
