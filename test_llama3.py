@@ -177,8 +177,8 @@ optimizer = torch.optim.Adam([
 
 
 # Assuming you have defined train_dataset and eval_dataset
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-eval_loader = DataLoader(eval_dataset, batch_size=1)
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+eval_loader = DataLoader(eval_dataset, batch_size=4)
 
 # Define your loss function (e.g., CrossEntropyLoss for classification)
 loss_fn = nn.CrossEntropyLoss()
