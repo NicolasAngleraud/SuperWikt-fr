@@ -92,7 +92,38 @@ def freeze_model_parameters(model):
     for param in model.parameters():
         param.requires_grad = False
         
+
+class PrefixTuningGPT(nn.Module):
+    def __init__(self, model_base, num_labels, prefix_length, embedding_size):
+        super(PrefixTuningGPT, self).__init__()
+        self.model_base = model_base  # Pre-trained GPT model
+        self.prefix_length = prefix_length  # Number of prefix embeddings
+        self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, 1, embedding_size))
+        self.classifier = nn.Linear(embedding_size, num_labels)  # Classifier for the task
+
+    def forward(self, input_ids):
+        device = input_ids.device
         
+        # Generate prefix for each position in the batch
+        prefix = self.prefix_embeddings.expand(-1, input_ids.size(0), -1)
+
+        # Get embeddings from the base model's embedding layer
+        base_embeddings = self.model_base.transformer.wte(input_ids)  # Word token embeddings
+
+        # Concatenate prefix and base embeddings
+        embeddings = torch.cat([prefix, base_embeddings], dim=0)
+
+        # Process through the model
+        outputs = self.model_base(inputs_embeds=embeddings)
+        last_hidden_state = outputs.last_hidden_state
+
+        # Assuming classification based on the output after the last token of the original input
+        logits = self.classifier(last_hidden_state[input_ids.size(0) + self.prefix_length - 1])
+
+        return logits
+
+
+
 ################################################################################################################
 
 """
