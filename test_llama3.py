@@ -149,10 +149,14 @@ class PrefixTuning(nn.Module):
 
 		# Pass the full sequence to the model
 		outputs = self.model_base(input_ids=full_input_ids, attention_mask=extended_attention_mask)
-		sequence_output = outputs.last_hidden_state
+		outputs = self.model_base(inputs_embeds=embeddings)
+		hidden_states = outputs.hidden_states
+
+		# Access hidden states for the last token
+		last_token_hidden_states = hidden_states[-1][0]
 
 		# Use mean pooling over the sequence for classification
-		pooled_output = torch.mean(sequence_output, 1)
+		pooled_output = torch.mean(last_token_hidden_states, 1)
 		pooled_output = self.dropout(pooled_output)
 		logits = self.classifier(pooled_output)
 
