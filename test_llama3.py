@@ -64,6 +64,7 @@ class PrefixTuning(nn.Module):
 		self.prefix_embeddings = nn.Parameter(torch.randn(prefix_length, prefix_size))
 		self.dropout = nn.Dropout(0.1)
 		self.classifier = nn.Linear(model_base.config.hidden_size, num_labels)
+		self.to(DEVICE)
 
 		for param in self.model_base.parameters():
 			param.requires_grad = False
@@ -77,7 +78,7 @@ class PrefixTuning(nn.Module):
 		full_input_ids = torch.cat((torch.zeros(batch_size, self.prefix_length).long().to(input_ids.device), input_ids), dim=1)
 		# Handle attention_mask if it's None
 		if attention_mask is None:
-			attention_mask = torch.ones_like(full_input_ids)
+			attention_mask = torch.ones_like(full_input_ids).to(DEVICE)
 		extended_attention_mask = torch.cat([torch.ones(batch_size, self.prefix_length).to(input_ids.device), attention_mask], dim=1)
 
 		# Pass the full sequence to the model
