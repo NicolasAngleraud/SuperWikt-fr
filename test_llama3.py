@@ -73,12 +73,11 @@ class PrefixTuning(nn.Module):
 		batch_size = input_ids.shape[0]
 		prefix = self.prefix_embeddings.expand(batch_size, -1, -1)
 
+		# Concatenate prefix embeddings with input_ids
+		full_input_ids = torch.cat((torch.zeros(batch_size, self.prefix_length).long().to(input_ids.device), input_ids), dim=1)
 		# Handle attention_mask if it's None
 		if attention_mask is None:
 			attention_mask = torch.ones_like(full_input_ids)
-
-		# Concatenate prefix embeddings with input_ids
-		full_input_ids = torch.cat((torch.zeros(batch_size, self.prefix_length).long().to(input_ids.device), input_ids), dim=1)
 		extended_attention_mask = torch.cat([torch.ones(batch_size, self.prefix_length).to(input_ids.device), attention_mask], dim=1)
 
 		# Pass the full sequence to the model
