@@ -41,7 +41,7 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN)
 	model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN).to(DEVICE)
 
-	inputs = tokenizer(prompt, return_tensors="pt")
+	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
 
 	generated_classification = tokenizer.decode(output[0], skip_special_tokens=True)
