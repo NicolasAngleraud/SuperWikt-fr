@@ -38,8 +38,8 @@ if __name__ == '__main__':
 	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les quatre classes suivantes: person, animal, mineral, plant. Donne simplement en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST] </s>
 	définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 	
-	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN)
-	model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", use_auth_token=API_TOKEN).to(DEVICE)
+	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
+	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN).to(DEVICE)
 
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
