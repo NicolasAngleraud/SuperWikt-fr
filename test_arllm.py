@@ -62,8 +62,9 @@ if __name__ == '__main__':
 	eval_df = []
 	
 	num_indices = 25
-	indices = random.sample(range(len(df)), num_indices)
-	for index in indices:
+	indices = random.sample(range(len(df_definitions)), num_indices)
+	for i, index in enumerate(indices):
+		print(i+1)
 		row = df_definitions.iloc[index]
 		definiton = row["definition"]
 		sense_id = row["sense_id"]
