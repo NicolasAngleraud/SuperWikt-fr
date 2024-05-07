@@ -569,36 +569,6 @@ class lexicalClf_V1():
 
 
 
-class lexicalClf_V2():
-
-	def __init__(self, params, DEVICE, coeff_ex, coeff_def, dropout_rate=0.1, bert_model_name=MODEL_NAME):
-		self.clf = multiRankClf(params, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.coeff_ex = coeff_ex
-		self.coeff_def = coeff_def
-
-	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
-		self.clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
-	
-	def load_clf(self, clf_file):
-		self.clf.load_state_dict(torch.load(clf_file))
-	
-	def evaluate(self, sense_encoder):
-		pass
-		
-	def predict(self, sense_encoder):
-		pass
-		
-	def evaluate_and_predict(self, sense_encoder):
-		accuracy = self.evaluate(sense_encoder)
-		predictions = self.predict(sense_encoder)
-		
-		return accuracy, predictions
-		
-	def grid_search(self, parameters, train_encoder, freq_dev_encoder, rand_dev_encoder):
-		pass
-
-
-
 class Baseline:
 
 	def __init__(self):

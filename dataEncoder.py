@@ -214,9 +214,17 @@ class definitionEncoder(Encoder):
 
 
 class exampleEncoder(Encoder):
-	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32):
+	def __init__(self, datafile, dataset, tokenizer, use_sample=False, sample_size=32, sub_corpus=None):
 		super().__init__(datafile, dataset, tokenizer, use_sample, sample_size)
-	
+		
+				
+		if sub_corpus:
+			if sub_corpus == "wiki":
+				self.df_definitions = self.df_definitions[~self.df_definitions["sense_id"].str.contains('frsemcor')]
+				self.df_examples = self.df_examples[~self.df_examples["sense_id"].str.contains('frsemcor')]
+			if sub_corpus == "frsemcor":
+				self.df_definitions = self.df_definitions[self.df_definitions["sense_id"].str.contains('frsemcor')]
+				self.df_examples = self.df_examples[self.df_examples["sense_id"].str.contains('frsemcor')]
 		
 	
 	def encode(self):
@@ -435,3 +443,4 @@ class corpusEncoder(exampleEncoder):
 		super().__init__(datafile, dataset, tokenizer, use_sample=use_sample, sample_size=sample_size)
 		self.df_definitions = self.df_definitions[self.df_definitions['ann_stage']==ann_stage]
 		self.df_examples = self.df_examples[self.df_examples['ann']==ann_stage]
+				

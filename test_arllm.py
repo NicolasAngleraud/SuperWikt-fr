@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
 	def_ = "Mammifère domestique, ongulé de l’ordre des suidés ; porc."
 
-	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les quatre classes suivantes: person, animal, mineral, plant. Donne simplement en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST] </s>
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les vingt quatre classes suivantes: act, animal, artifact, attribute, body, cognition, communication, event, feeling, food, institution, act*cognition, object, possession, person, phenomenon, plant, artifact*cognition, quantity, relation, state, substance, time, groupxperson. Donne simplement en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST] </s>
 	définition: {BODY} --> classe sémantique: """.format(BODY=def_)
 	
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN)
