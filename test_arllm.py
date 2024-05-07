@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
 		# print("Generated Classification:", generated_classification)
 		
-		eval_df.append({"lemma": lemma, "sense_id": sense_id, "set": dataset, "definition": definition, "gold": supersense, "prompt":prompt,"answer":generated_classification})
+		eval_df.append({"lemma": lemma, "sense_id": sense_id, "set": dataset, "definition": definition, "gold": gold, "prompt":prompt,"answer":generated_classification})
 		
 	eval_df = pd.DataFrame(eval_df)
 	eval_df.to_excel("./eval_sample_def_zero_shot_prompting_llama3.xlsx", index=False)
