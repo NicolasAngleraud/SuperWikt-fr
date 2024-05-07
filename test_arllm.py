@@ -4,6 +4,7 @@ import torch.nn as nn
 import argparse
 import dataEncoder as data
 import random
+import pandas as pd
 
 
 ## MODELS
