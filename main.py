@@ -153,7 +153,7 @@ if __name__ == '__main__':
 	"""
 	
 	
-	"""
+	
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 16,
@@ -166,11 +166,11 @@ if __name__ == '__main__':
 	}
 	
 	
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=False)
+	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=False, sub_corpus="wiki")
 	train_examples_encoder.encode()
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False, sub_corpus="wiki")
 	freq_dev_examples_encoder.encode()
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False, sub_corpus="wiki")
 	rand_dev_examples_encoder.encode()
 	
 	ex_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
@@ -194,8 +194,11 @@ if __name__ == '__main__':
 	
 	rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
-	"""
 	
+	
+	
+	
+	"""
 	train_examples_encoder = data.corpusEncoder(args.data_file, "train", tokenizer, "frsemcor", use_sample=False)
 	train_examples_encoder.encode()
 	dev_examples_encoder = data.corpusEncoder(args.data_file, "protect-frsemcor-dev", tokenizer, "frsemcor", use_sample=False)
@@ -235,4 +238,4 @@ if __name__ == '__main__':
 			
 			dev_df = pd.DataFrame(dev_predictions)
 			dev_df.to_excel(corpus_dev_pred_file.replace('.xlsx', f"_lr_{lr_id(lr)}_run_{run+1}.xlsx"), index=False)
-
+			"""
