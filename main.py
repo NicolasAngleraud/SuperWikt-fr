@@ -159,7 +159,7 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.000005,
+	"lr": 0.00001,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
