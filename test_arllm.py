@@ -73,7 +73,7 @@ if __name__ == '__main__':
 		gold = row["supersense"]
 
 		prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition suivante parmi les vingt quatre classes suivantes: act, animal, artifact, attribute, body, cognition, communication, event, feeling, food, institution, act*cognition, object, possession, person, phenomenon, plant, artifact*cognition, quantity, relation, state, substance, time, groupxperson. Donne simplement en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST] </s>
-		définition: {BODY} --> classe sémantique: """.format(BODY=definiton)
+		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 		
 		inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 		output = model.generate(**inputs, max_length=inputs.input_ids.size(1) + 50, num_return_sequences=1, temperature=0.2)
