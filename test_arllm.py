@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	for i, index in enumerate(indices):
 		print(i+1)
 		row = df_definitions.iloc[index]
-		definiton = row["definition"]
+		definition = row["definition"]
 		sense_id = row["sense_id"]
 		dataset = row["set"]
 		lemma = row["lemma"]
