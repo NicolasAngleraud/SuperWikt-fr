@@ -55,9 +55,9 @@ if __name__ == '__main__':
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B", use_auth_token=API_TOKEN).to(DEVICE)
 	
 	df_definitions = pd.read_excel(args.data_file, sheet_name='senses', engine='openpyxl')
-	df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
-	df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
-	df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
+	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
+	df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
+	df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 	
 	eval_df = []
 	
