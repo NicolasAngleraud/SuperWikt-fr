@@ -115,7 +115,7 @@ if __name__ == '__main__':
 	freq_dev_predictions = def_lem_clf.predict(freq_dev_definitions_encoder)
 	rand_dev_predictions = def_lem_clf.predict(rand_dev_definitions_encoder)
 	
-	print("train dev def lem accurcay = ", percentage(train_accuracy))
+	print("train def lem accurcay = ", percentage(train_accuracy))
 	print("freq dev def lem accurcay = ", percentage(freq_dev_accuracy))
 	print("rand dev def lem accurcay = ", percentage(rand_dev_accuracy))
 	print()
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 	freq_dev_predictions = def_clf.predict(freq_dev_definitions_encoder)
 	rand_dev_predictions = def_clf.predict(rand_dev_definitions_encoder)
 	
-	print("train dev def accurcay = ", percentage(train_accuracy))
+	print("train def accurcay = ", percentage(train_accuracy))
 	print("freq dev def accurcay = ", percentage(freq_dev_accuracy))
 	print("rand dev def accurcay = ", percentage(rand_dev_accuracy))
 	print()
@@ -184,7 +184,7 @@ if __name__ == '__main__':
 	freq_dev_predictions = ex_clf.predict(freq_dev_examples_encoder)
 	rand_dev_predictions = ex_clf.predict(rand_dev_examples_encoder)
 	
-	print("train dev accurcay = ", percentage(train_accuracy))
+	print("train accurcay = ", percentage(train_accuracy))
 	print("freq dev accurcay = ", percentage(freq_dev_accuracy))
 	print("rand dev accurcay = ", percentage(rand_dev_accuracy))
 	print()
