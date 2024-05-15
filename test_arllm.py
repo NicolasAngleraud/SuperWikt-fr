@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model, PromptTuningConfig, TaskType, PromptEmbedding, PromptTuningInit
+from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, PromptTuningInit, PrefixEmbedding, PrefixTuningInit, PrefixTuningConfig, LoraConfig
 
 
 ## MODELS
@@ -67,7 +67,8 @@ def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['cpu','0', '1', '2', '3'], default='cpu', help="Id of the GPU.")
 	parser.add_argument("-data_file", default="./data.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
-	parser.add_argument("-batch_size", choices=['2', '4', '8', '16', '32', '64'], help="batch size for the classifier.")
+	parser.add_argument("-batch_size", choices=['2', '4', '8', '16', '32', '64'], help="Batch size for the classifier.")
+	parser.add_argument("-peft_method", choices=['prompt_tuning', 'prefix_tuning', 'lora'], help="PEFT method used to finetune the model.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
 	return args
@@ -75,6 +76,8 @@ def get_parser_args():
 
 if __name__ == '__main__':
 	args = get_parser_args()
+	
+	peft_method = args.peft_method
 
 	# DEVICE setup
 	device_id = args.device_id
@@ -85,12 +88,32 @@ if __name__ == '__main__':
 	model_name = "bigscience/bloom-1b7"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
+	
+	
+	if peft_method == "prompt_tuning":
+		peft_config = PromptTuningConfig(
+										task_type=TaskType.CAUSAL_LM,
+										prompt_tuning_init=PromptTuningInit.RANDOM,
+										num_virtual_tokens=10,
+										tokenizer_name_or_path=model_name)
+	
+	
+	if peft_method == "prefix_tuning":
+		peft_config = PrefixTuningConfig(
+										task_type=TaskType.CAUSAL_LM,
+										prompt_tuning_init=PrefixTuningInit.RANDOM,
+										num_virtual_tokens=10,
+										tokenizer_name_or_path=model_name)
+	
+	
+	if peft_method == "lora":
+		peft_config = LoraConfig(
+								task_type=TaskType.SEQ_2_SEQ_LM, 
+								inference_mode=False, 
+								r=8, 
+								lora_alpha=32, 
+								lora_dropout=0.1)
 		
-	peft_config = PromptTuningConfig(
-									task_type=TaskType.CAUSAL_LM,
-									prompt_tuning_init=PromptTuningInit.RANDOM,
-									num_virtual_tokens=10,
-									tokenizer_name_or_path=model_name)
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
 	peft_model = get_peft_model(model, peft_config)
@@ -98,8 +121,18 @@ if __name__ == '__main__':
 	peft_model.print_trainable_parameters()
 	
 	
+	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition donnée par la suite parmi les classes suivantes: 'personne', 'animal', 'objet'. Donne UNIQUEMENT en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST]</s>
+		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
+		
+		inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
+		output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 100, num_return_sequences=1, temperature=0)
+
+		generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+		generated_classification = generated_text.split("classe sémantique: ")[-1]
+
+		print("Generated Classification:", generated_classification)
 	
 	
 	################################################################################################################################
