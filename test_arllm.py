@@ -95,7 +95,7 @@ if __name__ == '__main__':
 										num_layers=12,
 										prompt_tuning_init="TEXT",
 										prompt_tuning_init_text="Predict if the semantic type of the definition is person or animal",
-										tokenizer_name_or_path=tokenizer)
+										tokenizer_name_or_path="meta-llama/Meta-Llama-3-8B-Instruct")
 	
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
 	model = get_peft_model(model, peft_config)
