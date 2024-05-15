@@ -82,7 +82,7 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 		
-	peft_config = PromptTuningConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False, prompt_alpha=32, prompt_dropout=0.1)
+	peft_config = PromptTuningConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False)
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
 	model = get_peft_model(model, peft_config)
