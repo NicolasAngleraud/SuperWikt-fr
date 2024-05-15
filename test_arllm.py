@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	
 	for c in ss2classe:
 		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids'])
+		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
 	
 	for c in fr_supersenses: print(c)
 	
