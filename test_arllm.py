@@ -38,19 +38,19 @@ ss2classe = {
 	'act': 'action',
 	'animal': 'animal',
 	'artifact': 'objet',
-	'attribute': 'attribut',
-	'body': 'corps',
-	'cognition': 'concept',
-	'communication': 'langue',
-	'event': 'affaire',
-	'feeling': 'sent',
+	'attribute': 'propriété',
+	'body': 'anatomie',
+	'cognition': 'pensée',
+	'communication': 'langage',
+	'event': 'événement',
+	'feeling': 'sentiment',
 	'food': 'nourriture',
 	'institution': 'institution',
 	'act*cognition': 'discours',
 	'object': 'nature',
 	'possession': 'possession',
 	'person': 'personne',
-	'phenomenon': 'fait',
+	'phenomenon': 'phénomène',
 	'plant': 'plante',
 	'artifact*cognition': 'document',
 	'quantity': 'quantité',
@@ -58,9 +58,9 @@ ss2classe = {
 	'state': 'état',
 	'substance': 'substance',
 	'time': 'temps',
-	'groupxperson': 'collec'}
+	'groupxperson': 'collectif'}
 
-
+fr_supersenses = [ss2classe[c] for c in SUPERSENSES]
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
@@ -87,9 +87,9 @@ if __name__ == '__main__':
 	
 	for c in ss2classe:
 		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
+		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids'])
 	
-	
+	for c in fr_supersenses: print(c)
 	
 	
 	'''
