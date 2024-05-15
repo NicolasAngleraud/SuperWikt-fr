@@ -102,7 +102,11 @@ if __name__ == '__main__':
 		peft_config = PrefixTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
 										num_virtual_tokens=10,
-										token_dim=768)
+										token_dim=768,
+										num_transformer_submodules=1,
+										num_attention_heads=16,
+										num_layers=16,
+										encoder_hidden_size=768)
 										
 		prefix_encoder = PrefixEncoder(peft_config)
 	
