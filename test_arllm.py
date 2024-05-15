@@ -84,7 +84,7 @@ if __name__ == '__main__':
 	
 	model_name = "bigscience/bloom-1b7"
 	
-	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN)
+	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 		
 	peft_config = PromptTuningConfig(
 										peft_type="PROMPT_TUNING", 
