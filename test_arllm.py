@@ -101,8 +101,7 @@ if __name__ == '__main__':
 	if peft_method == "prefix_tuning":
 		peft_config = PrefixTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
-										num_virtual_tokens=10,
-										tokenizer_name_or_path=model_name)
+										num_virtual_tokens=10)
 		prefix_encoder = PrefixEncoder(peft_config)
 	
 	
