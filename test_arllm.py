@@ -40,7 +40,7 @@ ss2classe = {
 	'artifact': 'objet',
 	'attribute': 'propriété',
 	'body': 'anatomie',
-	'cognition': 'pensée'
+	'cognition': 'pensée',
 	'communication': 'langage',
 	'event': 'évènement',
 	'feeling': 'sentiment',
