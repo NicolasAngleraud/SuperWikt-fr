@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model, PromptTuningConfig, TaskType, PromptEmbedding
+from peft import get_peft_model, PromptTuningConfig, TaskType, PromptEmbedding, PromptTuningInit
 
 
 ## MODELS
@@ -87,22 +87,18 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 		
 	peft_config = PromptTuningConfig(
-										peft_type="PROMPT_TUNING", 
-										task_type=TaskType.CAUSAL_LM, 
-										inference_mode=False,
-										num_virtual_tokens=20,
-										token_dim=768,
-										num_transformer_submodules=1,
-										num_attention_heads=12,
-										num_layers=12,
-										prompt_tuning_init="TEXT",
-										prompt_tuning_init_text="Predict if the semantic type of the definition is person or animal",
-										tokenizer_name_or_path=model_name)
+									task_type=TaskType.CAUSAL_LM,
+									prompt_tuning_init=PromptTuningInit.RANDOM,
+									num_virtual_tokens=10,
+									tokenizer_name_or_path=model_name)
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
-	model = get_peft_model(model, peft_config)
+	peft_model = get_peft_model(model, peft_config)
 	
-	model.print_trainable_parameters()
+	peft_model.print_trainable_parameters()
+	
+	
+	
 	
 	
 	
