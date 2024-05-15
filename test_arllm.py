@@ -85,14 +85,14 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "bigscience/bloom-1b7"
+	model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	
 	
 	for c in ss2classe:
 		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids'])[1:])
+		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
 	
 	#for c in fr_supersenses: print(c)
 	
