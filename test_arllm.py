@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model, LoraConfig, TaskType
+from peft import get_peft_model, PromptTuningConfig, TaskType
 
 
 ## MODELS
