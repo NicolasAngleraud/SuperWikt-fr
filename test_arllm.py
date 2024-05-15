@@ -5,6 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
+from peft import get_peft_model
 
 
 ## MODELS
@@ -83,14 +84,21 @@ if __name__ == '__main__':
 	
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
+	model = get_peft_model(model, peft_config)
+	model.print_trainable_parameters()
 	
 	
+	
+	################################################################################################################################
+	
+	'''
 	for c in ss2classe:
 		classe = ss2classe[c]
 		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
 	
 	for c in fr_supersenses: print(c)
 	
+	'''
 	
 	'''
 	df_definitions = pd.read_excel(args.data_file, sheet_name='senses', engine='openpyxl')
