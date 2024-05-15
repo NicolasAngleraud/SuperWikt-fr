@@ -90,6 +90,13 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	
 	
+	for c in ss2classe:
+		classe = ss2classe[c]
+		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids'][1:]))
+	
+	#for c in fr_supersenses: print(c)
+	
+	
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
@@ -146,14 +153,6 @@ if __name__ == '__main__':
 	
 	################################################################################################################################
 	
-	'''
-	for c in ss2classe:
-		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
-	
-	for c in fr_supersenses: print(c)
-	
-	'''
 	
 	'''
 	df_definitions = pd.read_excel(args.data_file, sheet_name='senses', engine='openpyxl')
