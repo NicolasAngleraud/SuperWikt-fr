@@ -129,6 +129,7 @@ if __name__ == '__main__':
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
 	model.config.seed = 42
+	model.config.pad_token_id = tokenizer.eos_token_id
 	peft_model = get_peft_model(model, peft_config)
 	
 	peft_model.print_trainable_parameters()
@@ -136,14 +137,12 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	#prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition parmi les classes suivantes: personne, animal et objet. Donne UNIQUEMENT en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information. [/INST]</s>
-	#	définition: {BODY} --> classe sémantique: """.format(BODY=definition)
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition. Réponds UNIQUEMENT 'personne', 'animal' ou 'objet'. [/INST]</s>
+		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 	
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition parmi les classes suivantes: personne, animal et objet. Donne UNIQUEMENT en réponse la classe choisie après 'classe sémantique: ' et ne rajoute aucune autre information.
-	définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
-	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 10, num_return_sequences=1, temperature=0.01)
+	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 20, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 	generated_classification = generated_text.split("classe sémantique: ")[-1]
