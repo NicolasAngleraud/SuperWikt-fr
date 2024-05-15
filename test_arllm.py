@@ -13,6 +13,9 @@ import pandas as pd
 #meta-llama/Meta-Llama-3-8B-Instruct
 #mistralai/Mistral-7B-Instruct-v0.2
 
+## TEST SMALL MODEL
+#bigscience/bloom-1b7
+
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
@@ -30,6 +33,33 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
 
 
 API_TOKEN = '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'
+
+ss2classe = {
+	'act': 'action',
+	'animal': 'animal',
+	'artifact': 'objet',
+	'attribute': 'propriété',
+	'body': 'anatomie',
+	'cognition': 'pensée'
+	'communication': 'langage',
+	'event': 'évènement',
+	'feeling': 'sentiment',
+	'food': 'nourriture',
+	'institution': 'institution',
+	'act*cognition': 'discours',
+	'object': 'nature',
+	'possession': 'possession',
+	'person': 'personne',
+	'phenomenon': 'phénomène',
+	'plant': 'plante',
+	'artifact*cognition': 'document',
+	'quantity': 'quantité',
+	'relation': 'realtion',
+	'state': 'état',
+	'substance': 'substance',
+	'time': 'temps',
+	'groupxperson': 'collectif'}
+
 
 
 def get_parser_args():
@@ -54,6 +84,14 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
 	
+	
+	for c in ss2classe:
+		print(c, tokenizer(c))
+	
+	
+	
+	
+	'''
 	df_definitions = pd.read_excel(args.data_file, sheet_name='senses', engine='openpyxl')
 	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
 	df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
@@ -86,3 +124,4 @@ if __name__ == '__main__':
 		
 	eval_df = pd.DataFrame(eval_df)
 	eval_df.to_excel("./eval_sample_def_zero_shot_prompting_llama3.xlsx", index=False)
+	'''
