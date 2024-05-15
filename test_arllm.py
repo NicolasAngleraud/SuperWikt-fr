@@ -143,7 +143,7 @@ if __name__ == '__main__':
 	définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
-	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 10, num_return_sequences=1, temperature=0)
+	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 10, num_return_sequences=1, temperature=0.01)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 	generated_classification = generated_text.split("classe sémantique: ")[-1]
