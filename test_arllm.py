@@ -104,7 +104,7 @@ if __name__ == '__main__':
 										num_virtual_tokens=10,
 										tokenizer_name_or_path=model_name)
 	
-	
+	# NOT OPERATIONAL YET
 	if peft_method == "prefix_tuning":
 		peft_config = PrefixTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
@@ -141,7 +141,7 @@ if __name__ == '__main__':
 	
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
-	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 20, num_return_sequences=1, temperature=0.1)
+	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 	generated_classification = generated_text.split("classe sémantique: ")[-1]
