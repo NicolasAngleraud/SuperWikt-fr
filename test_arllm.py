@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model, PromptTuningConfig, TaskType
+from peft import get_peft_model, PromptTuningConfig, TaskType, PromptEmbedding
 
 
 ## MODELS
@@ -81,11 +81,25 @@ if __name__ == '__main__':
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
-		
-	peft_config = PromptTuningConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False)
+	
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
+		
+	peft_config = PromptTuningConfig(
+										peft_type="PROMPT_TUNING", 
+										task_type=TaskType.CAUSAL_LM, 
+										inference_mode=False,
+										num_virtual_tokens=20,
+										token_dim=768,
+										num_transformer_submodules=1,
+										num_attention_heads=12,
+										num_layers=12,
+										prompt_tuning_init="TEXT",
+										prompt_tuning_init_text="Predict if the semantic type of the definition is person or animal",
+										tokenizer_name_or_path="Meta-Llama-3-8B-Instruct")
+	
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
 	model = get_peft_model(model, peft_config)
+	
 	model.print_trainable_parameters()
 	
 	
