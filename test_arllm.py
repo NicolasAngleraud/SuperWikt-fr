@@ -128,8 +128,8 @@ if __name__ == '__main__':
 		
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
-	model.config.seed = 42
-	model.config.pad_token_id = tokenizer.eos_token_id
+	#model.config.seed = 42
+	#model.config.pad_token_id = tokenizer.eos_token_id
 	peft_model = get_peft_model(model, peft_config)
 	
 	peft_model.print_trainable_parameters()
@@ -137,8 +137,7 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition. Réponds UNIQUEMENT une des classes suivantes: 'personne', 'animal', 'objet'. [/INST]</s>
-		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
+	prompt = """Choisis la classe sémantique décrivant le mieux la définition. Réponds UNIQUEMENT une des classes suivantes: 'personne', 'animal', 'objet'. définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 	
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
