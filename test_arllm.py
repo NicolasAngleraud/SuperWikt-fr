@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model
+from peft import get_peft_model, LoraConfig, TaskType
 
 
 ## MODELS
@@ -81,7 +81,8 @@ if __name__ == '__main__':
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
-	
+		
+	peft_config = PromptTuningConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False, r=8, prompt_alpha=32, prompt_dropout=0.1)
 	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
 	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
 	model = get_peft_model(model, peft_config)
