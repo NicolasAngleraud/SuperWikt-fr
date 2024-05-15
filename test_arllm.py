@@ -85,7 +85,7 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+	model_name = "lightblue/suzume-llama-3-8B-multilingual"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition. Réponds UNIQUEMENT 'personne', 'animal' ou 'objet'. [/INST]</s>
+	prompt = """<s>[INST]Choisis la classe sémantique décrivant le mieux la définition. Réponds UNIQUEMENT une des classes suivantes: 'personne', 'animal', 'objet'. [/INST]</s>
 		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 	
 		
