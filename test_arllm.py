@@ -109,7 +109,7 @@ if __name__ == '__main__':
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
-								task_type=TaskType.SEQ_2_SEQ_LM, 
+								task_type=TaskType.CAUSAL_LM, 
 								inference_mode=False, 
 								r=8, 
 								lora_alpha=32, 
@@ -117,6 +117,7 @@ if __name__ == '__main__':
 		
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
+	model.config.seed = 42
 	peft_model = get_peft_model(model, peft_config)
 	
 	peft_model.print_trainable_parameters()
@@ -128,7 +129,7 @@ if __name__ == '__main__':
 		définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
-	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 100, num_return_sequences=1, temperature=0, seed=42)
+	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 100, num_return_sequences=1, temperature=0)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 	generated_classification = generated_text.split("classe sémantique: ")[-1]
