@@ -82,7 +82,9 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN)
+	model_name = "bigscience/bloom-1b7"
+	
+	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN)
 		
 	peft_config = PromptTuningConfig(
 										peft_type="PROMPT_TUNING", 
@@ -95,9 +97,9 @@ if __name__ == '__main__':
 										num_layers=12,
 										prompt_tuning_init="TEXT",
 										prompt_tuning_init_text="Predict if the semantic type of the definition is person or animal",
-										tokenizer_name_or_path="meta-llama/Meta-Llama-3-8B-Instruct")
+										tokenizer_name_or_path=model_name)
 	
-	model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct", use_auth_token=API_TOKEN).to(DEVICE)
+	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
 	model = get_peft_model(model, peft_config)
 	
 	model.print_trainable_parameters()
