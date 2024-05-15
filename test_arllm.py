@@ -86,7 +86,8 @@ if __name__ == '__main__':
 	
 	
 	for c in ss2classe:
-		print(c, tokenizer(c))
+		classe = ss2classe[c]
+		print(classe, tokenizer(classe)['input_ids'])
 	
 	
 	
