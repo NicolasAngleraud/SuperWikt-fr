@@ -5,7 +5,7 @@ import argparse
 import dataEncoder as data
 import random
 import pandas as pd
-from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, PromptTuningInit, PrefixEmbedding, PrefixTuningInit, PrefixTuningConfig, LoraConfig
+from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, PromptTuningInit, PrefixEncoder, PrefixTuningInit, PrefixTuningConfig, LoraConfig
 
 
 ## MODELS
@@ -104,6 +104,7 @@ if __name__ == '__main__':
 										prompt_tuning_init=PrefixTuningInit.RANDOM,
 										num_virtual_tokens=10,
 										tokenizer_name_or_path=model_name)
+		prefix_encoder = PrefixEncoder(peft_config)
 	
 	
 	if peft_method == "lora":
