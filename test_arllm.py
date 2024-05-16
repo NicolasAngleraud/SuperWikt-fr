@@ -13,6 +13,7 @@ from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, 
 #meta-llama/Meta-Llama-3-8B
 #meta-llama/Meta-Llama-3-8B-Instruct
 #mistralai/Mistral-7B-Instruct-v0.2
+#tiiuae/falcon-11B
 
 ## TEST SMALL MODEL
 #bigscience/bloom-1b7
@@ -85,14 +86,17 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+	model_name = "tiiuae/falcon-11B"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	if tokenizer.pad_token_id is None: tokenizer.pad_token_id = tokenizer.eos_token_id
 	
+	
+	'''
 	for c in ss2classe:
 		classe = ss2classe[c]
 		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
+	'''
 	
 	#for c in fr_supersenses: print(c)
 	
@@ -125,7 +129,9 @@ if __name__ == '__main__':
 								r=8, 
 								lora_alpha=32, 
 								lora_dropout=0.1)
-		
+	
+	
+	# model.config
 	
 	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN, torch_dtype=torch.bfloat16).to(DEVICE)
 	peft_model = get_peft_model(model, peft_config)
