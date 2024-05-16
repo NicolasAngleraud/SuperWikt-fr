@@ -108,10 +108,10 @@ if __name__ == '__main__':
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
-										#prompt_tuning_init=PromptTuningInit.RANDOM,
+										prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=20,
-										prompt_tuning_init="TEXT",
-										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
+										#prompt_tuning_init="TEXT",
+										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
 	
@@ -122,8 +122,9 @@ if __name__ == '__main__':
 								lora_dropout=0.05,
 								bias="none",
 								inference_mode = inference_mode,
-								task_type=TaskType.CAUSAL_LM,
-								target_modules=["q_proj", "k_proj", "v_proj", "o_proj","gate_proj"])
+								#target_modules=["q_proj", "k_proj", "v_proj", "o_proj","gate_proj"],
+								task_type=TaskType.CAUSAL_LM
+								)
 	
 	
 	model = AutoModelForCausalLM.from_pretrained(
@@ -140,7 +141,7 @@ if __name__ == '__main__':
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
 	if peft_method == "prompt_tuning":
-		prompt = """définition: {BODY} -> classe sémantique: """.format(BODY=definition)
+		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 	
 	if peft_method == "lora":
 		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
