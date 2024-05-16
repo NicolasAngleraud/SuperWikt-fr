@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 import torch.nn as nn
 import argparse
@@ -80,16 +80,15 @@ if __name__ == '__main__':
 	
 	peft_method = args.peft_method
 
-	# DEVICE setup
 	device_id = args.device_id
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "tiiuae/falcon-11B"
+	model_name = "lightblue/suzume-llama-3-8B-multilingual"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
-	if tokenizer.pad_token_id is None: tokenizer.pad_token_id = tokenizer.eos_token_id
+	tokenizer.pad_token_id = tokenizer.eos_token_id
 	
 	
 	'''
@@ -98,8 +97,11 @@ if __name__ == '__main__':
 		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
 	'''
 	
-	#for c in fr_supersenses: print(c)
-	
+	bnb_config = BitsAndBytesConfig(
+    load_in_4bit= True,
+    bnb_4bit_quant_type= "nf4",
+    bnb_4bit_compute_dtype= torch.bfloat16,
+    bnb_4bit_use_double_quant= False)
 	
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
@@ -124,18 +126,24 @@ if __name__ == '__main__':
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
-								task_type=TaskType.CAUSAL_LM, 
-								inference_mode=False, 
-								r=8, 
-								lora_alpha=32, 
-								lora_dropout=0.1)
+								r=16,
+								lora_alpha=16,
+								lora_dropout=0.05,
+								bias="none",
+								task_type=TaskType.CAUSAL_LM,
+								target_modules=["q_proj", "k_proj", "v_proj", "o_proj","gate_proj"])
 	
 	
 	# model.config
 	
-	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN, torch_dtype=torch.bfloat16).to(DEVICE)
-	peft_model = get_peft_model(model, peft_config)
+	model = AutoModelForCausalLM.from_pretrained(
+												model_name, 
+												use_auth_token=API_TOKEN,
+												quantization_config=bnb_config,
+												torch_dtype=torch.bfloat16)
 	
+	peft_model = get_peft_model(model, peft_config)
+	peft_model.to(DEVICE)
 	peft_model.print_trainable_parameters()
 	
 	
