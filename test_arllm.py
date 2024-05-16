@@ -99,11 +99,11 @@ if __name__ == '__main__':
 												torch_dtype=torch.bfloat16)
 	model.to(DEVICE)
 	
-	#'''
+	'''
 	for c in ss2classe:
 		classe = ss2classe[c]
 		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
-	#'''
+	'''
 	
 	#bnb_config = BitsAndBytesConfig(
 	#								load_in_4bit= True,
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
-		prompt_embedding = PromptEmbedding(config, model.shared)
+		prompt_embedding = PromptEmbedding(peft_config, model.shared)
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
@@ -160,7 +160,6 @@ if __name__ == '__main__':
 
 	print("Prompt: ", prompt+"\n\n")
 	print("Generated Classification: ", generated_text)
-	
 	
 	
 	
