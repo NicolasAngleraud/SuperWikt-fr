@@ -149,7 +149,9 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} ; classe sémantique: """.format(BODY=definition)
+	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. 
+	Définition: {BODY}  
+	Classe sémantique: """.format(BODY=definition)
 	
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
