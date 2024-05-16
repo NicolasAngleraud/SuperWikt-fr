@@ -148,13 +148,10 @@ if __name__ == '__main__':
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
-	prompt = output.prompt
-	generated_text = output.outputs[0].text
+	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+	generated_classification = generated_text.split("'personne', 'animal', 'objet'. ")[-1]
 
-	#generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
-	#generated_classification = generated_text.split("'personne', 'animal', 'objet'. ")[-1]
-
-	print("Prompt: ", prompt)
+	print("Prompt: ", prompt+"\n\n")
 	print("Generated Classification: ", generated_text)
 	
 	
