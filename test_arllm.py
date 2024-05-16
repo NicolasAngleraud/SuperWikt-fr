@@ -79,7 +79,9 @@ if __name__ == '__main__':
 	args = get_parser_args()
 	
 	peft_method = args.peft_method
-
+	
+	inference_mode = True
+	
 	device_id = args.device_id
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
@@ -108,21 +110,8 @@ if __name__ == '__main__':
 										task_type=TaskType.CAUSAL_LM,
 										prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=10,
+										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
-	
-	# NOT OPERATIONAL YET
-	if peft_method == "prefix_tuning":
-		peft_config = PrefixTuningConfig(
-										task_type=TaskType.CAUSAL_LM,
-										num_virtual_tokens=10,
-										token_dim=4096,
-										num_transformer_submodules=1,
-										num_attention_heads=32,
-										num_layers=32,
-										encoder_hidden_size=4096)
-										
-		prefix_encoder = PrefixEncoder(peft_config)
-	
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
@@ -130,11 +119,10 @@ if __name__ == '__main__':
 								lora_alpha=16,
 								lora_dropout=0.05,
 								bias="none",
+								inference_mode = inference_mode,
 								task_type=TaskType.CAUSAL_LM,
 								target_modules=["q_proj", "k_proj", "v_proj", "o_proj","gate_proj"])
 	
-	
-	# model.config
 	
 	model = AutoModelForCausalLM.from_pretrained(
 												model_name, 
@@ -159,6 +147,19 @@ if __name__ == '__main__':
 	generated_classification = generated_text.split("'personne', 'animal', 'objet'. ")[-1]
 
 	print("Generated Classification:", generated_classification)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	################################################################################################################################
@@ -197,4 +198,20 @@ if __name__ == '__main__':
 		
 	eval_df = pd.DataFrame(eval_df)
 	eval_df.to_excel("./eval_sample_def_zero_shot_prompting_llama3.xlsx", index=False)
+	'''
+	
+	# CONFIG PREFIX TUNING PEFT
+	'''
+	# NOT OPERATIONAL YET
+	if peft_method == "prefix_tuning":
+		peft_config = PrefixTuningConfig(
+										task_type=TaskType.CAUSAL_LM,
+										num_virtual_tokens=10,
+										token_dim=4096,
+										num_transformer_submodules=1,
+										num_attention_heads=32,
+										num_layers=32,
+										encoder_hidden_size=4096)
+										
+		prefix_encoder = PrefixEncoder(peft_config)
 	'''
