@@ -109,7 +109,9 @@ if __name__ == '__main__':
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
 										prompt_tuning_init=PromptTuningInit.RANDOM,
-										num_virtual_tokens=4,
+										num_virtual_tokens=20,
+										prompt_tuning_init="TEXT",
+										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
 	
@@ -137,8 +139,11 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
+	if peft_method == "prompt_tuning":
+		prompt = """définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 	
+	if peft_method == "lora":.
+		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
