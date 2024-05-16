@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "lightblue/suzume-llama-3-8B-multilingual"
+	model_name = "bigscience/bloom-1b7"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
-		prompt_embedding = PromptEmbedding(peft_config, model.shared)
+
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
@@ -142,17 +142,11 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	if peft_method == "prompt_tuning":
-		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
-		
-		inputs = torch.cat((prompt_embedding.to(DEVICE), tokenizer(prompt, return_tensors="pt").to(DEVICE)))
-	
-	if peft_method == "lora":
-		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
-		
-		inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
+
+	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 		
 	
+	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
