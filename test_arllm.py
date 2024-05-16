@@ -92,6 +92,12 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	tokenizer.pad_token_id = tokenizer.eos_token_id
 	
+	model = AutoModelForCausalLM.from_pretrained(
+												model_name, 
+												use_auth_token=API_TOKEN,
+												#quantization_config=bnb_config,
+												torch_dtype=torch.bfloat16)
+	model.to(DEVICE)
 	
 	#'''
 	for c in ss2classe:
@@ -114,7 +120,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
-		prompt_embedding = PromptEmbedding(config, t5_model.shared)
+		prompt_embedding = PromptEmbedding(config, model.shared)
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
@@ -128,12 +134,7 @@ if __name__ == '__main__':
 								)
 	
 	
-	model = AutoModelForCausalLM.from_pretrained(
-												model_name, 
-												use_auth_token=API_TOKEN,
-												#quantization_config=bnb_config,
-												torch_dtype=torch.bfloat16)
-	model.to(DEVICE)
+	
 	
 	peft_model = get_peft_model(model, peft_config)
 	peft_model.print_trainable_parameters()
