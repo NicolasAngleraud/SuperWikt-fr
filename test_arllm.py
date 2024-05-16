@@ -142,7 +142,7 @@ if __name__ == '__main__':
 	if peft_method == "prompt_tuning":
 		prompt = """définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 	
-	if peft_method == "lora":.
+	if peft_method == "lora":
 		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
