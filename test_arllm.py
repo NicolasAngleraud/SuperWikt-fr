@@ -120,7 +120,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=20,
 										prompt_tuning_init="TEXT",
-										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition. ",
+										prompt_tuning_init_text="Quelle classe sémantique décrit le mieux la définition suivante ? ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
 										
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 								task_type=TaskType.CAUSAL_LM
 								)
 								
-		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
+		prompt = """Quelle classe sémantique décrit le mieux la définition suivante ?  Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 	
 	
 	peft_model = get_peft_model(model, peft_config)
