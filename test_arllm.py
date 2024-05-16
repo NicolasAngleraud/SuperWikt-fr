@@ -158,7 +158,7 @@ if __name__ == '__main__':
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
-	generated_classification = generated_text.split("classe sémantique: ")[-1]
+	generated_classification = generated_text.split("Classe sémantique: ")[-1]
 
 	print("Generated Classification:", generated_classification)
 	
