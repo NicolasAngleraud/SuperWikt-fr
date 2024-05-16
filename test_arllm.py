@@ -141,7 +141,7 @@ if __name__ == '__main__':
 												use_auth_token=API_TOKEN,
 												#quantization_config=bnb_config,
 												torch_dtype=torch.bfloat16)
-	#model.to(DEVICE)
+	model.to(DEVICE)
 	
 	peft_model = get_peft_model(model, peft_config)
 	peft_model.print_trainable_parameters()
