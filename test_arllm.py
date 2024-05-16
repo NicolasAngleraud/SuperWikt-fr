@@ -99,6 +99,9 @@ if __name__ == '__main__':
 												torch_dtype=torch.bfloat16)
 	model.to(DEVICE)
 	
+		
+	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
+	
 	'''
 	for c in ss2classe:
 		classe = ss2classe[c]
@@ -114,12 +117,14 @@ if __name__ == '__main__':
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
-										prompt_tuning_init=PromptTuningInit.RANDOM,
+										#prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=20,
-										#prompt_tuning_init="TEXT",
-										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
+										prompt_tuning_init="TEXT",
+										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
+										
+		prompt = """Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 
 	
 	if peft_method == "lora":
@@ -132,18 +137,12 @@ if __name__ == '__main__':
 								#target_modules=["q_proj", "k_proj", "v_proj", "o_proj","gate_proj"],
 								task_type=TaskType.CAUSAL_LM
 								)
-	
-	
+								
+		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 	
 	
 	peft_model = get_peft_model(model, peft_config)
 	peft_model.print_trainable_parameters()
-	
-	
-	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
-	
-
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 		
 	
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
