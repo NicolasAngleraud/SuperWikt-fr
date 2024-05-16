@@ -98,10 +98,10 @@ if __name__ == '__main__':
 	'''
 	
 	bnb_config = BitsAndBytesConfig(
-    load_in_4bit= True,
-    bnb_4bit_quant_type= "nf4",
-    bnb_4bit_compute_dtype= torch.bfloat16,
-    bnb_4bit_use_double_quant= False)
+									load_in_4bit= True,
+									bnb_4bit_quant_type= "nf4",
+									bnb_4bit_compute_dtype= torch.bfloat16,
+									bnb_4bit_use_double_quant= False)
 	
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
@@ -140,10 +140,9 @@ if __name__ == '__main__':
 												model_name, 
 												use_auth_token=API_TOKEN,
 												quantization_config=bnb_config,
-												torch_dtype=torch.bfloat16)
+												torch_dtype=torch.bfloat16).to(DEVICE)
 	
 	peft_model = get_peft_model(model, peft_config)
-	peft_model.to(DEVICE)
 	peft_model.print_trainable_parameters()
 	
 	
