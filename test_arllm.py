@@ -114,6 +114,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
+		prompt_embedding = PromptEmbedding(config, t5_model.shared)
 	
 	if peft_method == "lora":
 		peft_config = LoraConfig(
@@ -142,11 +143,15 @@ if __name__ == '__main__':
 	
 	if peft_method == "prompt_tuning":
 		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
+		
+		inputs = torch.cat((prompt_embedding.to(DEVICE), tokenizer(prompt, return_tensors="pt").to(DEVICE)))
 	
 	if peft_method == "lora":
 		prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} -> classe sémantique: """.format(BODY=definition)
 		
-	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
+		inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
+		
+	
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
