@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
-	
+	if tokenizer.pad_token_id is None: tokenizer.pad_token_id = tokenizer.eos_token_id
 	
 	for c in ss2classe:
 		classe = ss2classe[c]
@@ -127,9 +127,7 @@ if __name__ == '__main__':
 								lora_dropout=0.1)
 		
 	
-	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN).to(DEVICE)
-	#model.config.seed = 42
-	#model.config.pad_token_id = tokenizer.eos_token_id
+	model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=API_TOKEN, torch_dtype=torch.bfloat16).to(DEVICE)
 	peft_model = get_peft_model(model, peft_config)
 	
 	peft_model.print_trainable_parameters()
