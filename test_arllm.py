@@ -111,7 +111,7 @@ if __name__ == '__main__':
 										#prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=20,
 										prompt_tuning_init="TEXT",
-										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. ",
+										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. ",
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
 	
