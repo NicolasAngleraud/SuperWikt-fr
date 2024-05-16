@@ -108,7 +108,7 @@ if __name__ == '__main__':
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
-										prompt_tuning_init=PromptTuningInit.RANDOM,
+										#prompt_tuning_init=PromptTuningInit.RANDOM,
 										num_virtual_tokens=20,
 										prompt_tuning_init="TEXT",
 										prompt_tuning_init_text="Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. ",
