@@ -102,12 +102,13 @@ if __name__ == '__main__':
 		
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	'''
+	
 	for c in ss2classe:
 		classe = ss2classe[c]
 		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
-	'''
+		print(classe, tokenizer(classe)['input_ids'])
 	
+	'''
 	#bnb_config = BitsAndBytesConfig(
 	#								load_in_4bit= True,
 	#								bnb_4bit_quant_type= "nf4",
@@ -157,7 +158,7 @@ if __name__ == '__main__':
 	
 	
 	
-	
+	'''
 	
 	
 	
