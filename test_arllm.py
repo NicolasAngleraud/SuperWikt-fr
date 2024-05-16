@@ -109,7 +109,7 @@ if __name__ == '__main__':
 		peft_config = PromptTuningConfig(
 										task_type=TaskType.CAUSAL_LM,
 										prompt_tuning_init=PromptTuningInit.RANDOM,
-										num_virtual_tokens=10,
+										num_virtual_tokens=4,
 										inference_mode = inference_mode,
 										tokenizer_name_or_path=model_name)
 	
