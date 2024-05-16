@@ -149,16 +149,14 @@ if __name__ == '__main__':
 	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
 	
-	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. 
-	Définition: {BODY}  
-	Classe sémantique: """.format(BODY=definition)
+	prompt = """Choisis la classe sémantique décrivant le mieux la définition suivante. Réponds UNIQUEMENT une des classes parmi: 'personne', 'animal', 'objet'. définition: {BODY} --> classe sémantique: """.format(BODY=definition)
 	
 		
 	inputs = tokenizer(prompt, return_tensors="pt").to(DEVICE)
 	output = peft_model.generate(**inputs, max_length=inputs.input_ids.size(1) + 5, num_return_sequences=1, temperature=0.1)
 
 	generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
-	generated_classification = generated_text.split("Classe sémantique: ")[-1]
+	generated_classification = generated_text.split("'personne', 'animal', 'objet'. ")[-1]
 
 	print("Generated Classification:", generated_classification)
 	
