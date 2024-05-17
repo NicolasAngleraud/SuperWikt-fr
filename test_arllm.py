@@ -97,7 +97,7 @@ if __name__ == '__main__':
 	
 	model = AutoModelForCausalLM.from_pretrained(
 												pretrained_model_name_or_path="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
-												model_file="mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
+												model_file="./mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
 												use_auth_token=API_TOKEN,
 												gpu_layers=50,
 												model_type="mixtral",
