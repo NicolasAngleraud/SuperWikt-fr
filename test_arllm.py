@@ -102,7 +102,7 @@ if __name__ == '__main__':
 												gpu_layers=50,
 												model_type="mixtral",
 												#quantization_config=bnb_config,
-												torch_dtype=torch.bfloat16)
+												#torch_dtype=torch.bfloat16)
 	model.to(DEVICE)
 	
 	
