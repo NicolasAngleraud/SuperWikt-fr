@@ -100,7 +100,7 @@ if __name__ == '__main__':
 												model_file="./mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
 												use_auth_token=API_TOKEN,
 												gpu_layers=50,
-												model_type="mixtral",
+												model_type="mixtral")
 												#quantization_config=bnb_config,
 												#torch_dtype=torch.bfloat16)
 	model.to(DEVICE)
