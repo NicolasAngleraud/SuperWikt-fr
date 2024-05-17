@@ -97,6 +97,7 @@ if __name__ == '__main__':
 	
 	model = AutoModelForCausalLM.from_pretrained(
 												model_name, 
+												model_file="mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
 												use_auth_token=API_TOKEN,
 												#quantization_config=bnb_config,
 												torch_dtype=torch.bfloat16)
