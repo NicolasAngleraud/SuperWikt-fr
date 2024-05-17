@@ -86,7 +86,7 @@ if __name__ == '__main__':
 	
 	model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 	
-	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
+	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=API_TOKEN, add_eos_token=True)
 	tokenizer.pad_token_id = tokenizer.eos_token_id
 
 	#bnb_config = BitsAndBytesConfig(
@@ -96,8 +96,8 @@ if __name__ == '__main__':
 	#								bnb_4bit_use_double_quant= False)
 	
 	model = AutoModelForCausalLM.from_pretrained(
-												model_name, 
-												#model_file="mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
+												model_name="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
+												model_file="mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
 												use_auth_token=API_TOKEN,
 												#quantization_config=bnb_config,
 												torch_dtype=torch.bfloat16)
