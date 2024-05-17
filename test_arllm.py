@@ -10,13 +10,9 @@ from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, 
 
 ## MODELS
 #lightblue/suzume-llama-3-8B-multilingual
-#meta-llama/Meta-Llama-3-8B
 #meta-llama/Meta-Llama-3-8B-Instruct
 #mistralai/Mixtral-8x7B-Instruct-v0.1
-#tiiuae/falcon-11B
 
-## TEST SMALL MODEL
-#bigscience/bloom-1b7
 
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
