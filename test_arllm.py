@@ -12,7 +12,7 @@ from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, 
 #lightblue/suzume-llama-3-8B-multilingual
 #meta-llama/Meta-Llama-3-8B
 #meta-llama/Meta-Llama-3-8B-Instruct
-#mistralai/Mistral-7B-Instruct-v0.2
+#mistralai/Mixtral-8x7B-Instruct-v0.1
 #tiiuae/falcon-11B
 
 ## TEST SMALL MODEL
@@ -87,33 +87,26 @@ if __name__ == '__main__':
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+	model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 	
 	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
 	tokenizer.pad_token_id = tokenizer.eos_token_id
+
+	bnb_config = BitsAndBytesConfig(
+									load_in_4bit= True,
+									bnb_4bit_quant_type= "nf4",
+									bnb_4bit_compute_dtype= torch.bfloat16,
+									bnb_4bit_use_double_quant= False)
 	
 	model = AutoModelForCausalLM.from_pretrained(
 												model_name, 
 												use_auth_token=API_TOKEN,
-												#quantization_config=bnb_config,
+												quantization_config=bnb_config,
 												torch_dtype=torch.bfloat16)
 	model.to(DEVICE)
 	
-		
+	
 	definition = "Ustensile de cuisine qui sert à éplucher des fruits ou légumes."
-	
-	
-	for c in ss2classe:
-		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
-		print(classe, tokenizer(classe)['input_ids'])
-	
-	'''
-	#bnb_config = BitsAndBytesConfig(
-	#								load_in_4bit= True,
-	#								bnb_4bit_quant_type= "nf4",
-	#								bnb_4bit_compute_dtype= torch.bfloat16,
-	#								bnb_4bit_use_double_quant= False)
 	
 	if peft_method == "prompt_tuning":
 		peft_config = PromptTuningConfig(
@@ -158,7 +151,6 @@ if __name__ == '__main__':
 	
 	
 	
-	'''
 	
 	
 	
@@ -221,3 +213,14 @@ if __name__ == '__main__':
 										
 		prefix_encoder = PrefixEncoder(peft_config)
 	'''
+	
+	
+	# TESTS TOKENIZER
+	'''
+	for c in ss2classe:
+		classe = ss2classe[c]
+		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
+		print(classe, tokenizer(classe)['input_ids'])
+	
+	'''
+
