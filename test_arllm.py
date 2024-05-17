@@ -86,7 +86,7 @@ if __name__ == '__main__':
 	
 	model_name = "TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF"
 	
-	tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=API_TOKEN, add_eos_token=True)
+	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=API_TOKEN, add_eos_token=True)
 	tokenizer.pad_token_id = tokenizer.eos_token_id
 
 	#bnb_config = BitsAndBytesConfig(
