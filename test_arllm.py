@@ -6,6 +6,8 @@ import dataEncoder as data
 import random
 import pandas as pd
 from peft import get_peft_model, TaskType, PromptTuningConfig, PromptEmbedding, PromptTuningInit, PrefixEncoder, PrefixTuningConfig, LoraConfig
+from huggingface_hub import hf_hub_download
+from llama_cpp import Llama
 
 
 ## MODELS
@@ -31,7 +33,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                }
 
 
-API_TOKEN = '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'
+#API_TOKEN = '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'
 
 ss2classe = {
 	'act': 'action',
@@ -77,17 +79,17 @@ if __name__ == '__main__':
 	
 	peft_method = args.peft_method
 	
-	inference_mode = True
+	#inference_mode = True
 	
 	device_id = args.device_id
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
 	
-	model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+	#model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 	
-	tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=API_TOKEN, add_eos_token=True)
-	tokenizer.pad_token_id = tokenizer.eos_token_id
+	#tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=API_TOKEN, add_eos_token=True)
+	#tokenizer.pad_token_id = tokenizer.eos_token_id
 
 	#bnb_config = BitsAndBytesConfig(
 	#								load_in_4bit= True,
@@ -95,6 +97,38 @@ if __name__ == '__main__':
 	#								bnb_4bit_compute_dtype= torch.bfloat16,
 	#								bnb_4bit_use_double_quant= False)
 	
+	
+	
+
+
+	model_name = "TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF"
+	model_file = "mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf"
+	model_path = hf_hub_download(model_name, filename=model_file)
+
+
+	llm = Llama(
+		model_path=model_path,
+		n_ctx=16000,
+		n_threads=32,
+		n_gpu_layers=0
+	)
+
+
+	generation_kwargs = {
+		"max_tokens":20000,
+		"stop":["</s>"],
+		"echo":False,
+		"top_k":1
+	}
+
+
+	prompt = "Le sens de la vie est "
+	res = llm(prompt, **generation_kwargs)
+
+	print(res["choices"][0]["text"])
+	
+	
+	'''
 	model = AutoModelForCausalLM.from_pretrained(
 												pretrained_model_name_or_path="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
 												model_file="./mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
@@ -150,7 +184,7 @@ if __name__ == '__main__':
 	
 	
 	
-	
+	'''
 	
 	
 	
