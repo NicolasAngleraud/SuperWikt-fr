@@ -96,7 +96,7 @@ if __name__ == '__main__':
 	#								bnb_4bit_use_double_quant= False)
 	
 	model = AutoModelForCausalLM.from_pretrained(
-												model_name="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
+												pretrained_model_name_or_path="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
 												model_file="mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf",
 												use_auth_token=API_TOKEN,
 												#quantization_config=bnb_config,
