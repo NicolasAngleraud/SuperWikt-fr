@@ -580,7 +580,7 @@ class lexicalClf_V1():
 		self.ex_clf.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
 		with torch.no_grad():
-			for definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+			for definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.make_batches(device=self.device, batch_size=1, shuffle_data=False):
 				
 				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
 				
