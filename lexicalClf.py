@@ -584,7 +584,7 @@ class lexicalClf_V1():
 				
 				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
 				
-				ex_log_probs = [self.ex_clf.forward(input_, tg_trk) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
+				ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
 				ex_log_probs = torch.stack(ex_log_probs)
 				ex_log_probs = torch.mean(stacked_tensors, dim=0)
 				
