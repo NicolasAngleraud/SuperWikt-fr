@@ -327,7 +327,7 @@ class senseEncoder(Encoder):
 			for example in examples:
 				for x in example:
 					x = x.replace('##', ' ')
-		
+
 			sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 			
 			tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, word_ranks)]
