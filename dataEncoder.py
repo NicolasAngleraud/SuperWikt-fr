@@ -337,7 +337,7 @@ class senseEncoder(Encoder):
 			definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
 			definition_without_lemma_encoded = torch.tensor(definition_without_lemma_encoded).to(device)
 			tg_trks_examples = torch.tensor(tg_trks_examples).to(device)
-			for bert_input in bert_input_examples: bert_input = torch.tensor(bert_input).unsqueeze(0).to(device)
+			bert_input_examples = [torch.tensor(bert_input).unsqueeze(0).to(device) for bert_input in bert_input_examples]
 			
 			yield definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma
 
