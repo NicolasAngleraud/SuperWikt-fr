@@ -585,12 +585,15 @@ class lexicalClf_V1():
 				
 				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
 				
-				ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
-				ex_log_probs = torch.stack(ex_log_probs)
-				ex_log_probs = torch.mean(ex_log_probs, dim=0)
+				if bert_input_examples:
+					ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
+					ex_log_probs = torch.stack(ex_log_probs)
+					ex_log_probs = torch.mean(ex_log_probs, dim=0)
 				
-				log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
-				predicted_index = torch.argmax(log_probs, dim=1).item()
+					log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
+					predicted_index = torch.argmax(log_probs, dim=1).item()
+				else:
+					predicted_index = torch.argmax(def_log_probs, dim=1).item()
 				
 				pred = SUPERSENSES[predicted_index]
 				gold = supersense
