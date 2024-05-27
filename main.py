@@ -80,9 +80,9 @@ if __name__ == '__main__':
 	
 	
 	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
-	freq_dev_sense_encoder.encode()
+
 	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
-	rand_dev_sense_encoder.encode()
+
 	
 	params_def = {
 	"nb_epochs": 100,
