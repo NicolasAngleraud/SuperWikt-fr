@@ -316,9 +316,9 @@ class senseEncoder(Encoder):
 			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
 			supersense = df_definitions[df_definitions['sense_id'] == sense_id]["supersense"].iloc[0]
 			
-			definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt').unsqueeze(0)
+			definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
 			
-			definition_without_lemma_encoded = tokenizer.encode(text=definition, add_special_tokens=True, return_tensors='pt').unsqueeze(0)
+			definition_without_lemma_encoded = tokenizer.encode(text=definition, add_special_tokens=True, return_tensors='pt')
 			
 			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
 			word_ranks = df_examples[df_examples['sense_id'] == sense_id]['word_rank'].tolist()
