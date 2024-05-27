@@ -316,9 +316,9 @@ class senseEncoder(Encoder):
 			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
 			supersense = df_definitions[df_definitions['sense_id'] == sense_id]["supersense"].iloc[0]
 			
-			definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True)
+			definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True).unsqueeze(0)
 			
-			definition_without_lemma_encoded = tokenizer.encode(text=definition, add_special_tokens=True)
+			definition_without_lemma_encoded = tokenizer.encode(text=definition, add_special_tokens=True).unsqueeze(0)
 			
 			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
 			word_ranks = df_examples[df_examples['sense_id'] == sense_id]['word_rank'].tolist()
@@ -337,7 +337,7 @@ class senseEncoder(Encoder):
 			definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
 			definition_without_lemma_encoded = torch.tensor(definition_without_lemma_encoded).to(device)
 			tg_trks_examples = torch.tensor(tg_trks_examples).to(device)
-			for bert_input in bert_input_examples: bert_input = torch.tensor(bert_input).to(device)
+			for bert_input in bert_input_examples: bert_input = torch.tensor(bert_input).unsqueeze(0).to(device)
 			
 			yield definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma
 
