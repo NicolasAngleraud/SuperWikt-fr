@@ -543,6 +543,7 @@ class lexicalClf_V1():
 		self.coeff_ex = coeff_ex
 		self.coeff_def = coeff_def
 		self.device = DEVICE
+		self.tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
 
 	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
 	
