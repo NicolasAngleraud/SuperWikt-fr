@@ -595,7 +595,7 @@ class lexicalClf_V1():
 				pred = SUPERSENSES[predicted_index]
 				gold = supersense
 				print(definition_with_lemma_encoded)
-				sentence = self.tokenizer.decode(definition_with_lemma_encoded, skip_special_tokens=True)
+				sentence = self.tokenizer.decode(definition_with_lemma_encoded.squeeze(), skip_special_tokens=True)
 				
 				predictions['lemma'].append(lemma)
 				predictions['sense_id'].append(sense_id)
