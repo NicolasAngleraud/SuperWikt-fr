@@ -47,7 +47,7 @@ def get_parser_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
 	parser.add_argument("-data_file", default="./data.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
-	parser.add_argument("-batch_size", choices=['2', '4', '8', '16', '32', '64'], help="batch size for the classifier.")
+	parser.add_argument("-batch_size", choices=['1', '2', '4', '8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
 	return args
@@ -56,8 +56,6 @@ def get_parser_args():
 if __name__ == '__main__':
 	args = get_parser_args()
 	
-	
-	# DEVICE setup
 	device_id = args.device_id
 	if torch.cuda.is_available():
 		DEVICE = torch.device("cuda:" + args.device_id)
@@ -73,11 +71,57 @@ if __name__ == '__main__':
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
 	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
 	corpus_dev_pred_file = './dev_corpus_clf.xlsx'
+	freq_dev_def_ex_pred_file = './freq_dev_def_ex_clf.xlsx'
 	
 	rand_dev_def_lem_pred_file = './rand_dev_def_lem_clf.xlsx'
 	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
 	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
-
+	rand_dev_def_ex_pred_file = './rand_dev_def_ex_clf.xlsx'
+	
+	
+	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	freq_dev_sense_encoder.encode()
+	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	rand_dev_sense_encoder.encode()
+	
+	params_def = {
+	"nb_epochs": 100,
+	"batch_size": 1,
+	"hidden_layer_size": 768,
+	"patience": 2,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
+	params_ex = {
+	"nb_epochs": 100,
+	"batch_size": 1,
+	"hidden_layer_size": 768,
+	"patience": 2,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
+	coeff_ex = 0.68
+	
+	coeff_def = 0.80
+	
+	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
+	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
+	
+	freq_dev_predictions = lex_clf.predict(freq_dev_sense_encoder)
+	rand_dev_predictions = lex_clf.predict(rand_dev_sense_encoder)
+	
+	freq_dev_def_ex_df = pd.DataFrame(freq_dev_predictions)
+	freq_dev_def_ex_df.to_excel(freq_dev_def_ex_pred_file, index=False)
+	
+	rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
+	rand_dev_def_ex_df.to_excel(rand_dev_def_ex_pred_file, index=False)
+	
 	"""
 	params = {
 	"nb_epochs": 100,
@@ -153,7 +197,7 @@ if __name__ == '__main__':
 	"""
 	
 	
-	
+	"""
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 16,
@@ -194,7 +238,7 @@ if __name__ == '__main__':
 	
 	rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_ex_df.to_excel(rand_dev_ex_pred_file, index=False)
-	
+	"""
 	
 	
 	

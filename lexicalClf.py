@@ -536,30 +536,70 @@ class multiRankClf(nn.Module):
 
 class lexicalClf_V1():
 
-	def __init__(self, params_def, params_ex, DEVICE, coeff_ex, coeff_def, multi_clf=False, dropout_rate=0.1, bert_model_name=MODEL_NAME):
-	
-		if multi_clf: self.def_clf = monoRankClf(params_def, DEVICE, use_lemma=False, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.def_lem_clf = monoRankClf(params_def, DEVICE, use_lemma=True, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.ex_clf = multiRankClf(params_ex, DEVICE, dropout_rate=dropout_rate, bert_model_name=bert_model_name)
-		self.multi_clf = multi_clf
+	def __init__(self, params_def, params_ex, DEVICE, coeff_ex, coeff_def,  dropout_hidden=0.3, dropout_input=0, bert_model_name=MODEL_NAME):
+
+		self.def_lem_clf = monoRankClf(params_def, DEVICE, use_lemma=True, dropout_hidden=dropout_hidden, dropout_input=dropout_input, bert_model_name=bert_model_name)
+		self.ex_clf = multiRankClf(params_ex, DEVICE, dropout_hidden=dropout_hidden, dropout_input=dropout_input, bert_model_name=bert_model_name)
 		self.coeff_ex = coeff_ex
 		self.coeff_def = coeff_def
 
 	def training(self, train_encoder, freq_dev_encoder, rand_dev_encoder):
-		if self.multi_clf: self.def_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
+	
 		self.def_lem_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
 		self.ex_clf.train(train_encoder, freq_dev_encoder, rand_dev_encoder)
 	
-	def load_clf(self, clf_def_lem_file, clf_ex_file, clf_def_file=None):
-		if self.multi_clf: self.def_clf.load_state_dict(torch.load(clf_def_file))
+	def load_clf(self, clf_def_lem_file, clf_ex_file):
+	
 		self.def_lem_clf.load_state_dict(torch.load(clf_def_lem_file))
 		self.ex_clf.load_state_dict(torch.load(clf_ex_file))
-
+	
+	# TODO
+	"""
 	def evaluate(self, sense_encoder):
-		pass
-		
+		self.eval()
+		accuracy = 0
+		with torch.no_grad():
+			for definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
+				
+				ex_log_probs = [self.ex_clf.forward(bert_input_examples, tg_trks_examples)]
+				ex_log_probs = torch.stack(ex_log_probs)
+				ex_log_probs = torch.mean(stacked_tensors, dim=0)
+				
+				log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
+				predicted_indices = torch.argmax(log_probs, dim=1)
+				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				
+			return accuracy / data_encoder.length
+	"""
+	
 	def predict(self, sense_encoder):
-		pass
+		self.eval()
+		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
+		with torch.no_grad():
+			for definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
+				
+				ex_log_probs = [self.ex_clf.forward(bert_input_examples, tg_trks_examples)]
+				ex_log_probs = torch.stack(ex_log_probs)
+				ex_log_probs = torch.mean(stacked_tensors, dim=0)
+				
+				log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
+				predicted_index = torch.argmax(log_probs, dim=1).item()
+				
+				pred = SUPERSENSES[predicted_index]
+				gold = supersense
+				sentence = self.tokenizer.decode(definition_with_lemma_encoded.tolist(), skip_special_tokens=True)
+				
+				predictions['lemma'].append(lemma)
+				predictions['sense_id'].append(sense_id)
+				predictions['gold'].append(gold)
+				predictions['pred'].append(pred)
+				predictions['sentence'].append(sentence)
+				
+			return predictions
 		
 	def evaluate_and_predict(self, sense_encoder):
 		accuracy = self.evaluate(sense_encoder)
