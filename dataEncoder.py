@@ -530,6 +530,7 @@ class wikiEncoder():
 			if pd.isna(definition) or definition == '': definition = None
 			
 			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
+			lemma = str(lemma)
 
 			
 			if definition: 
