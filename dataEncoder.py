@@ -452,7 +452,6 @@ class wikiEncoder():
 		self.ex_datafile = ex_datafile
 		
 		self.df_definitions = pd.read_excel(def_datafile, engine='openpyxl')
-		print(self.df_definitions[['sense_id', 'definition']].head(10))
 		self.df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
 		
 		self.df_examples = pd.read_excel(ex_datafile, engine='openpyxl')
@@ -464,6 +463,7 @@ class wikiEncoder():
 		if use_sample:
 			self.df_definitions = self.df_definitions.sample(sample_size)
 			self.df_examples = self.df_examples.sample(sample_size)
+			self.senses_ids = self.df_definitions['sense_id'].tolist()
 	
 	def truncate(self, sentences, word_ranks=[], max_length=100):
 		# Adjust max_length to account for potential special tokens
