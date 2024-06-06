@@ -541,6 +541,8 @@ class wikiEncoder():
 			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
 			word_ranks = df_examples[df_examples['sense_id'] == sense_id]['word_rank'].tolist()
 			
+			print("WORD RANKS: ", word_ranks)
+			
 			examples = [ x.split(' ') for x in examples ]
 			for example in examples:
 				for x in example:
@@ -549,8 +551,11 @@ class wikiEncoder():
 			sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 			
 			tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, word_ranks)]
+			
+			print("TOKEN RANKS: ", tg_trks)
 			bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
 			bert_input_examples, tg_trks_examples = self.add_special_tokens(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
+			print("TOKEN RANKS: ", tg_trks_examples)
 			
 			#if definition: definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
 			tg_trks_examples = torch.tensor(tg_trks_examples).to(device)
