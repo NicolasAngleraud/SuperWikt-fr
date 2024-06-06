@@ -89,11 +89,11 @@ if __name__ == '__main__':
 	wiki_pred_file = "./wiktionary_predictions.xlsx"
 	
 	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=True, sample_size=32)
-	
+	print(wiki_encoder.df_examples[['sense_id','example', 'word_rank']])
 	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=DEVICE):
 		print(sense_id)
 		print(lemma)
-		if definition_with_lemma_encoded is not None: print(tokenizer.decode(definition_with_lemma_encoded.squeeze().tolist()))
+		if definition_with_lemma_encoded is not None: print(tokenizer.decode(definition_with_lemma_encoded.squeeze().tolist(), skip_special_tokens=True))
 		print(tg_trks_examples)
 		#for i, ex in enumerate(bert_input_examples): print(tokenizer.convert_ids_to_tokens(ex.tolist()[tg_trks_examples.tolist()[i]]))
 		print()
