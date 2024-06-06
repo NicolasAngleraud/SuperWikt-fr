@@ -62,11 +62,13 @@ if __name__ == '__main__':
 		
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
-	def_lem_clf_file = './def_lem_clf.params'
-	def_clf_file = './def_clf.params'
-	ex_clf_file = './ex_clf.params'
-	corpus_clf_file = './corpus_clf.params'
 	
+	def_lem_clf_file = './def_lem_clf.params'
+	#def_clf_file = './def_clf.params'
+	ex_clf_file = './ex_clf.params'
+	#corpus_clf_file = './corpus_clf.params'
+	
+	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
 	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
@@ -77,7 +79,7 @@ if __name__ == '__main__':
 	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
 	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
 	rand_dev_def_ex_pred_file = './rand_dev_def_ex_clf.xlsx'
-	
+	"""
 	
 	#freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 
@@ -88,7 +90,7 @@ if __name__ == '__main__':
 	
 	wiki_pred_file = "./wiktionary_predictions.xlsx"
 	
-	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=True, sample_size=100)
+	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=100)
 
 	
 	params_def = {
