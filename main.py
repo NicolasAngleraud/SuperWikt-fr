@@ -93,9 +93,9 @@ if __name__ == '__main__':
 	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=DEVICE):
 		print(sense_id)
 		print(lemma)
-		print(definition_with_lemma_encoded)
-		#if definition_with_lemma_encoded: print(tokenizer.decode(definition_with_lemma_encoded.tolist()))
-		for i, ex in enumerate(bert_input_examples): print(tokenizer.convert_ids_to_tokens(ex.tolist()[tg_trks_examples.tolist()[i]]))
+		if definition_with_lemma_encoded: print(tokenizer.decode(definition_with_lemma_encoded.squeeze().tolist()))
+		print(tg_trks_examples)
+		#for i, ex in enumerate(bert_input_examples): print(tokenizer.convert_ids_to_tokens(ex.tolist()[tg_trks_examples.tolist()[i]]))
 		print()
 		print()
 	
