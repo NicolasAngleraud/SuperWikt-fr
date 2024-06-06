@@ -2,19 +2,10 @@ import spacy
 import pandas as pd
 import argparse
 from collections import Counter, defaultdict
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import sacremoses
 from random import shuffle
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
-import warnings
-import lexicalClf as clf
-import dataEncoder as data
-warnings.filterwarnings("ignore")
+
 
 # compound words link token
 sp_sym = '##'
@@ -45,16 +36,16 @@ def data_analysis():
 	nums_ = [item for sublist in nums for item in sublist]
 
 	print('number of examples:', len(examples_))
-	print(supersense_dist)
+
 	return examples_, lemmas_, sense_ids_, nums_
 
-print('WIKTIONARY EXAMPLES')	
+print('WIKTIONARY EXAMPLES EXTRACTION...')	
 examples_, lemmas_, sense_ids_, nums_ = data_analysis()
+print('WIKTIONARY EXAMPLES EXTRACTED.')
 print()
 
-
-
 def compound_lemma(lemma, sentence, special_token=sp_sym):
+	lemma = str(lemma)
 	# Split the lemma into individual words
 	lemma_words = lemma.split()
 
@@ -67,7 +58,8 @@ def compound_lemma(lemma, sentence, special_token=sp_sym):
 	return result_sentence
 
 def lemmatize_spacy(text, lemma):
-	doc = nlp(text)
+	lemma = str(lemma)
+	doc = nlp(str(text))
 	lemmatized_words = [token.lemma_ for token in doc]
 	lemmatized_text = ' '.join(lemmatized_words).replace(' - ', '-')
 	for punc in [',', ';', ':', '.', '!', '?']: 
@@ -83,7 +75,8 @@ def lemmatize_spacy(text, lemma):
 	return lemmatized_words
 
 def tokenize_spacy(text, lemma):
-	doc = nlp(text)
+	lemma = str(lemma)
+	doc = nlp(str(text))
 	tokens = [token.text for token in doc]
 	tokenized_text = ' '.join(tokens).replace(' - ', '-')
 	for punc in [',', ';', ':', '.', '!', '?']: 
@@ -121,16 +114,23 @@ num_iter = examples_iterator(
     nums_
 )
 
+print("LOADING SPACY fr_core_news_lg...")
 nlp = spacy.load("fr_core_news_lg")
+print("LOADED SPACY fr_core_news_lg.")
+print()
 
 lemmas_not_found = 0
 
 examples_data = []
 
 def find_rank(lemma, tokenized_words):
+	lemma = str(lemma)
 	for i, word in enumerate(tokenized_words):
 		if (word == lemma) or (word.lower() == lemma.lower()): return i
 	return -1
+
+
+print("FINDING LEMMA WORD RANK IN EXAMPLES...")
 
 for example, lemma, sense_id, num in zip(example_iter, lemma_iter, sense_id_iter, num_iter):
 	
@@ -147,7 +147,8 @@ for example, lemma, sense_id, num in zip(example_iter, lemma_iter, sense_id_iter
 		
 	examples_data.append(example_data)
 
-print("Number of examples where the lemma was not found", lemmas_not_found)
+print("FINISHED FINDING LEMMA WORD RANK IN EXAMPLES.")
+print("Number of examples where the lemma was not found ", lemmas_not_found)
 
 examples_data_df = pd.DataFrame(examples_data)
 examples_data_df.to_excel('./wiktionnaire_examples_data.xlsx', index=False)
