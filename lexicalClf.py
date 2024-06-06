@@ -617,7 +617,7 @@ class lexicalClf_V1():
 	def predict_wiki(self, wiki_encoder):
 		self.def_lem_clf.eval()
 		self.ex_clf.eval()
-		predictions = {"lemma":[], "sense_id":[], "pred":[], "sentence":[]}
+		predictions = {"lemma":[], "sense_id":[], "pred":[]}
 		with torch.no_grad():
 			for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):
 				
@@ -625,7 +625,7 @@ class lexicalClf_V1():
 					def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
 					def_weight = self.coeff_def
 				else:
-					def_log_probs = torch.zeros(len(SUPERSENSES))
+					def_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
 					def_weight = 0
 				
 				if bert_input_examples:
@@ -635,7 +635,7 @@ class lexicalClf_V1():
 					ex_weight = self.coeff_ex
 				
 				else:
-					ex_log_probs = torch.zeros(len(SUPERSENSES))
+					ex_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
 					ex_weight = 0
 				
 				log_probs = def_weight * def_log_probs + ex_weight * ex_log_probs
@@ -646,13 +646,10 @@ class lexicalClf_V1():
 				else:
 					predicted_index = torch.argmax(log_probs, dim=1).item()
 					pred = SUPERSENSES[predicted_index]
-
-				sentence = self.tokenizer.decode(definition_with_lemma_encoded.squeeze(), skip_special_tokens=True)
 				
 				predictions['lemma'].append(lemma)
 				predictions['sense_id'].append(sense_id)
 				predictions['pred'].append(pred)
-				predictions['sentence'].append(sentence)
 				
 		return predictions
 
