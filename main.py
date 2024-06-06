@@ -79,10 +79,24 @@ if __name__ == '__main__':
 	rand_dev_def_ex_pred_file = './rand_dev_def_ex_clf.xlsx'
 	
 	
-	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	#freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 
-	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
-
+	#rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	
+	wiki_def_file = "./wiktionnaire.xlsx"
+	wiki_example_file = "./wiktionnaire_exemples.xlsx"
+	
+	wiki_pred_file = "./wiktionary_predictions.xlsx"
+	
+	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=True, sample_size=32)
+	
+	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=DEVICE):
+		print(sense_id)
+		print(lemma)
+		print(tokenizer.decode(definition_with_lemma_encoded))
+		for i, ex in enumerate(bert_input_examples): print(tokenizer.convert_ids_to_tokens(ex.tolist()[tg_trks_examples.tolist()[i]]))
+		print()
+		print()
 	
 	params_def = {
 	"nb_epochs": 100,
@@ -109,18 +123,28 @@ if __name__ == '__main__':
 	coeff_ex = 0.68
 	
 	coeff_def = 0.80
-	
+	"""
 	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
 	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
 	
-	freq_dev_predictions = lex_clf.predict(freq_dev_sense_encoder)
-	rand_dev_predictions = lex_clf.predict(rand_dev_sense_encoder)
+	wiktionary_predictions = lex_clf.predict_wiki(wiki_encoder)
 	
-	freq_dev_def_ex_df = pd.DataFrame(freq_dev_predictions)
-	freq_dev_def_ex_df.to_excel(freq_dev_def_ex_pred_file, index=False)
+	wiki_df = pd.DataFrame(freq_dev_predictions)
+	wiki_df.to_excel(wiki_pred_file, index=False)
+	"""
 	
-	rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
-	rand_dev_def_ex_df.to_excel(rand_dev_def_ex_pred_file, index=False)
+	
+	
+	
+	
+	#freq_dev_predictions = lex_clf.predict(freq_dev_sense_encoder)
+	#rand_dev_predictions = lex_clf.predict(rand_dev_sense_encoder)
+	
+	#freq_dev_def_ex_df = pd.DataFrame(freq_dev_predictions)
+	#freq_dev_def_ex_df.to_excel(freq_dev_def_ex_pred_file, index=False)
+	
+	#rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
+	#rand_dev_def_ex_df.to_excel(rand_dev_def_ex_pred_file, index=False)
 	
 	"""
 	params = {

@@ -443,4 +443,113 @@ class corpusEncoder(exampleEncoder):
 		super().__init__(datafile, dataset, tokenizer, use_sample=use_sample, sample_size=sample_size)
 		self.df_definitions = self.df_definitions[self.df_definitions['ann_stage']==ann_stage]
 		self.df_examples = self.df_examples[self.df_examples['ann']==ann_stage]
-				
+
+
+class wikiEncoder():
+	def __init__(self, def_datafile, ex_datafile, tokenizer, use_sample=False, sample_size=32):
+		self.tokenizer = tokenizer
+		self.def_datafile = def_datafile
+		self.ex_datafile = ex_datafile
+		
+		self.df_definitions = pd.read_excel(def_datafile, engine='openpyxl')
+		self.df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
+		
+		self.df_examples = pd.read_excel(ex_datafile, engine='openpyxl')
+		self.df_examples = self.df_examples[self.df_examples['word_rank'] >= 0]
+		self.df_examples['lemma'] = self.df_examples['lemma'].str.replace('_', ' ')
+		
+		if use_sample:
+			self.df_definitions = self.df_definitions.sample(sample_size)
+			self.df_examples = self.df_examples.sample(sample_size)
+	
+	def truncate(self, sentences, word_ranks=[], max_length=100):
+		# Adjust max_length to account for potential special tokens
+		max_length = max_length - 2
+
+		trunc_sentences = []
+		new_word_ranks = []
+		
+		if len(word_ranks) == 0: word_ranks = [0]*len(sentences)
+
+		for sent, target_index in zip(sentences, word_ranks):
+			if len(sent) <= max_length:
+				# No truncation needed
+				trunc_sentences.append(sent)
+				new_word_ranks.append(target_index)  # The target index remains the same
+			else:
+				# Calculate the number of tokens to keep before and after the target_index
+				half_max_length = max_length // 2
+				start_index = max(0, min(len(sent) - max_length, target_index - half_max_length))
+				end_index = start_index + max_length
+
+				# Truncate the sentence
+				trunc_sent = sent[start_index:end_index]
+				trunc_sentences.append(trunc_sent)
+
+				# Adjust the target index based on truncation
+				new_target_index = target_index - start_index
+				# Ensure the new target index does not exceed the bounds of the truncated sentence
+				new_target_index = max(0, min(new_target_index, max_length-1))
+				new_word_ranks.append(new_target_index)
+
+		return trunc_sentences, new_word_ranks
+
+
+
+	def pad(self, sentences, pad_id=2, max_length=100):
+
+		max_length = max_length - 2
+		pad_lengths = [ max_length - len(sent) if max_length >= len(sent) else 0 for sent in sentences ]
+
+		padded_sentences = [ [el for el in sent] + pad_lengths[i] * [pad_id] for i, sent in enumerate(sentences) ]
+		
+		return padded_sentences
+		
+	
+	
+	def add_special_tokens(self, sentences, ranks=[], cls_id=0, sep_id=1):
+	
+		sentences_with_special_tokens = [ [cls_id] + [tok for tok in sent] + [sep_id] for sent in sentences ]
+		if ranks: rks = [rk + 1 for rk in ranks]
+		else: rks = []
+
+		return sentences_with_special_tokens, rks
+	
+	def encoded_senses(self, device):
+		
+		df_definitions = self.df_definitions
+		df_examples = self.df_examples
+		
+		tokenizer = self.tokenizer
+		
+		for sense_id in self.senses_ids:
+			
+			definition = df_definitions[df_definitions['sense_id'] == sense_id]["definition"].iloc[0]
+			if pd.isna(definition) or definition == '': definition = None
+			
+			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
+			
+			if definition: 
+				definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
+			else:
+				definition_with_lemma_encoded = None
+			
+			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
+			word_ranks = df_examples[df_examples['sense_id'] == sense_id]['word_rank'].tolist()
+			
+			examples = [ x.split(' ') for x in examples ]
+			for example in examples:
+				for x in example:
+					x = x.replace('##', ' ')
+
+			sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
+			
+			tg_trks = [token_rank(sent, rank) for sent, rank in zip(sents_encoded, word_ranks)]
+			bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
+			bert_input_examples, tg_trks_examples = self.add_special_tokens(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
+			
+			if definition: definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
+			tg_trks_examples = torch.tensor(tg_trks_examples).to(device)
+			bert_input_examples = [torch.tensor(bert_input).unsqueeze(0).to(device) for bert_input in bert_input_examples]
+			
+			yield definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma
