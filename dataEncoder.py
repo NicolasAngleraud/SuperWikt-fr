@@ -458,6 +458,8 @@ class wikiEncoder():
 		self.df_examples = self.df_examples[self.df_examples['word_rank'] >= 0]
 		self.df_examples['lemma'] = self.df_examples['lemma'].str.replace('_', ' ')
 		
+		self.senses_ids = self.df_definitions['sense_id'].tolist()
+		
 		if use_sample:
 			self.df_definitions = self.df_definitions.sample(sample_size)
 			self.df_examples = self.df_examples.sample(sample_size)
