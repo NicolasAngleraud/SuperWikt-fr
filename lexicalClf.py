@@ -606,7 +606,7 @@ class lexicalClf_V1():
 				predictions['pred'].append(pred)
 				predictions['sentence'].append(sentence)
 				
-			return predictions
+		return predictions
 		
 	def evaluate_and_predict(self, sense_encoder):
 		accuracy = self.evaluate(sense_encoder)
@@ -614,37 +614,47 @@ class lexicalClf_V1():
 		
 		return accuracy, predictions
 		
-	def predict_wiki(self, sense_encoder):
+	def predict_wiki(self, wiki_encoder):
 		self.def_lem_clf.eval()
 		self.ex_clf.eval()
-		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
+		predictions = {"lemma":[], "sense_id":[], "pred":[], "sentence":[]}
 		with torch.no_grad():
-			for definition_with_lemma_encoded, definition_without_lemma_encoded, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.encoded_senses(device=self.device):
+			for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):
 				
-				def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
+				if definition_with_lemma_encoded is not None: 
+					def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
+					def_weight = self.coeff_def
+				else:
+					def_log_probs = torch.zeros(len(SUPERSENSES))
+					def_weight = 0
 				
 				if bert_input_examples:
 					ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
 					ex_log_probs = torch.stack(ex_log_probs)
 					ex_log_probs = torch.mean(ex_log_probs, dim=0)
+					ex_weight = self.coeff_ex
 				
-					log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
-					predicted_index = torch.argmax(log_probs, dim=1).item()
 				else:
-					predicted_index = torch.argmax(def_log_probs, dim=1).item()
+					ex_log_probs = torch.zeros(len(SUPERSENSES))
+					ex_weight = 0
 				
-				pred = SUPERSENSES[predicted_index]
-				gold = supersense
+				log_probs = def_weight * def_log_probs + ex_weight * ex_log_probs
+				
+				if torch.all(log_probs == 0).item():
+					pred = ''
+					
+				else:
+					predicted_index = torch.argmax(log_probs, dim=1).item()
+					pred = SUPERSENSES[predicted_index]
 
 				sentence = self.tokenizer.decode(definition_with_lemma_encoded.squeeze(), skip_special_tokens=True)
 				
 				predictions['lemma'].append(lemma)
 				predictions['sense_id'].append(sense_id)
-				predictions['gold'].append(gold)
 				predictions['pred'].append(pred)
 				predictions['sentence'].append(sentence)
 				
-			return predictions
+		return predictions
 
 
 
