@@ -531,6 +531,7 @@ class wikiEncoder():
 			#if pd.isna(definition) or definition == '': definition = None
 			
 			#lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
+			lemma = df_examples[df_examples['sense_id'] == sense_id]["lemma"].iloc[0]
 			
 			#if definition: 
 			#	definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
