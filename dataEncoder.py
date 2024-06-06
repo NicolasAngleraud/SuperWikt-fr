@@ -463,7 +463,7 @@ class wikiEncoder():
 		if use_sample:
 			self.df_definitions = self.df_definitions.sample(sample_size)
 			self.df_examples = self.df_examples.sample(sample_size)
-			self.senses_ids = self.df_definitions['sense_id'].tolist()
+			self.senses_ids = self.df_examples['sense_id'].tolist()
 	
 	def truncate(self, sentences, word_ranks=[], max_length=100):
 		# Adjust max_length to account for potential special tokens
@@ -527,15 +527,15 @@ class wikiEncoder():
 		
 		for sense_id in self.senses_ids:
 			
-			definition = df_definitions[df_definitions['sense_id'] == sense_id]["definition"].iloc[0]
-			if pd.isna(definition) or definition == '': definition = None
+			#definition = df_definitions[df_definitions['sense_id'] == sense_id]["definition"].iloc[0]
+			#if pd.isna(definition) or definition == '': definition = None
 			
-			lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
+			#lemma = df_definitions[df_definitions['sense_id'] == sense_id]["lemma"].iloc[0]
 			
-			if definition: 
-				definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
-			else:
-				definition_with_lemma_encoded = None
+			#if definition: 
+			#	definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
+			#else:
+			#	definition_with_lemma_encoded = None
 			
 			examples = df_examples[df_examples['sense_id'] == sense_id]['example'].tolist()
 			word_ranks = df_examples[df_examples['sense_id'] == sense_id]['word_rank'].tolist()
@@ -551,8 +551,13 @@ class wikiEncoder():
 			bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
 			bert_input_examples, tg_trks_examples = self.add_special_tokens(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 			
-			if definition: definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
+			#if definition: definition_with_lemma_encoded = torch.tensor(definition_with_lemma_encoded).to(device)
 			tg_trks_examples = torch.tensor(tg_trks_examples).to(device)
 			bert_input_examples = [torch.tensor(bert_input).unsqueeze(0).to(device) for bert_input in bert_input_examples]
+			
+			
+			
+			
+			definition_with_lemma_encoded = None
 			
 			yield definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma
