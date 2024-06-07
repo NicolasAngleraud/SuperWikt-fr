@@ -95,9 +95,10 @@ if __name__ == '__main__':
 	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(DEVICE):
 		print(lemma)
 		print(sense_id)
-		print(tokenizer.decode(definition_with_lemma_encoded[0], skip_special_tokens=True))
+		if definition_with_lemma_encoded: print(tokenizer.decode(definition_with_lemma_encoded[0], skip_special_tokens=True))
 		for i, ex in enumerate(bert_input_examples): print(tokenizer.decode(ex.squeeze()[tg_trks_examples[i]]))
-	
+		print()
+		print()
 
 	
 	params_def = {
