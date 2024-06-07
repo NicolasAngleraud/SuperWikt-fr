@@ -90,7 +90,7 @@ if __name__ == '__main__':
 	
 	wiki_pred_file = "./wiktionary_predictions.xlsx"
 	
-	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=True, sample_size=1000)
+	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=1000)
 	"""
 	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(DEVICE):
 		print(lemma)
