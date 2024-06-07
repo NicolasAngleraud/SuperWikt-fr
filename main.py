@@ -90,7 +90,14 @@ if __name__ == '__main__':
 	
 	wiki_pred_file = "./wiktionary_predictions.xlsx"
 	
-	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=100)
+	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=True, sample_size=1000)
+	
+	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(DEVICE):
+		print(lemma)
+		print(sense_id)
+		print(tokenizer.decode(definition_with_lemma_encoded[0], skip_special_tokens=True))
+		for i, ex in enumerate(bert_input_examples): print(tokenizer.decode(ex.squeeze()[tg_trks_examples[i]]))
+	
 
 	
 	params_def = {
@@ -118,7 +125,7 @@ if __name__ == '__main__':
 	coeff_ex = 0.68
 	
 	coeff_def = 0.80
-	
+	'''
 	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
 	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
 	
@@ -127,7 +134,7 @@ if __name__ == '__main__':
 	wiki_df = pd.DataFrame(wiktionary_predictions)
 	wiki_df.to_excel(wiki_pred_file, index=False)
 	
-	
+	'''
 	
 	
 	

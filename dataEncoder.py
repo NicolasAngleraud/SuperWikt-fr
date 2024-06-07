@@ -464,20 +464,20 @@ class wikiEncoder():
 			self.df_definitions = self.df_definitions.sample(sample_size)
 			self.senses_ids = self.df_definitions['sense_id'].tolist()
 	
-	def truncate(self, sentences, word_ranks=[], max_length=100):
+	def truncate(self, sentences, ranks=[], max_length=100):
 		# Adjust max_length to account for potential special tokens
 		max_length = max_length - 2
 
 		trunc_sentences = []
-		new_word_ranks = []
+		new_ranks = []
 		
-		if len(word_ranks) == 0: word_ranks = [0]*len(sentences)
+		if len(ranks) == 0: ranks = [0]*len(sentences)
 
-		for sent, target_index in zip(sentences, word_ranks):
+		for sent, target_index in zip(sentences, ranks):
 			if len(sent) <= max_length:
 				# No truncation needed
 				trunc_sentences.append(sent)
-				new_word_ranks.append(target_index)  # The target index remains the same
+				new_ranks.append(target_index)  # The target index remains the same
 			else:
 				# Calculate the number of tokens to keep before and after the target_index
 				half_max_length = max_length // 2
@@ -492,9 +492,9 @@ class wikiEncoder():
 				new_target_index = target_index - start_index
 				# Ensure the new target index does not exceed the bounds of the truncated sentence
 				new_target_index = max(0, min(new_target_index, max_length-1))
-				new_word_ranks.append(new_target_index)
+				new_ranks.append(new_target_index)
 
-		return trunc_sentences, new_word_ranks
+		return trunc_sentences, new_ranks
 
 
 
@@ -534,7 +534,15 @@ class wikiEncoder():
 
 			
 			if definition: 
-				definition_with_lemma_encoded = tokenizer.encode(text=f"{lemma.replace('_',' ')} : {definition}", add_special_tokens=True, return_tensors='pt')
+				definition_with_lemma_encoded = tokenizer.encoded_input = tokenizer.encode_plus(
+																					text=f"{lemma.replace('_',' ')} : {definition}",
+																					add_special_tokens=True,
+																					max_length=100,  
+																					padding='max_length',  
+																					truncation=True,        
+																					return_tensors='pt'     
+																								)['input_ids']
+				
 			else:
 				definition_with_lemma_encoded = None
 			
@@ -546,6 +554,7 @@ class wikiEncoder():
 			for example in examples:
 				for x in example:
 					x = x.replace('##', ' ')
+			
 
 			sents_encoded = [ tokenizer(word, add_special_tokens=False)['input_ids'] for word in examples ]
 			
@@ -553,6 +562,10 @@ class wikiEncoder():
 			
 
 			bert_input_raw = [ flatten_list(sent) for sent in sents_encoded ]
+			
+			bert_input_raw, tg_trks = self.truncate(bert_input_raw, tg_trks)
+			bert_input_raw = self.pad(bert_input_raw, pad_id=2)
+			
 			bert_input_examples, tg_trks_examples = self.add_special_tokens(bert_input_raw, tg_trks, cls_id=0, sep_id=1)
 
 			
