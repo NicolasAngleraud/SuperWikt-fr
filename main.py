@@ -15,7 +15,7 @@ import warnings
 import lexicalClf as clf
 import subprocess
 import dataEncoder as data
-from huggingface_hub import HfApi, HfFolder
+from huggingface_hub import HfApi, login
 warnings.filterwarnings("ignore")
 
 
@@ -95,33 +95,24 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
-	
-	
-
-	# Set your Hugging Face token
-	os.environ["HUGGINGFACE_TOKEN"] = API_TOKEN
-
-	# Function to log in to Hugging Face using the token
-	def login_to_huggingface():
-		try:
-		    # Use the token to log in non-interactively
-		    subprocess.run(f"echo {os.environ['HUGGINGFACE_TOKEN']} | huggingface-cli login --token", check=True, shell=True)
-		except subprocess.CalledProcessError as e:
-		    print(f"An error occurred while trying to log in: {e}")
 
 	
 	# Load your fine-tuned model
 	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.load_clf(def_lem_clf_file)
 
-	# Define your repository name
-	repo_name = "flaubert-fr-sem-nom-def"
+	# Log in to Hugging Face
+	login(token=API_TOKEN)
 
-	# Call the login function
-	login_to_huggingface()
-	
-	# Upload the model and tokenizer
-	HfApi().create_repo(repo_name, exist_ok=True)
+	# Initialize the API
+	api = HfApi()
+
+	# Repository name
+	repo_name = "nangleraud/flaubert-fr-sem-nom-def"
+
+	# Create a new repository or use an existing one
+	api.create_repo(repo_id=repo_name, exist_ok=True)
+
 	def_lem_clf.bert_model.push_to_hub(repo_name)
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	tokenizer.push_to_hub(repo_name)
