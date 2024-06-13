@@ -13,6 +13,7 @@ from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 import warnings
 import lexicalClf as clf
+import subprocess
 import dataEncoder as data
 from huggingface_hub import HfApi, HfFolder
 warnings.filterwarnings("ignore")
