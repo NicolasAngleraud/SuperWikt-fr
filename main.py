@@ -7,12 +7,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 import sacremoses
 from random import shuffle
+import os
 import numpy as np
 from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 import warnings
 import lexicalClf as clf
 import dataEncoder as data
+from huggingface_hub import HfApi, HfFolder
 warnings.filterwarnings("ignore")
 
 
@@ -45,7 +47,7 @@ def lr_id(lr):
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-device_id", choices=['0', '1', '2', '3'], help="Id of the GPU.")
+	parser.add_argument("-device_id", choices=['cpu', '0', '1', '2', '3'], help="Id of the GPU.")
 	parser.add_argument("-data_file", default="./data.xlsx", help="The excel file containing all the annotated sense data from wiktionary.")
 	parser.add_argument("-batch_size", choices=['1', '2', '4', '8', '16', '32', '64'], help="batch size for the classifier.")
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
@@ -57,12 +59,11 @@ if __name__ == '__main__':
 	args = get_parser_args()
 	
 	device_id = args.device_id
-	if torch.cuda.is_available():
-		DEVICE = torch.device("cuda:" + args.device_id)
-		
-	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-	API_TOKEN = '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'
-	# TODO
+	if device_id != 'cpu':
+		if torch.cuda.is_available():
+			DEVICE = torch.device("cuda:" + args.device_id)
+	
+	API_TOKEN = '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'
 	
 	def_lem_clf_file = './def_lem_clf.params'
 	#def_clf_file = './def_clf.params'
@@ -90,6 +91,37 @@ if __name__ == '__main__':
 	"frozen": False,
 	"max_seq_length": 100
 	}
+	
+	
+	
+
+	# Set your Hugging Face token
+	os.environ["HUGGINGFACE_TOKEN"] = API_TOKEN
+
+	# Function to log in to Hugging Face using the token
+	def login_to_huggingface():
+		try:
+		    # Use the token to log in non-interactively
+		    subprocess.run(f"echo {os.environ['HUGGINGFACE_TOKEN']} | huggingface-cli login --token", check=True, shell=True)
+		except subprocess.CalledProcessError as e:
+		    print(f"An error occurred while trying to log in: {e}")
+
+	
+	# Load your fine-tuned model
+	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
+	def_lem_clf.load_clf(def_lem_clf_file)
+
+	# Define your repository name
+	repo_name = "flaubert-fr-sem-nom-def"
+
+	# Call the login function
+	login_to_huggingface()
+	
+	# Upload the model and tokenizer
+	HfApi().create_repo(repo_name, exist_ok=True)
+	def_lem_clf.bert_model.push_to_hub(repo_name)
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	tokenizer.push_to_hub(repo_name)
 	
 	
 	
