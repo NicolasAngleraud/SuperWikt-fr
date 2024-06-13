@@ -11,6 +11,8 @@ from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
+from kan import KAN
+
 
 
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
@@ -689,3 +691,68 @@ class MostFrequentTrainingData(Baseline):
 
 	def training(self):
 		self.most_frequent_supersense = 'artifact'
+
+
+
+class KANClf(nn.Module):
+
+	def __init__(self, params, DEVICE, bert_model_name=MODEL_NAME):
+		super(KANClf, self).__init__()
+
+		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
+
+		for param in self.bert_model.parameters():
+			param.requires_grad = False
+
+		self.embedding_layer_size = self.bert_model.config.hidden_size
+
+		self.hidden_layer_size = params['hidden_layer_size']
+
+		self.output_size = NB_CLASSES
+		
+		self.device = DEVICE
+		
+		self.kan = KAN(width=[self.embedding_layer_size, self.hidden_layer_size, self.output_size], grid=params['grid'], k=params['k'], device=self.device)
+		
+		self.params = params
+
+		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+		
+
+	def forward(self, padded_encodings):
+
+		bert_output = self.bert_model(padded_encodings, return_dict=True) # SHAPE [len(definitions), max_length, embedding_size]
+
+		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
+
+		logit = kan(batch_contextual_embeddings)
+
+		return F.log_softmax(logit, dim=1)
+		
+
+	def train_clf(self):
+
+		params = self.params
+
+		X_train = 
+		y_train = 
+		
+		X_test = 
+		y_test = 
+		
+		def train_acc():
+			return torch.mean((torch.argmax(model(X_train), dim=1) == y_train).float())
+
+		def test_acc():
+			return torch.mean((torch.argmax(model(X_test), dim=1) == y_test).float())
+
+		results = self.kan.train(
+							dataset, 
+							opt="LBFGS",
+							steps=5,
+							metrics=(train_acc, test_acc),
+							batch=params['batch_size'],
+							loss_fn=torch.nn.CrossEntropyLoss())
+		
+		return results
+

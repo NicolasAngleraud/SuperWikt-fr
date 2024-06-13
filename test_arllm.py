@@ -12,9 +12,8 @@ from llama_cpp import Llama
 
 ## MODELS
 #lightblue/suzume-llama-3-8B-multilingual
+#CohereForAI/aya-23-8B
 #meta-llama/Meta-Llama-3-8B-Instruct
-#mistralai/Mixtral-8x7B-Instruct-v0.1
-#TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF
 
 
 
@@ -35,33 +34,8 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
 
 #API_TOKEN = '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'
 
-ss2classe = {
-	'act': 'action',
-	'animal': 'animal',
-	'artifact': 'objet',
-	'attribute': 'propriété',
-	'body': 'anatomie',
-	'cognition': 'pensée',
-	'communication': 'langage',
-	'event': 'événement',
-	'feeling': 'sentiment',
-	'food': 'nourriture',
-	'institution': 'institution',
-	'act*cognition': 'discours',
-	'object': 'nature',
-	'possession': 'possession',
-	'person': 'personne',
-	'phenomenon': 'phénomène',
-	'plant': 'plante',
-	'artifact*cognition': 'document',
-	'quantity': 'quantité',
-	'relation': 'relation',
-	'state': 'état',
-	'substance': 'substance',
-	'time': 'temps',
-	'groupxperson': 'collectif'}
 
-fr_supersenses = [ss2classe[c] for c in SUPERSENSES]
+
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
@@ -85,49 +59,7 @@ if __name__ == '__main__':
 	if device_id == "cpu": DEVICE = "cpu"
 	else:
 		if torch.cuda.is_available(): DEVICE = torch.device("cuda:" + args.device_id)
-	
-	#model_name = "mistralai/Mixtral-8x7B-Instruct-v0.1"
-	
-	#tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=API_TOKEN, add_eos_token=True)
-	#tokenizer.pad_token_id = tokenizer.eos_token_id
 
-	#bnb_config = BitsAndBytesConfig(
-	#								load_in_4bit= True,
-	#								bnb_4bit_quant_type= "nf4",
-	#								bnb_4bit_compute_dtype= torch.bfloat16,
-	#								bnb_4bit_use_double_quant= False)
-	
-	
-	
-
-
-	model_name = "TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF"
-	model_file = "mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf"
-	model_path = hf_hub_download(model_name, filename=model_file)
-
-
-	llm = Llama(
-		model_path=model_path,
-		n_ctx=16000,
-		n_threads=32,
-		n_gpu_layers=0
-	)
-
-
-	generation_kwargs = {
-		"max_tokens":20000,
-		"stop":["</s>"],
-		"echo":False,
-		"top_k":1
-	}
-
-
-	prompt = "Le sens de la vie est "
-	res = llm(prompt, **generation_kwargs)
-
-	print(res["choices"][0]["text"])
-	
-	
 	'''
 	model = AutoModelForCausalLM.from_pretrained(
 												pretrained_model_name_or_path="TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF", 
@@ -232,29 +164,5 @@ if __name__ == '__main__':
 	eval_df.to_excel("./eval_sample_def_zero_shot_prompting_llama3.xlsx", index=False)
 	'''
 	
-	# CONFIG PREFIX TUNING PEFT
-	'''
-	# NOT OPERATIONAL YET
-	if peft_method == "prefix_tuning":
-		peft_config = PrefixTuningConfig(
-										task_type=TaskType.CAUSAL_LM,
-										num_virtual_tokens=10,
-										token_dim=4096,
-										num_transformer_submodules=1,
-										num_attention_heads=32,
-										num_layers=32,
-										encoder_hidden_size=4096)
-										
-		prefix_encoder = PrefixEncoder(peft_config)
-	'''
-	
-	
-	# TESTS TOKENIZER
-	'''
-	for c in ss2classe:
-		classe = ss2classe[c]
-		print(classe, tokenizer.convert_ids_to_tokens(tokenizer(classe)['input_ids']))
-		print(classe, tokenizer(classe)['input_ids'])
-	
-	'''
+
 

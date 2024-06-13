@@ -61,45 +61,13 @@ if __name__ == '__main__':
 		DEVICE = torch.device("cuda:" + args.device_id)
 		
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-	
+	API_TOKEN = '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'
+	# TODO
 	
 	def_lem_clf_file = './def_lem_clf.params'
 	#def_clf_file = './def_clf.params'
 	ex_clf_file = './ex_clf.params'
 	#corpus_clf_file = './corpus_clf.params'
-	
-	"""
-	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
-	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
-	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
-	corpus_dev_pred_file = './dev_corpus_clf.xlsx'
-	freq_dev_def_ex_pred_file = './freq_dev_def_ex_clf.xlsx'
-	
-	rand_dev_def_lem_pred_file = './rand_dev_def_lem_clf.xlsx'
-	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
-	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
-	rand_dev_def_ex_pred_file = './rand_dev_def_ex_clf.xlsx'
-	"""
-	
-	#freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
-
-	#rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
-	
-	wiki_def_file = "./wiktionnaire.xlsx"
-	wiki_example_file = "./wiktionnaire_exemples.xlsx"
-	
-	wiki_pred_file = "./wiktionary_predictions.xlsx"
-	
-	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=1000)
-	"""
-	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(DEVICE):
-		print(lemma)
-		print(sense_id)
-		if definition_with_lemma_encoded is not None: print(tokenizer.decode(definition_with_lemma_encoded[0], skip_special_tokens=True))
-		for i, ex in enumerate(bert_input_examples): print(tokenizer.decode(ex.squeeze()[tg_trks_examples[i]]))
-		print()
-		print()
-	"""
 	
 	params_def = {
 	"nb_epochs": 100,
@@ -123,6 +91,45 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	
+	
+	"""
+	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
+	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
+	freq_dev_ex_pred_file = './freq_dev_ex_clf.xlsx'
+	corpus_dev_pred_file = './dev_corpus_clf.xlsx'
+	freq_dev_def_ex_pred_file = './freq_dev_def_ex_clf.xlsx'
+	
+	rand_dev_def_lem_pred_file = './rand_dev_def_lem_clf.xlsx'
+	rand_dev_def_pred_file = './rand_dev_def_clf.xlsx'
+	rand_dev_ex_pred_file = './rand_dev_ex_clf.xlsx'
+	rand_dev_def_ex_pred_file = './rand_dev_def_ex_clf.xlsx'
+	"""
+	
+	#freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+
+	#rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	
+	'''
+	wiki_def_file = "./wiktionnaire.xlsx"
+	wiki_example_file = "./wiktionnaire_exemples.xlsx"
+	
+	wiki_pred_file = "./wiktionary_predictions.xlsx"
+	
+	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=1000)
+	'''
+	"""
+	for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(DEVICE):
+		print(lemma)
+		print(sense_id)
+		if definition_with_lemma_encoded is not None: print(tokenizer.decode(definition_with_lemma_encoded[0], skip_special_tokens=True))
+		for i, ex in enumerate(bert_input_examples): print(tokenizer.decode(ex.squeeze()[tg_trks_examples[i]]))
+		print()
+		print()
+	"""
+	
+
+	'''
 	coeff_ex = 0.68
 	
 	coeff_def = 0.80
@@ -147,7 +154,7 @@ if __name__ == '__main__':
 	
 	#rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
 	#rand_dev_def_ex_df.to_excel(rand_dev_def_ex_pred_file, index=False)
-	
+	'''
 	"""
 	params = {
 	"nb_epochs": 100,
