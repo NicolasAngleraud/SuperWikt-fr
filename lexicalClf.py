@@ -733,13 +733,14 @@ class KANClf(nn.Module):
 	def train_clf(self):
 
 		params = self.params
-
+		
+		'''
 		X_train = 
 		y_train = 
 		
 		X_test = 
 		y_test = 
-		
+		'''
 		def train_acc():
 			return torch.mean((torch.argmax(model(X_train), dim=1) == y_train).float())
 
