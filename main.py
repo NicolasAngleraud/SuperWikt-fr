@@ -62,6 +62,8 @@ if __name__ == '__main__':
 	if device_id != 'cpu':
 		if torch.cuda.is_available():
 			DEVICE = torch.device("cuda:" + args.device_id)
+	else:
+		DEVICE = 'cpu'
 	
 	API_TOKEN = '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'
 	
