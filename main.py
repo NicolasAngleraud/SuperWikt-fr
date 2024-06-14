@@ -10,7 +10,6 @@ from random import shuffle
 import os
 import numpy as np
 from transformers import AutoModel, AutoTokenizer
-from safetensors.torch import save_file, load_file
 from matplotlib import pyplot as plt
 import warnings
 import lexicalClf as clf
@@ -160,15 +159,14 @@ if __name__ == '__main__':
 	test_embeddings = get_embeddings(X_test, tokenizer, bert_model)
 	
 	# Save embeddings as safetensors
-	save_file({'train_embeddings': train_embeddings}, './train_embeddings.safetensors')
-	save_file({'test_embeddings': test_embeddings}, './test_embeddings.safetensors')
+	torch.save(train_embeddings, './train_embeddings.pt')
+	torch.save(test_embeddings, './test_embeddings.pt')
 	
-
 
 	# Load embeddings from safetensors
-	#train_embeddings = load_file('./train_embeddings.safetensors')['train_embeddings']
-	#test_embeddings = load_file('./test_embeddings.safetensors')['test_embeddings']
-	
+	#train_embeddings_loaded = torch.load('./train_embeddings.pt')
+	#test_embeddings_loaded = torch.load('./test_embeddings.pt')
+		
 	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
