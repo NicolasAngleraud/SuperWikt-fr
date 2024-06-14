@@ -698,12 +698,13 @@ class KANClf():
 
 	def __init__(self, params, bert_model_name, DEVICE):
 
-		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
+		# Load model configuration
+		self.config = AutoConfig.from_pretrained(bert_model_name)
 
-		for param in self.bert_model.parameters():
-			param.requires_grad = False
-
-		self.embedding_layer_size = self.bert_model.config.hidden_size
+		# Set embedding layer size
+		self.embedding_layer_size = config.hidden_size
+		
+		print(self.embedding_layer_size)
 
 		self.hidden_layer_size = params['hidden_layer_size']
 
@@ -718,26 +719,69 @@ class KANClf():
 		self.tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
 		
 
-	def train_clf(self, ):
+	def train(self):
 
 		params = self.params
-		
-		bert_output = self.bert_model(padded_encodings, return_dict=True) # SHAPE [len(definitions), max_length, embedding_size]
 
-		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
+		X_train = torch.load('./train_embeddings.pt')
+		y_train = torch.load('./train_supersenses.pt')
 		
-		'''
-		X_train = 
-		y_train = 
+		X_test = torch.load('./test_embeddings.pt')
+		y_test = torch.load('./test_supersenses.pt')
 		
-		X_test = 
-		y_test = 
-		'''
 		def train_acc():
-			return torch.mean((torch.argmax(self.kan(X_train), dim=1) == y_train).float())
+			batch_size = 100  # Set your desired batch size
+			num_samples = X_train.shape[0]
+			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
+
+			total_correct = 0
+			total_samples = 0
+
+			for i in range(num_batches):
+				start_idx = i * batch_size
+				end_idx = min((i + 1) * batch_size, num_samples)
+
+				# Get batch
+				X_batch = X_train[start_idx:end_idx]
+				y_batch = y_train[start_idx:end_idx]
+
+				# Get predictions for the batch
+				predictions = torch.argmax(model(X_batch), dim=1)
+
+				# Calculate accuracy for the batch
+				total_correct += torch.sum(predictions == y_batch)
+				total_samples += y_batch.size(0)
+
+			# Calculate overall accuracy
+			accuracy = total_correct / total_samples
+			return accuracy
 
 		def test_acc():
-			return torch.mean((torch.argmax(self.kan(X_test), dim=1) == y_test).float())
+			batch_size = 100  # Set your desired batch size
+			num_samples = X_test.shape[0]
+			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
+
+			total_correct = 0
+			total_samples = 0
+
+			for i in range(num_batches):
+				start_idx = i * batch_size
+				end_idx = min((i + 1) * batch_size, num_samples)
+
+				# Get batch
+				X_batch = X_test[start_idx:end_idx]
+				y_batch = y_test[start_idx:end_idx]
+
+				# Get predictions for the batch
+				predictions = torch.argmax(model(X_batch), dim=1)
+
+				# Calculate accuracy for the batch
+				total_correct += torch.sum(predictions == y_batch)
+				total_samples += y_batch.size(0)
+
+			# Calculate overall accuracy
+			accuracy = total_correct / total_samples
+			return accuracy
 
 		results = self.kan.train(
 							dataset, 

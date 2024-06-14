@@ -96,6 +96,33 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	
+	params_kan = {
+	'hidden_layer_size': 4,
+	'grid': 3,
+	'k': 3,
+	'nb_epochs': 5,
+	'batch_size': 16
+	}
+	
+	
+	
+	kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
+	kan.train()
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	#########################################################################################################################
+	
+	
+	"""
 	datafile = "./data.xlsx"
 	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
@@ -111,7 +138,7 @@ if __name__ == '__main__':
 	
 	torch.save(train_supersenses, './train_supersenses.pt')
 	torch.save(test_supersenses, './test_supersenses.pt')
-	
+	"""
 	
 	"""
 	# Load your fine-tuned model
