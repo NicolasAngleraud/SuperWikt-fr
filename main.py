@@ -130,9 +130,9 @@ if __name__ == '__main__':
 	
 	datafile = "./data.xlsx"
 	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
-	df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
-	df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
-	df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
+	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
+	df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
+	df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 	
 	# Filter definitions based on set column values
 	train_definitions = df_definitions[df_definitions['set'] == 'train']
