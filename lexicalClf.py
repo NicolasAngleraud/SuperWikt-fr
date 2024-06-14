@@ -694,10 +694,9 @@ class MostFrequentTrainingData(Baseline):
 
 
 
-class KANClf(nn.Module):
+class KANClf():
 
-	def __init__(self, params, DEVICE, bert_model_name=MODEL_NAME):
-		super(KANClf, self).__init__()
+	def __init__(self, params, bert_model_name, DEVICE):
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
 
@@ -716,23 +715,16 @@ class KANClf(nn.Module):
 		
 		self.params = params
 
-		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+		self.tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
 		
 
-	def forward(self, padded_encodings):
+	def train_clf(self, ):
 
+		params = self.params
+		
 		bert_output = self.bert_model(padded_encodings, return_dict=True) # SHAPE [len(definitions), max_length, embedding_size]
 
 		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
-
-		logit = kan(batch_contextual_embeddings)
-
-		return F.log_softmax(logit, dim=1)
-		
-
-	def train_clf(self):
-
-		params = self.params
 		
 		'''
 		X_train = 
@@ -742,18 +734,21 @@ class KANClf(nn.Module):
 		y_test = 
 		'''
 		def train_acc():
-			return torch.mean((torch.argmax(model(X_train), dim=1) == y_train).float())
+			return torch.mean((torch.argmax(self.kan(X_train), dim=1) == y_train).float())
 
 		def test_acc():
-			return torch.mean((torch.argmax(model(X_test), dim=1) == y_test).float())
+			return torch.mean((torch.argmax(self.kan(X_test), dim=1) == y_test).float())
 
 		results = self.kan.train(
 							dataset, 
 							opt="LBFGS",
-							steps=5,
+							steps=params['nb_epochs'],
 							metrics=(train_acc, test_acc),
 							batch=params['batch_size'],
 							loss_fn=torch.nn.CrossEntropyLoss())
 		
 		return results
+		
+	def predict(self):
+		pass
 

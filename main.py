@@ -10,6 +10,7 @@ from random import shuffle
 import os
 import numpy as np
 from transformers import AutoModel, AutoTokenizer
+from safetensors.torch import save_file, load_file
 from matplotlib import pyplot as plt
 import warnings
 import lexicalClf as clf
@@ -35,6 +36,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
 MODEL_NAME = "flaubert/flaubert_large_cased"
+flaubert_fr_sem = "nangleraud/flaubert-fr-sem-nom-def"
 
 def percentage(decimal):
     percentage = decimal * 100
@@ -95,29 +97,77 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
-
 	
-	# Load your fine-tuned model
-	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
-	def_lem_clf.load_clf(def_lem_clf_file)
-
-	# Log in to Hugging Face
+	
 	login(token=API_TOKEN)
-
-	# Initialize the API
-	api = HfApi()
-
-	# Repository name
-	repo_name = "nangleraud/flaubert-fr-sem-nom-def"
-
-	# Create a new repository or use an existing one
-	api.create_repo(repo_id=repo_name, exist_ok=True)
-
-	def_lem_clf.bert_model.push_to_hub(repo_name)
-	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-	tokenizer.push_to_hub(repo_name)
 	
+	# Load pre-trained BERT model and tokenizer
+	model_name = flaubert_fr_sem
+	tokenizer = BertTokenizer.from_pretrained(model_name)
+	bert_model = BertModel.from_pretrained(model_name).to(DEVICE)
+
+	# Set BERT to evaluation mode and disable gradients
+	bert_model.eval()
+	for param in bert_model.parameters():
+		param.requires_grad = False
+
+	def get_embeddings(texts, tokenizer, model, batch_size=32):
+		all_embeddings = []
+		with torch.no_grad():
+		    for i in range(0, len(texts), batch_size):
+		        batch_texts = texts[i:i+batch_size]
+		        encoded_inputs = tokenizer(batch_texts, padding=True, truncation=True, return_tensors="pt").to(DEVICE)
+		        input_ids = encoded_inputs['input_ids']
+		        attention_mask = encoded_inputs['attention_mask']
+		        
+		        # Get the last hidden states from BERT
+		        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+		        last_hidden_states = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, hidden_size)
+		        
+		        # Use the [CLS] token representation as the embedding
+		        cls_embeddings = last_hidden_states[:, 0, :]  # Shape: (batch_size, hidden_size)
+		        
+		        all_embeddings.append(cls_embeddings)
+
+		all_embeddings = torch.cat(all_embeddings, dim=0).to(DEVICE)
+		return all_embeddings
 	
+	datafile = "./data.xlsx"
+	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
+	df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
+	df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
+	df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
+	
+	# Filter definitions based on set column values
+	train_definitions = df_definitions[df_definitions['set'] == 'train']
+	test_definitions = df_definitions[df_definitions['set'].isin(['freq-dev', 'rand-dev'])]
+
+	# Format lemma: definition for each set
+	def format_definitions(df):
+		formatted_definitions = []
+		for index, row in df.iterrows():
+		    lemma = row['lemma']
+		    definition = row['definition']
+		    formatted_definitions.append(f"{lemma}: {definition}")
+		return formatted_definitions
+
+	# Create X_train and X_test with lemma: definition format
+	X_train = format_definitions(train_definitions)
+	X_test = format_definitions(test_definitions)
+
+	# Get embeddings
+	train_embeddings = get_embeddings(X_train, tokenizer, bert_model)
+	test_embeddings = get_embeddings(X_test, tokenizer, bert_model)
+	
+	# Save embeddings as safetensors
+	save_file({'train_embeddings': train_embeddings}, './train_embeddings.safetensors')
+	save_file({'test_embeddings': test_embeddings}, './test_embeddings.safetensors')
+	
+
+
+	# Load embeddings from safetensors
+	#train_embeddings = load_file('./train_embeddings.safetensors')['train_embeddings']
+	#test_embeddings = load_file('./test_embeddings.safetensors')['test_embeddings']
 	
 	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
@@ -341,4 +391,26 @@ if __name__ == '__main__':
 			
 			dev_df = pd.DataFrame(dev_predictions)
 			dev_df.to_excel(corpus_dev_pred_file.replace('.xlsx', f"_lr_{lr_id(lr)}_run_{run+1}.xlsx"), index=False)
-			"""
+	"""
+			
+		'''
+	# Load your fine-tuned model
+	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
+	def_lem_clf.load_clf(def_lem_clf_file)
+
+	# Log in to Hugging Face
+	login(token=API_TOKEN)
+
+	# Initialize the API
+	api = HfApi()
+
+	# Repository name
+	repo_name = "nangleraud/flaubert-fr-sem-nom-def"
+
+	# Create a new repository or use an existing one
+	api.create_repo(repo_id=repo_name, exist_ok=True)
+
+	def_lem_clf.bert_model.push_to_hub(repo_name)
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	tokenizer.push_to_hub(repo_name)
+	'''
