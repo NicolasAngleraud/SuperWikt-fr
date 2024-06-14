@@ -98,18 +98,19 @@ if __name__ == '__main__':
 	
 	
 	params_kan = {
-	'hidden_layer_size': 8,
-	'grid': 4,
-	'k': 4,
-	'nb_epochs': 20,
+	'hidden_layer_size': 16,
+	'grid': 5,
+	'k': 5,
+	'nb_epochs': 30,
 	'batch_size': 32
 	}
 	
 	
 	
-	kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
-	kan.train()
+	#kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
+	#results = kan.train()
 	
+	#for key in results: print(key, results[key])
 	
 	
 	
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 	#########################################################################################################################
 	
 	
-	"""
+	
 	datafile = "./data.xlsx"
 	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
@@ -133,14 +134,13 @@ if __name__ == '__main__':
 	train_definitions = df_definitions[df_definitions['set'] == 'train']
 	test_definitions = df_definitions[df_definitions['set'].isin(['freq-dev', 'rand-dev'])]
 	
-	train_supersenses = torch.tensor([supersense2i[ss] for ss in train_definitions['supersense'].tolist()])
-	test_supersenses = torch.tensor([supersense2i[ss] for ss in test_definitions['supersense'].tolist()])
+	train_supersenses = torch.tensor([supersense2i[ss] for ss in train_definitions['supersense'].tolist()]).to(DEVICE)
+	test_supersenses = torch.tensor([supersense2i[ss] for ss in test_definitions['supersense'].tolist()]).to(DEVICE)
 	
 	torch.save(train_supersenses, './train_supersenses.pt')
 	torch.save(test_supersenses, './test_supersenses.pt')
-	"""
 	
-	"""
+	
 	# Load your fine-tuned model
 	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.load_clf(def_lem_clf_file)
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 	# Save embeddings as safetensors
 	torch.save(train_embeddings, './train_embeddings.pt')
 	torch.save(test_embeddings, './test_embeddings.pt')
-	"""
+	
 
 	# Load embeddings from safetensors
 	#train_embeddings_loaded = torch.load('./train_embeddings.pt')
