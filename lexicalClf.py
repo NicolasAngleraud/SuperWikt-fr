@@ -7,7 +7,7 @@ import torch.optim as optim
 import sacremoses
 from random import shuffle
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, AutoConfig
 from matplotlib import pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
