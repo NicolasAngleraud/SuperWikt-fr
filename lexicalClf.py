@@ -800,7 +800,7 @@ class KANClf():
 							steps=params['nb_epochs'],
 							metrics=(train_acc, test_acc),
 							batch=params['batch_size'],
-							loss_fn=torch.nn.CrossEntropyLoss()
+							loss_fn=torch.nn.CrossEntropyLoss(),
 							lr=params['lr'])
 		
 		return results
