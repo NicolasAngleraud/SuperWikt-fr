@@ -98,7 +98,7 @@ if __name__ == '__main__':
 	
 	
 	
-	login(token=API_TOKEN)
+	#login(token=API_TOKEN)
 	
 	# Load pre-trained BERT model and tokenizer
 	model_name = flaubert_fr_sem
