@@ -96,18 +96,11 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
-	# Specify paths
-	model_path = 'nangleraud/flaubert-fr-sem-nom-def'
-	
-	tokenizer = AutoTokenizer.from_pretrained(model_path)
-	
-	# Load configuration
-	config = AutoConfig.from_pretrained(model_path)
-
-	# Instantiate model
-	bert_model = AutoModel.from_config(config)
-	
-	bert_model = AutoModel.from_pretrained(model_path).to(DEVICE)
+	# Load your fine-tuned model
+	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
+	def_lem_clf.load_clf(def_lem_clf_file)
+	bert_model = def_lem_clf.bert_model
+	tokenizer = AutoTokenizer.from_pretrained('nangleraud/flaubert-fr-sem-nom-def')
 
 	# Set BERT to evaluation mode and disable gradients
 	bert_model.eval()
