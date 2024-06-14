@@ -851,8 +851,7 @@ class KANmonoRankClf(nn.Module):
 		
 		out = self.dropout(batch_contextual_embeddings)
 		
-		out = self.kan_layer(out)
-		for el in out: print(el.shape)
+		out, _, _, _ = self.kan_layer(out)
 
 		return F.log_softmax(out, dim=1)
 		
