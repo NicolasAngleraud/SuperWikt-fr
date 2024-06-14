@@ -721,11 +721,11 @@ class KANClf():
 
 		params = self.params
 
-		X_train = torch.load('./train_embeddings.pt')
-		y_train = torch.load('./train_supersenses.pt')
+		X_train = torch.load('./train_embeddings.pt').to(self.device)
+		y_train = torch.load('./train_supersenses.pt').to(self.device)
 		
-		X_test = torch.load('./test_embeddings.pt')
-		y_test = torch.load('./test_supersenses.pt')
+		X_test = torch.load('./test_embeddings.pt').to(self.device)
+		y_test = torch.load('./test_supersenses.pt').to(self.device)
 		
 		dataset = {}
 		dataset['train_input'] = X_train
