@@ -734,7 +734,7 @@ class KANClf():
 		dataset['test_label'] = y_test
 		
 		def train_acc():
-			batch_size = 100  # Set your desired batch size
+			batch_size = 500  # Set your desired batch size
 			num_samples = X_train.shape[0]
 			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
 
@@ -761,7 +761,7 @@ class KANClf():
 			return accuracy
 
 		def test_acc():
-			batch_size = 100  # Set your desired batch size
+			batch_size = 500  # Set your desired batch size
 			num_samples = X_test.shape[0]
 			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
 

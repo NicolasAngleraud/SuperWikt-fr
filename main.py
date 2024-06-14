@@ -98,11 +98,11 @@ if __name__ == '__main__':
 	
 	
 	params_kan = {
-	'hidden_layer_size': 4,
-	'grid': 3,
-	'k': 3,
-	'nb_epochs': 5,
-	'batch_size': 16
+	'hidden_layer_size': 8,
+	'grid': 4,
+	'k': 4,
+	'nb_epochs': 20,
+	'batch_size': 32
 	}
 	
 	
