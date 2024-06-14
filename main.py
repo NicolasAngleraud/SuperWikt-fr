@@ -102,7 +102,7 @@ if __name__ == '__main__':
 	model_safetensors_path = 'nangleraud/flaubert-fr-sem-nom-def/model.safetensors'
 
 	# Load configuration
-	config = AutoConfig.from_pretrained(config_path)
+	config = AutoConfig.from_pretrained(model_path)
 
 	# Load model weights
 	state_dict = torch.load(model_safetensors_path, map_location=torch.device(DEVICE))
