@@ -96,6 +96,7 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	"""
 	# Load your fine-tuned model
 	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 	def_lem_clf.load_clf(def_lem_clf_file)
@@ -158,11 +159,14 @@ if __name__ == '__main__':
 	# Save embeddings as safetensors
 	torch.save(train_embeddings, './train_embeddings.pt')
 	torch.save(test_embeddings, './test_embeddings.pt')
-	
+	"""
 
 	# Load embeddings from safetensors
-	#train_embeddings_loaded = torch.load('./train_embeddings.pt')
-	#test_embeddings_loaded = torch.load('./test_embeddings.pt')
+	train_embeddings_loaded = torch.load('./train_embeddings.pt')
+	test_embeddings_loaded = torch.load('./test_embeddings.pt')
+	
+	print(train_embeddings_loaded.shape)
+	print(test_embeddings_loaded.shape)
 		
 	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
