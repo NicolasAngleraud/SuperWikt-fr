@@ -128,7 +128,7 @@ if __name__ == '__main__':
 	
 	
 	kan_clf_file = './kan_clf.params'
-	
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
 	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
