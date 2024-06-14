@@ -98,23 +98,16 @@ if __name__ == '__main__':
 	
 	# Specify paths
 	model_path = 'nangleraud/flaubert-fr-sem-nom-def'
-	config_path = 'nangleraud/flaubert-fr-sem-nom-def/config.json'
-	model_safetensors_path = 'nangleraud/flaubert-fr-sem-nom-def/model.safetensors'
-
+	
+	tokenizer = AutoTokenizer.from_pretrained(model_path)
+	
 	# Load configuration
 	config = AutoConfig.from_pretrained(model_path)
 
-	# Load model weights
-	state_dict = torch.load(model_path, map_location=torch.device(DEVICE))
-
 	# Instantiate model
 	bert_model = AutoModel.from_config(config)
-	bert_model.load_state_dict(state_dict)
 	
-	# Load pre-trained BERT model and tokenizer
-	#model_name = flaubert_fr_sem
-	tokenizer = AutoTokenizer.from_pretrained(model_path)
-	#bert_model = AutoModel.from_pretrained(model_name).to(DEVICE)
+	bert_model = AutoModel.from_pretrained(model_name).to(DEVICE)
 
 	# Set BERT to evaluation mode and disable gradients
 	bert_model.eval()
