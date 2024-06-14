@@ -136,7 +136,7 @@ if __name__ == '__main__':
 	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 	
-	classifier = KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
+	classifier = clf.KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
 	loss, acc = classifier.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, kan_clf_file)
 	
 	print("MEAN DEV LOSSES : ", loss)
