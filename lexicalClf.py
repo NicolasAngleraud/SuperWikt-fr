@@ -796,7 +796,7 @@ class KANClf():
 
 		results = self.kan.train(
 							dataset, 
-							opt=params[opt],
+							opt=params['opt'],
 							steps=params['nb_epochs'],
 							metrics=(train_acc, test_acc),
 							batch=params['batch_size'],
