@@ -110,20 +110,49 @@ if __name__ == '__main__':
 	}
 	
 	
+	params = {
+	"nb_epochs": 100,
+	"batch_size": 16,
+	"hidden_layer_size": 16,
+	"patience": 3,
+	'num': 5,
+	'k': 3,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
+	
+	
+	
+	
+	kan_clf_file = './kan_clf.params'
+	
+	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
+	train_definitions_encoder.encode()
+	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	freq_dev_definitions_encoder.encode()
+	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	rand_dev_definitions_encoder.encode()
+	
+	classifier = KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
+	loss, acc = classifier.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, kan_clf_file)
+	
+	print("MEAN DEV LOSSES : ", loss)
+	print()
+	print("MEAN DEV ACCURACIES : ", acc)
+	
+	
+	#########################################################################################################################
+	
+	
+	'''
 	kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
 	
 	results = kan.train()
 	for key in results: print(key, results[key])
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	#########################################################################################################################
+	'''
 	
 	
 	'''
