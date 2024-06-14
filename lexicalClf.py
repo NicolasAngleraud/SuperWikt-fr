@@ -750,7 +750,7 @@ class KANClf():
 				y_batch = y_train[start_idx:end_idx]
 
 				# Get predictions for the batch
-				predictions = torch.argmax(model(X_batch), dim=1)
+				predictions = torch.argmax(self.kan(X_batch), dim=1)
 
 				# Calculate accuracy for the batch
 				total_correct += torch.sum(predictions == y_batch)
@@ -777,7 +777,7 @@ class KANClf():
 				y_batch = y_test[start_idx:end_idx]
 
 				# Get predictions for the batch
-				predictions = torch.argmax(model(X_batch), dim=1)
+				predictions = torch.argmax(self.kan(X_batch), dim=1)
 
 				# Calculate accuracy for the batch
 				total_correct += torch.sum(predictions == y_batch)
