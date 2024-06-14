@@ -97,19 +97,22 @@ if __name__ == '__main__':
 	}
 	
 	
+	#NB_EPOCHS = 30
+	#opt="LBFGS"
 	params_kan = {
-	'hidden_layer_size': 16,
-	'grid': 5,
-	'k': 5,
-	'nb_epochs': 30,
-	'batch_size': 32
+	'hidden_layer_size': 8,
+	'grid': 4,
+	'k': 4,
+	'nb_epochs': 20,
+	'batch_size': 32,
+	'lr': 0.001,
+	'opt':'Adam'
 	}
 	
 	
-	
 	kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
-	results = kan.train()
 	
+	results = kan.train()
 	for key in results: print(key, results[key])
 	
 	

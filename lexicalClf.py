@@ -724,6 +724,13 @@ class KANClf():
 		X_train = torch.load('./train_embeddings.pt').to(self.device)
 		y_train = torch.load('./train_supersenses.pt').to(self.device)
 		
+		# Generate a random permutation of indices
+		indices = torch.randperm(X_train.size(0))
+
+		# Shuffle X_train and y_train tensors using the same permutation
+		X_train = X_train[indices]
+		y_train = y_train[indices]
+		
 		X_test = torch.load('./test_embeddings.pt').to(self.device)
 		y_test = torch.load('./test_supersenses.pt').to(self.device)
 		
@@ -789,11 +796,12 @@ class KANClf():
 
 		results = self.kan.train(
 							dataset, 
-							opt="LBFGS",
+							opt=params[opt],
 							steps=params['nb_epochs'],
 							metrics=(train_acc, test_acc),
 							batch=params['batch_size'],
-							loss_fn=torch.nn.CrossEntropyLoss())
+							loss_fn=torch.nn.CrossEntropyLoss()
+							lr=params['lr'])
 		
 		return results
 		
