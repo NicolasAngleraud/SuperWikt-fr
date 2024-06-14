@@ -703,8 +703,6 @@ class KANClf():
 
 		# Set embedding layer size
 		self.embedding_layer_size = self.config.hidden_size
-		
-		print(self.embedding_layer_size)
 
 		self.hidden_layer_size = params['hidden_layer_size']
 
@@ -728,6 +726,12 @@ class KANClf():
 		
 		X_test = torch.load('./test_embeddings.pt')
 		y_test = torch.load('./test_supersenses.pt')
+		
+		dataset = {}
+		dataset['train_input'] = X_train
+		dataset['test_input'] = X_test
+		dataset['train_label'] = y_train
+		dataset['test_label'] = y_test
 		
 		def train_acc():
 			batch_size = 100  # Set your desired batch size
