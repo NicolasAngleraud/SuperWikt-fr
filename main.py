@@ -105,7 +105,7 @@ if __name__ == '__main__':
 	config = AutoConfig.from_pretrained(model_path)
 
 	# Load model weights
-	state_dict = torch.load(model_safetensors_path, map_location=torch.device(DEVICE))
+	state_dict = torch.load(model_path, map_location=torch.device(DEVICE))
 
 	# Instantiate model
 	bert_model = AutoModel.from_config(config)
