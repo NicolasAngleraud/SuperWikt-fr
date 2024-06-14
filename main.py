@@ -109,8 +109,8 @@ if __name__ == '__main__':
 	train_supersenses = torch.tensor([supersense2i[ss] for ss in train_definitions['supersense'].tolist()])
 	test_supersenses = torch.tensor([supersense2i[ss] for ss in test_definitions['supersense'].tolist()])
 	
-	torch.save(train_embeddings, './train_supersenses.pt')
-	torch.save(test_embeddings, './test_supersenses.pt')
+	torch.save(train_supersenses, './train_supersenses.pt')
+	torch.save(test_supersenses, './test_supersenses.pt')
 	
 	
 	"""
