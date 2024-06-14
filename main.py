@@ -102,8 +102,8 @@ if __name__ == '__main__':
 	
 	# Load pre-trained BERT model and tokenizer
 	model_name = flaubert_fr_sem
-	tokenizer = BertTokenizer.from_pretrained(model_name)
-	bert_model = BertModel.from_pretrained(model_name).to(DEVICE)
+	tokenizer = AutoTokenizer.from_pretrained(model_name)
+	bert_model = AutoModel.from_pretrained(model_name).to(DEVICE)
 
 	# Set BERT to evaluation mode and disable gradients
 	bert_model.eval()
