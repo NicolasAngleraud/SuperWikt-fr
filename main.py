@@ -107,7 +107,7 @@ if __name__ == '__main__':
 	# Instantiate model
 	bert_model = AutoModel.from_config(config)
 	
-	bert_model = AutoModel.from_pretrained(model_name).to(DEVICE)
+	bert_model = AutoModel.from_pretrained(model_path).to(DEVICE)
 
 	# Set BERT to evaluation mode and disable gradients
 	bert_model.eval()
