@@ -96,6 +96,23 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	datafile = "./data.xlsx"
+	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
+	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
+	df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
+	df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
+	
+	# Filter definitions based on set column values
+	train_definitions = df_definitions[df_definitions['set'] == 'train']
+	test_definitions = df_definitions[df_definitions['set'].isin(['freq-dev', 'rand-dev'])]
+	
+	train_supersenses = torch.tensor(train_definitions['supersense'].tolist())
+	test_supersenses = torch.tensor(test_definitions['supersense'].tolist())
+	
+	torch.save(train_embeddings, './train_supersenses.pt')
+	torch.save(test_embeddings, './test_supersenses.pt')
+	
+	
 	"""
 	# Load your fine-tuned model
 	def_lem_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
@@ -162,11 +179,11 @@ if __name__ == '__main__':
 	"""
 
 	# Load embeddings from safetensors
-	train_embeddings_loaded = torch.load('./train_embeddings.pt')
-	test_embeddings_loaded = torch.load('./test_embeddings.pt')
+	#train_embeddings_loaded = torch.load('./train_embeddings.pt')
+	#test_embeddings_loaded = torch.load('./test_embeddings.pt')
 	
-	print(train_embeddings_loaded.shape)
-	print(test_embeddings_loaded.shape)
+	#print(train_embeddings_loaded.shape)
+	#print(test_embeddings_loaded.shape)
 		
 	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
