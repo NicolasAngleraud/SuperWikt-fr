@@ -100,10 +100,10 @@ if __name__ == '__main__':
 	#NB_EPOCHS = 30
 	#opt="LBFGS"
 	params_kan = {
-	'hidden_layer_size': 64,
+	'hidden_layer_size': 32,
 	'grid': 3,
 	'k': 3,
-	'nb_epochs': 40,
+	'nb_epochs': 10,
 	'batch_size': 32,
 	'lr': 0.1,
 	'opt':"LBFGS"
