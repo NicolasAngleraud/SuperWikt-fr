@@ -105,7 +105,7 @@ if __name__ == '__main__':
 	'k': 3,
 	'nb_epochs': 10,
 	'batch_size': 32,
-	'lr': 0.1,
+	'lr': 0.01,
 	'opt':"LBFGS"
 	}
 	
