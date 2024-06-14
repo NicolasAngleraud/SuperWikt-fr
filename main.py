@@ -107,10 +107,10 @@ if __name__ == '__main__':
 	
 	
 	
-	#kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
-	#results = kan.train()
+	kan = clf.KANClf(params=params_kan, bert_model_name=flaubert_fr_sem, DEVICE=DEVICE)
+	results = kan.train()
 	
-	#for key in results: print(key, results[key])
+	for key in results: print(key, results[key])
 	
 	
 	
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 	#########################################################################################################################
 	
 	
-	
+	'''
 	datafile = "./data.xlsx"
 	df_definitions = pd.read_excel(datafile, sheet_name='senses', engine='openpyxl')
 	df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES)]
@@ -211,7 +211,8 @@ if __name__ == '__main__':
 	
 	#print(train_embeddings_loaded.shape)
 	#print(test_embeddings_loaded.shape)
-		
+	'''
+	
 	"""
 	freq_dev_def_lem_pred_file = './freq_dev_def_lem_clf.xlsx'
 	freq_dev_def_pred_file = './freq_dev_def_clf.xlsx'
