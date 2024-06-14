@@ -106,8 +106,8 @@ if __name__ == '__main__':
 	train_definitions = df_definitions[df_definitions['set'] == 'train']
 	test_definitions = df_definitions[df_definitions['set'].isin(['freq-dev', 'rand-dev'])]
 	
-	train_supersenses = torch.tensor(train_definitions['supersense'].tolist())
-	test_supersenses = torch.tensor(test_definitions['supersense'].tolist())
+	train_supersenses = torch.tensor([supersense2i[ss] for ss in train_definitions['supersense'].tolist()])
+	test_supersenses = torch.tensor([supersense2i[ss] for ss in test_definitions['supersense'].tolist()])
 	
 	torch.save(train_embeddings, './train_supersenses.pt')
 	torch.save(test_embeddings, './test_supersenses.pt')
