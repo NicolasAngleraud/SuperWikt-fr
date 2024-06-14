@@ -702,7 +702,7 @@ class KANClf():
 		self.config = AutoConfig.from_pretrained(bert_model_name)
 
 		# Set embedding layer size
-		self.embedding_layer_size = config.hidden_size
+		self.embedding_layer_size = self.config.hidden_size
 		
 		print(self.embedding_layer_size)
 
