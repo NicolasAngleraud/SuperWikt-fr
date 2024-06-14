@@ -105,8 +105,8 @@ if __name__ == '__main__':
 	'k': 4,
 	'nb_epochs': 20,
 	'batch_size': 32,
-	'lr': 0.001,
-	'opt':'Adam'
+	'lr': 0.1,
+	'opt':"LBFGS"
 	}
 	
 	
