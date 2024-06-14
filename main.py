@@ -116,8 +116,8 @@ if __name__ == '__main__':
 	"hidden_layer_size": 32,
 	"patience": 3,
 	'num': 5,
-	'k': 3,
-	"lr": 0.000001,
+	'k': 5,
+	"lr": 0.000005,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
