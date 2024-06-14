@@ -103,9 +103,9 @@ if __name__ == '__main__':
 	'hidden_layer_size': 4,
 	'grid': 3,
 	'k': 3,
-	'nb_epochs': 30,
+	'nb_epochs': 40,
 	'batch_size': 32,
-	'lr': 0.01,
+	'lr': 0.001,
 	'opt':"LBFGS"
 	}
 	
