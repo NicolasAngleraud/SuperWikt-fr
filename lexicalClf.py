@@ -816,7 +816,7 @@ class KANClf():
 class KANmonoRankClf(nn.Module):
 
 	def __init__(self, params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME):
-		super(monoRankClf, self).__init__()
+		super(KANmonoRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
 
