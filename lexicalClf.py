@@ -868,7 +868,6 @@ class KANmonoRankClf(nn.Module):
 
 
 	def train_clf(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
-		self.train()
 		
 		train_losses = []
 		mean_dev_losses = []
@@ -901,6 +900,7 @@ class KANmonoRankClf(nn.Module):
 			rand_dev_epoch_loss = 0
 			rand_dev_epoch_accuracy = 0
 			
+			self.train()
 			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
 				
 				if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
@@ -919,7 +919,7 @@ class KANmonoRankClf(nn.Module):
 			train_losses.append(epoch_loss)
 			
 			with torch.no_grad():
-			
+				self.eval()
 				for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in freq_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
 					
 					if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
@@ -936,7 +936,7 @@ class KANmonoRankClf(nn.Module):
 				freq_dev_losses.append(freq_dev_epoch_loss / freq_dev_encoder.length)
 				freq_dev_accuracies.append(freq_dev_epoch_accuracy / freq_dev_encoder.length)
 				
-				
+				self.eval()
 				for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in rand_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
 					
 					if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
