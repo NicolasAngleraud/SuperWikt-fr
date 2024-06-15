@@ -859,7 +859,7 @@ class KANmonoRankClf(nn.Module):
 		
 		out, _, _, _ = self.kan_layer(out)
 		
-		normalized_states = layernorm(out)
+		normalized_states = self.layernorm(out)
 		
 		out = self.linear(normalized_states)
 
