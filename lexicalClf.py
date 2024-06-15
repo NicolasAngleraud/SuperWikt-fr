@@ -815,7 +815,7 @@ class KANClf():
 
 class KANmonoRankClf(nn.Module):
 
-	def __init__(self, params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, use_lemma=True, dropout=0.3, bert_model_name=MODEL_NAME):
 		super(KANmonoRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
@@ -836,9 +836,9 @@ class KANmonoRankClf(nn.Module):
 		
 		self.params = params
 
-		self.kan_layer_1 = KANLayer(in_dim=self.embedding_layer_size, out_dim=self.hidden_layer_size, num=params['num'], k=params['k'], device=DEVICE)
+		self.kan_layer = KANLayer(in_dim=self.embedding_layer_size, out_dim=self.hidden_layer_size, num=params['num'], k=params['k'], device=DEVICE)
 		
-		self.kan_layer_2 = KANLayer(in_dim=self.hidden_layer_size, out_dim=self.output_size, num=params['num'], k=params['k'], device=DEVICE)
+		self.linear = nn.Linear(self.hidden_layer_size, self.output_size).to(DEVICE)
 
 		self.dropout = nn.Dropout(dropout).to(DEVICE)
 
@@ -851,11 +851,11 @@ class KANmonoRankClf(nn.Module):
 
 		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
 		
-		out, _, _, _ = self.kan_layer_1(batch_contextual_embeddings)
+		out = self.dropout(batch_contextual_embeddings)
 		
-		out = self.dropout(out)
+		out, _, _, _ = self.kan_layer(out)
 		
-		out, _, _, _ = self.kan_layer_2(out)
+		out = self.linear(out)
 
 		return F.log_softmax(out, dim=1)
 		
