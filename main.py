@@ -114,10 +114,10 @@ if __name__ == '__main__':
 	"nb_epochs": 100,
 	"batch_size": 8,
 	"hidden_layer_size": 256,
-	"patience": 2,
+	"patience": 3,
 	'num': 5,
 	'k': 3,
-	"lr": 0.000005,
+	"lr": 0.000001,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
