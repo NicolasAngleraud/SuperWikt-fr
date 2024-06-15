@@ -844,6 +844,10 @@ class KANmonoRankClf(nn.Module):
 
 		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 		
+		self.layernorm = nn.LayerNorm(normalized_shape=self.hidden_layer_size)
+
+		
+		
 
 	def forward(self, padded_encodings):
 
@@ -855,7 +859,9 @@ class KANmonoRankClf(nn.Module):
 		
 		out, _, _, _ = self.kan_layer(out)
 		
-		out = self.linear(out)
+		normalized_states = layernorm(out)
+		
+		out = self.linear(normalized_states)
 
 		return F.log_softmax(out, dim=1)
 		
