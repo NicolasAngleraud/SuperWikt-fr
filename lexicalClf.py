@@ -90,7 +90,6 @@ class monoRankClf(nn.Module):
 
 
 	def train_clf(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
-		self.train()
 		
 		train_losses = []
 		mean_dev_losses = []
@@ -123,6 +122,7 @@ class monoRankClf(nn.Module):
 			rand_dev_epoch_loss = 0
 			rand_dev_epoch_accuracy = 0
 			
+			self.train()
 			for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
 				
 				if use_lemma: b_def_encoded = b_definitions_with_lemma_encoded
@@ -140,6 +140,7 @@ class monoRankClf(nn.Module):
 
 			train_losses.append(epoch_loss)
 			
+			self.eval()
 			with torch.no_grad():
 			
 				for b_definitions_with_lemma_encoded, b_definitions_without_lemma_encoded, b_supersenses_encoded, _, _ in freq_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
@@ -311,7 +312,6 @@ class multiRankClf(nn.Module):
 
 
 	def train_clf(self, train_encoder, freq_dev_encoder, rand_dev_encoder, clf_file):
-		self.train()
 		
 		train_losses = []
 		mean_dev_losses = []
@@ -343,6 +343,7 @@ class multiRankClf(nn.Module):
 			rand_dev_epoch_loss = 0
 			rand_dev_epoch_accuracy = 0
 			
+			self.train()
 			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in train_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=True):
 				
 				self.zero_grad()
@@ -357,6 +358,7 @@ class multiRankClf(nn.Module):
 
 			train_losses.append(epoch_loss)
 			
+			self.eval()
 			with torch.no_grad():
 			
 				for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in freq_dev_encoder.make_batches(device=self.device, batch_size=params['batch_size'], shuffle_data=False):
