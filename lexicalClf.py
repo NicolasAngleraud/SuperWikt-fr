@@ -844,7 +844,7 @@ class KANmonoRankClf(nn.Module):
 
 		self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 		
-		self.layernorm = nn.LayerNorm(normalized_shape=self.hidden_layer_size)
+		self.layernorm = nn.LayerNorm(normalized_shape=self.hidden_layer_size).to(DEVICE)
 
 		
 		
