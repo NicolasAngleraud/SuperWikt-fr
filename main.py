@@ -137,11 +137,14 @@ if __name__ == '__main__':
 	rand_dev_definitions_encoder.encode()
 	
 	classifier = clf.KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
-	loss, acc = classifier.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, kan_clf_file)
+	classifier.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, kan_clf_file)
 	
-	print("MEAN DEV LOSSES : ", loss)
-	print()
-	print("MEAN DEV ACCURACIES : ", acc)
+	classifier = clf.KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
+	classifier.load_clf(kan_clf_file)
+	
+	train_accuracy = classifier.evaluate(train_definitions_encoder)
+	freq_dev_accuracy = classifier.evaluate(freq_dev_definitions_encoder)
+	rand_dev_accuracy = classifier.evaluate(rand_dev_definitions_encoder)
 	
 	
 	#########################################################################################################################

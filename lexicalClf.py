@@ -836,7 +836,9 @@ class KANmonoRankClf(nn.Module):
 		
 		self.params = params
 
-		self.kan_layer = KANLayer(in_dim=self.embedding_layer_size, out_dim=self.output_size, num=params['num'], k=params['k'], device=DEVICE)
+		self.kan_layer_1 = KANLayer(in_dim=self.embedding_layer_size, out_dim=self.hidden_layer_size, num=params['num'], k=params['k'], device=DEVICE)
+		
+		self.kan_layer_2 = KANLayer(in_dim=self.hidden_layer_size, out_dim=self.output_size, num=params['num'], k=params['k'], device=DEVICE)
 
 		self.dropout = nn.Dropout(dropout).to(DEVICE)
 
@@ -849,9 +851,11 @@ class KANmonoRankClf(nn.Module):
 
 		batch_contextual_embeddings = bert_output.last_hidden_state[:,0,:] # from [batch_size , max_seq_length, plm_emb_size] to [batch_size, plm_emb_size]
 		
-		out = self.dropout(batch_contextual_embeddings)
+		out, _, _, _ = self.kan_layer_1(batch_contextual_embeddings)
 		
-		out, _, _, _ = self.kan_layer(out)
+		out = self.dropout(out)
+		
+		out, _, _, _ = self.kan_layer_2(out)
 
 		return F.log_softmax(out, dim=1)
 		
@@ -947,6 +951,12 @@ class KANmonoRankClf(nn.Module):
 			mean_dev_losses.append( (freq_dev_epoch_loss/freq_dev_encoder.length + rand_dev_epoch_loss/rand_dev_encoder.length ) / 2)
 			mean_dev_accuracies.append( (freq_dev_epoch_accuracy/freq_dev_encoder.length + rand_dev_epoch_accuracy/rand_dev_encoder.length ) / 2)
 			
+			print()
+			print("RAND DEV ACC = ", rand_dev_accuracies[epoch])
+			print("FREQ DEV ACC = ", freq_dev_accuracies[epoch])
+			print()
+			print()
+			
 			if epoch >= params["patience"]:
 			
 				if mean_dev_losses[epoch] < min_mean_dev_loss:
@@ -958,6 +968,7 @@ class KANmonoRankClf(nn.Module):
 					patience = patience - 1
 				
 				if patience == 0:
+					print()
 					print("EARLY STOPPING : epoch ", epoch+1)
 					break
 			else:
@@ -965,7 +976,7 @@ class KANmonoRankClf(nn.Module):
 					min_mean_dev_loss = mean_dev_losses[epoch]
 				torch.save(self.state_dict(), clf_file)
 				
-		return mean_dev_losses, mean_dev_accuracies
+		#return mean_dev_losses, mean_dev_accuracies
 	
 	def save_clf(self, clf_save_file):
 		torch.save(self.state_dict(), clf_save_file)
@@ -987,7 +998,7 @@ class KANmonoRankClf(nn.Module):
 				predicted_indices = torch.argmax(log_probs, dim=1)
 				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
 				
-			return accuracy / data_encoder.length
+		return accuracy / data_encoder.length
 			
 	
 	def predict(self, data_encoder):
