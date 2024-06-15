@@ -117,7 +117,7 @@ if __name__ == '__main__':
 	"patience": 3,
 	'num': 5,
 	'k': 5,
-	"lr": 0.0001,
+	"lr": 0.000001,
 	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
