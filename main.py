@@ -112,7 +112,7 @@ if __name__ == '__main__':
 	
 	params = {
 	"nb_epochs": 100,
-	"batch_size": 16,
+	"batch_size": 8,
 	"hidden_layer_size": 128,
 	"patience": 3,
 	'num': 5,
@@ -129,22 +129,35 @@ if __name__ == '__main__':
 	
 	kan_clf_file = './kan_clf.params'
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	
+	print('ENCODING DATA...')
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
 	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 	freq_dev_definitions_encoder.encode()
 	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
+	print('DATA ENCODED.')
 	
+	print('INITIALIZING CLASSIFIER...')
 	classifier = clf.KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
+	print('CLASSIFIER INITIALIZED.')
+	print('TRAINING CLASSIFIER...')
 	classifier.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, kan_clf_file)
-	
+	print('CLASSIFIER TRAINED.')
 	classifier = clf.KANmonoRankClf(params, DEVICE, use_lemma=True, dropout=0.2, bert_model_name=MODEL_NAME)
 	classifier.load_clf(kan_clf_file)
 	
+	print('FINAL EVALUATION')
+	print()
 	train_accuracy = classifier.evaluate(train_definitions_encoder)
+	print('TRAIN ACC = ', train_accuracy)
 	freq_dev_accuracy = classifier.evaluate(freq_dev_definitions_encoder)
+	print('RAND DEV ACC = ', rand_dev_accuracy)
 	rand_dev_accuracy = classifier.evaluate(rand_dev_definitions_encoder)
+	print('FREQ DEV ACC = ', freq_dev_accuracy)
+	
+	print('EXPERIMENT COMPLETED.')
 	
 	
 	#########################################################################################################################
