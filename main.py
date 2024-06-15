@@ -113,8 +113,8 @@ if __name__ == '__main__':
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 8,
-	"hidden_layer_size": 16,
-	"patience": 3,
+	"hidden_layer_size": 256,
+	"patience": 2,
 	'num': 5,
 	'k': 5,
 	"lr": 0.000001,
