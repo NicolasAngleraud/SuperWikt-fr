@@ -152,9 +152,11 @@ if __name__ == '__main__':
 	print()
 	train_accuracy = classifier.evaluate(train_definitions_encoder)
 	print('TRAIN ACC = ', train_accuracy)
-	freq_dev_accuracy = classifier.evaluate(freq_dev_definitions_encoder)
-	print('RAND DEV ACC = ', rand_dev_accuracy)
+	
 	rand_dev_accuracy = classifier.evaluate(rand_dev_definitions_encoder)
+	print('RAND DEV ACC = ', rand_dev_accuracy)
+	
+	freq_dev_accuracy = classifier.evaluate(freq_dev_definitions_encoder)
 	print('FREQ DEV ACC = ', freq_dev_accuracy)
 	
 	print('EXPERIMENT COMPLETED.')
