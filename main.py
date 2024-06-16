@@ -109,7 +109,31 @@ if __name__ == '__main__':
 	'opt':"LBFGS"
 	}
 	
+
+	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	
+	coeff_ex = 0.68
+	coeff_def = 0
+	
+	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
+	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
+	
+	freq_dev_predictions = lex_clf.predict(freq_dev_sense_encoder)
+	rand_dev_predictions = lex_clf.predict(rand_dev_sense_encoder)
+	
+	freq_dev_def_ex_df = pd.DataFrame(freq_dev_predictions)
+	freq_dev_def_ex_df.to_excel('./ex_sense_freq_dev_predictions.xlsx', index=False)
+	
+	rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
+	rand_dev_def_ex_df.to_excel('./ex_sense_rand_dev_predictions.xlsx', index=False)
+	
+
+	
+	
+	
+	###############################################################################################################
+	'''
 	params = {
 	"nb_epochs": 100,
 	"batch_size": 8,
@@ -123,9 +147,9 @@ if __name__ == '__main__':
 	"max_seq_length": 100
 	}
 	
+	'''
 	
-	
-	
+	"""
 	
 	kan_clf_file = './kan_clf.params'
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -161,7 +185,7 @@ if __name__ == '__main__':
 	
 	print('EXPERIMENT COMPLETED.')
 	
-	
+	"""
 	#########################################################################################################################
 	
 	
