@@ -109,7 +109,9 @@ if __name__ == '__main__':
 	'opt':"LBFGS"
 	}
 	
-
+	
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	
 	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
 	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
 	
