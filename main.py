@@ -69,9 +69,9 @@ if __name__ == '__main__':
 	
 	API_TOKEN = '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'
 	
-	#def_lem_clf_file = './def_lem_clf.params'
-	def_clf_file = './def_clf.params'
-	#ex_clf_file = './ex_clf.params'
+	def_lem_clf_file = './def_lem_clf.params'
+	#def_clf_file = './def_clf.params'
+	ex_clf_file = './ex_clf.params'
 	#corpus_clf_file = './corpus_clf.params'
 	
 	params_def = {
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.00001,
+	"lr": 0.000005,
 	"weight_decay": 0.001,
 	"frozen": True,
 	"max_seq_length": 100
@@ -112,8 +112,45 @@ if __name__ == '__main__':
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
+	freq_test_sense_encoder = data.senseEncoder(args.data_file, "freq-test", tokenizer, use_sample=False)
+	rand_test_sense_encoder = data.senseEncoder(args.data_file, "rand-test", tokenizer, use_sample=False)
+	
+	coeff_ex = 0.68
+	coeff_def = 0.80
+	
+	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
+	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
+	
+	freq_test_predictions = lex_clf.predict(freq_test_sense_encoder)
+	rand_test_predictions = lex_clf.predict(rand_test_sense_encoder)
+	
+	freq_test_def_ex_df = pd.DataFrame(freq_test_predictions)
+	freq_test_def_ex_df.to_excel('./sense_freq_test_predictions.xlsx', index=False)
+	
+	rand_test_def_ex_df = pd.DataFrame(rand_test_predictions)
+	rand_test_def_ex_df.to_excel('./sense_rand_test_predictions.xlsx', index=False)
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	########################################################################################################
+	"""
 	print('ENCODING DATA...')
 	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
@@ -147,7 +184,7 @@ if __name__ == '__main__':
 	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
 	rand_dev_def_df.to_excel('./baseline_rand_dev.xlsx', index=False)
 	
-	
+	"""
 	
 	
 	
@@ -162,23 +199,23 @@ if __name__ == '__main__':
 	
 	
 	
-	freq_dev_sense_encoder = data.senseEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
-	rand_dev_sense_encoder = data.senseEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	freq_test_sense_encoder = data.senseEncoder(args.data_file, "freq-test", tokenizer, use_sample=False)
+	rand_test_sense_encoder = data.senseEncoder(args.data_file, "rand-test", tokenizer, use_sample=False)
 	
 	coeff_ex = 0.68
-	coeff_def = 0
+	coeff_def = 0.80
 	
 	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
 	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
 	
-	freq_dev_predictions = lex_clf.predict(freq_dev_sense_encoder)
-	rand_dev_predictions = lex_clf.predict(rand_dev_sense_encoder)
+	freq_test_predictions = lex_clf.predict(freq_test_sense_encoder)
+	rand_test_predictions = lex_clf.predict(rand_test_sense_encoder)
 	
-	freq_dev_def_ex_df = pd.DataFrame(freq_dev_predictions)
-	freq_dev_def_ex_df.to_excel('./ex_sense_freq_dev_predictions.xlsx', index=False)
+	freq_test_def_ex_df = pd.DataFrame(freq_test_predictions)
+	freq_test_def_ex_df.to_excel('./sense_freq_test_predictions.xlsx', index=False)
 	
-	rand_dev_def_ex_df = pd.DataFrame(rand_dev_predictions)
-	rand_dev_def_ex_df.to_excel('./ex_sense_rand_dev_predictions.xlsx', index=False)
+	rand_test_def_ex_df = pd.DataFrame(rand_test_predictions)
+	rand_test_def_ex_df.to_excel('./sense_rand_test_predictions.xlsx', index=False)
 	
 	"""
 	
