@@ -80,7 +80,7 @@ if __name__ == '__main__':
 	"hidden_layer_size": 768,
 	"patience": 2,
 	"lr": 0.001,
-	"weight_decay": 0.001,
+	"weight_decay": 0.0001,
 	"frozen": True,
 	"max_seq_length": 100
 	}
