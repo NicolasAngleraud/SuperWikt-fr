@@ -69,9 +69,9 @@ if __name__ == '__main__':
 	
 	API_TOKEN = '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'
 	
-	def_lem_clf_file = './def_lem_clf.params'
-	#def_clf_file = './def_clf.params'
-	ex_clf_file = './ex_clf.params'
+	#def_lem_clf_file = './def_lem_clf.params'
+	def_clf_file = './def_clf.params'
+	#ex_clf_file = './ex_clf.params'
 	#corpus_clf_file = './corpus_clf.params'
 	
 	params_def = {
