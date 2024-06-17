@@ -596,12 +596,12 @@ class lexicalClf_V1():
 				
 					log_probs = self.coeff_def * def_log_probs + self.coeff_ex * ex_log_probs
 					predicted_index = torch.argmax(log_probs, dim=1).item()
-					pred = SUPERSENSES[predicted_index]
+					
 				else:
-					#predicted_index = torch.argmax(def_log_probs, dim=1).item()
-					pred = ''
+					predicted_index = torch.argmax(def_log_probs, dim=1).item()
+
 				
-				
+				pred = SUPERSENSES[predicted_index]
 				gold = supersense
 
 				sentence = self.tokenizer.decode(definition_with_lemma_encoded.squeeze(), skip_special_tokens=True)
