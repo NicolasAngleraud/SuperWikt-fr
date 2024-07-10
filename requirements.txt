@@ -1,0 +1,9 @@
+pandas
+argparse
+torch
+sacremoses
+numpy
+transformers
+matplotlib
+spacy
+gdown

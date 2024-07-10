@@ -9,6 +9,29 @@ WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}wiktionary.tsv"}
 EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}wiktionary_examples.tsv"}
 PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}enriched_wiktionary.tsv"}
+VENV_DIR=${VENV_DIR:-"${REPO_DIR}venv"}
+
+# Function to create and activate virtual environment
+setup_virtualenv() {
+    if [ ! -d "$VENV_DIR" ]; then
+        echo "Creating virtual environment in $VENV_DIR..."
+        python3 -m venv "$VENV_DIR"
+        echo "Virtual environment created."
+    fi
+    echo "Activating virtual environment..."
+    source "$VENV_DIR/bin/activate"
+    echo "Virtual environment activated."
+
+    # Install required libraries
+    echo "Installing required libraries..."
+    pip install --upgrade pip
+    pip install -r "${REPO_DIR}requirements.txt"
+    echo "Libraries installed."
+}
+
+# Set up virtual environment and install libraries
+setup_virtualenv
+
 
 # Google Drive file IDs and names
 DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
