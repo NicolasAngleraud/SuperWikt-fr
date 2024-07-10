@@ -10,7 +10,7 @@ WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}wiktionary.tsv"}
 EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}wiktionary_examples.tsv"}
 PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}enriched_wiktionary.tsv"}
-VENV_DIR=${VENV_DIR:-"${SUPER_DIR}venv/"}
+VENV_DIR=${VENV_DIR:-"${SUPER_DIR}venv"}
 
 # Function to create and activate virtual environment
 setup_virtualenv() {
@@ -20,7 +20,7 @@ setup_virtualenv() {
         echo "Virtual environment created."
     fi
     echo "Activating virtual environment..."
-    source "${VENV_DIR}bin/activate"
+    source "$VENV_DIR/bin/activate"
     echo "Virtual environment activated."
 
     # Install required libraries
