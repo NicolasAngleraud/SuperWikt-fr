@@ -58,5 +58,14 @@ if [ $? -ne 0 ]; then
 fi
 
 
+# Step 2: Generate wiktionary_examples.tsv from wiktionary.tsv
+echo "Starting step 2: Generating wiktionary_examples.tsv from wiktionary.tsv"
+python3 "${REPO_DIR}/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
+if [ $? -ne 0 ]; then
+    echo "Error in step 2: process_examples.py failed"
+    exit 1
+fi
+
+
 echo "Pipeline completed successfully"
 
