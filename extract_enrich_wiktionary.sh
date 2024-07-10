@@ -2,6 +2,7 @@
 
 # Default values for environment variables
 REPO_DIR=${REPO_DIR:-"./"}
+SUPER_DIR=${SUPER_DIR:-"../"}
 MODEL_DIR=${MODEL_DIR:-"${REPO_DIR}models"}
 BZ2_FILE="${REPO_DIR}fr_dbnary_ontolex_20240501.ttl.bz2"
 DUMP_FILE=${DUMP_FILE:-"${REPO_DIR}wiktionary.ttl"}
@@ -9,7 +10,7 @@ WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}wiktionary.tsv"}
 EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}wiktionary_examples.tsv"}
 PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}enriched_wiktionary.tsv"}
-VENV_DIR=${VENV_DIR:-"${REPO_DIR}venv"}
+VENV_DIR=${VENV_DIR:-"${SUPER_DIR}venv"}
 
 # Function to create and activate virtual environment
 setup_virtualenv() {
@@ -25,6 +26,7 @@ setup_virtualenv() {
     # Install required libraries
     echo "Installing required libraries..."
     pip install --upgrade pip
+    pip install gdown
     pip install -r "${REPO_DIR}requirements.txt"
     echo "Libraries installed."
 }
