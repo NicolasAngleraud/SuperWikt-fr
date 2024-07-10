@@ -20,8 +20,6 @@ DUMP_FILE_LINK="https://drive.google.com/file/d/1QKZjcYVqFkFWwup3zBlmoswAkB9l0Gk
 # Create model directory if it does not exist
 mkdir -p "$MODEL_DIR"
 
-
-
 # Download Wiki dump file from Google Drive
 echo "Downloading Wiki dump file from Google Drive..."
 gdown "$DUMP_FILE_LINK" -O "$DUMP_FILE"
@@ -29,8 +27,6 @@ if [ $? -ne 0 ]; then
     echo "Error downloading Wiki dump file from Google Drive"
     exit 1
 fi
-
-
 
 
 # Step 1: Extract wiktionary.tsv from the .ttl dump file
@@ -42,8 +38,5 @@ if [ $? -ne 0 ]; then
 fi
 
 
-
-
-
-echo "Pipeline completed successfully."
+echo "Pipeline completed successfully"
 
