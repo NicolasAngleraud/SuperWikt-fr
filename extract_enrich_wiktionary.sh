@@ -20,7 +20,7 @@ setup_virtualenv() {
         echo "Virtual environment created."
     fi
     echo "Activating virtual environment..."
-    source "$VENV_DIR/bin/activate"
+    source "${VENV_DIR}bin/activate"
     echo "Virtual environment activated."
 
     # Install required libraries
@@ -45,7 +45,7 @@ mkdir -p "$MODEL_DIR"
 
 # Download DEF model from Google Drive
 echo "Downloading DEF model from Google Drive..."
-python3 -m gdown.cli "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
+gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading DEF model from Google Drive"
     exit 1
@@ -53,7 +53,7 @@ fi
 
 # Download EX model from Google Drive
 echo "Downloading EX model from Google Drive..."
-python3 -m gdown.cli "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
+gdown "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading EX model from Google Drive"
     exit 1
