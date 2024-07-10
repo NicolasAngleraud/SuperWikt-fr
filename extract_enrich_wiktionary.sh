@@ -19,6 +19,22 @@ EX_MODEL_FILE_NAME="ex_clf.params"
 # Create model directory if it does not exist
 mkdir -p "$MODEL_DIR"
 
+# Download DEF model from Google Drive
+echo "Downloading DEF model from Google Drive..."
+gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
+if [ $? -ne 0 ]; then
+    echo "Error downloading DEF model from Google Drive"
+    exit 1
+fi
+
+# Download EX model from Google Drive
+echo "Downloading EX model from Google Drive..."
+gdown "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
+if [ $? -ne 0 ]; then
+    echo "Error downloading EX model from Google Drive"
+    exit 1
+fi
+
 
 # Check if the .bz2 file exists
 if [ -f "$BZ2_FILE" ]; then
