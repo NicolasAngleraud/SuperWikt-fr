@@ -26,7 +26,6 @@ setup_virtualenv() {
     # Install required libraries
     echo "Installing required libraries..."
     pip install --upgrade pip
-    pip install gdown
     pip install -r "${REPO_DIR}requirements.txt"
     echo "Libraries installed."
 }
@@ -46,7 +45,7 @@ mkdir -p "$MODEL_DIR"
 
 # Download DEF model from Google Drive
 echo "Downloading DEF model from Google Drive..."
-gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
+python3 -m gdown.cli "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading DEF model from Google Drive"
     exit 1
@@ -54,7 +53,7 @@ fi
 
 # Download EX model from Google Drive
 echo "Downloading EX model from Google Drive..."
-gdown "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
+python3 -m gdown.cli "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading EX model from Google Drive"
     exit 1
