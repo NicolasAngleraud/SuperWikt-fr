@@ -60,6 +60,17 @@ fi
 
 # Step 2: Generate wiktionary_examples.tsv from wiktionary.tsv
 echo "Starting step 2: Generating wiktionary_examples.tsv from wiktionary.tsv"
+# Function to download Spacy model if not already present
+download_spacy_model() {
+    model=$1
+    python3 -c "import spacy; spacy.cli.download('${model}')"
+}
+
+# Download the required Spacy model
+SPACY_MODEL="fr_core_news_lg"
+echo "Downloading Spacy model: $SPACY_MODEL"
+download_spacy_model $SPACY_MODEL
+
 python3 "${REPO_DIR}process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 2: process_examples.py failed"
