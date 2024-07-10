@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Default values for environment variables
-# REPO_DIR=${REPO_DIR:-"./"}
-MODEL_DIR=${MODEL_DIR:-"./models"}
-DUMP_FILE=${DUMP_FILE:-"./test.ttl"}
-WIKTIONARY_FILE=${WIKTIONARY_FILE:-"./wiktionary.tsv"}
-EXAMPLES_FILE=${EXAMPLES_FILE:-"./wiktionary_examples.tsv"}
-PREDS_FILE=${PREDS_FILE:-"./wiktionary_preds.tsv"}
-ENRICHED_FILE=${ENRICHED_FILE:-"./enriched_wiktionary.tsv"}
+REPO_DIR=${REPO_DIR:-"./"}
+MODEL_DIR=${MODEL_DIR:-"${REPO_DIR}models"}
+DUMP_FILE=${DUMP_FILE:-"${REPO_DIR}test.ttl"}
+WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}wiktionary.tsv"}
+EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}wiktionary_examples.tsv"}
+PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}wiktionary_preds.tsv"}
+ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}enriched_wiktionary.tsv"}
 
 
 # Google Drive file links and names
@@ -15,24 +15,30 @@ DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
 DEF_MODEL_FILE_NAME="def_lem_clf.params"
 EX_MODEL_FILE_ID="1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ"
 EX_MODEL_FILE_NAME="ex_clf.params"
-DUMP_FILE_ID="1QKZjcYVqFkFWwup3zBlmoswAkB9l0Gkr"
-DUMP_FILE_NAME="test.ttl"
+
 
 # Create model directory if it does not exist
 mkdir -p "$MODEL_DIR"
 
-# Download Wiki dump file from Google Drive
-echo "Downloading Wiki dump file from Google Drive..."
-gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$DUMP_FILE"
-if [ $? -ne 0 ]; then
-    echo "Error downloading Wiki dump file from Google Drive"
+BZ2_FILE="${REPO_DIR}fr_dbnary_ontolex_20240501.ttl.bz2"
+OUTPUT_TTL="${REPO_DIR}/test.ttl"
+
+# Check if the .bz2 file exists
+if [ -f "$BZ2_FILE" ]; then
+    echo "Extracting TTL file from $BZ2_FILE..."
+
+    # Extract .ttl file from .bz2 file
+    bunzip2 -c "$BZ2_FILE" > "$OUTPUT_TTL"
+
+    echo "Extraction complete. TTL file saved to $OUTPUT_TTL"
+else
+    echo "Error: $BZ2_FILE not found."
     exit 1
 fi
 
-
 # Step 1: Extract wiktionary.tsv from the .ttl dump file
 echo "Starting step 1: Extracting wiktionary.tsv from the .ttl dump file"
-python3 "./extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
+python3 "${REPO_DIR}extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 1: extract_wiki.py failed"
     exit 1
