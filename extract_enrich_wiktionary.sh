@@ -11,18 +11,19 @@ ENRICHED_FILE=${ENRICHED_FILE:-"$REPO_DIR/enriched_wiktionary.tsv"}
 
 
 # Google Drive file links and names
-DEF_MODEL_FILE_LINK="https://drive.google.com/file/d/1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st/view?usp=drive_link"
+DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
 DEF_MODEL_FILE_NAME="def_lem_clf.params"
-EX_MODEL_FILE_LINK="https://drive.google.com/file/d/1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ/view?usp=drive_link"
+EX_MODEL_FILE_ID="1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ"
 EX_MODEL_FILE_NAME="ex_clf.params"
-DUMP_FILE_LINK="https://drive.google.com/file/d/1QKZjcYVqFkFWwup3zBlmoswAkB9l0Gkr/view?usp=drive_link"
+DUMP_FILE_ID="1QKZjcYVqFkFWwup3zBlmoswAkB9l0Gkr"
+DUMP_FILE_NAME="test.ttl"
 
 # Create model directory if it does not exist
 mkdir -p "$MODEL_DIR"
 
 # Download Wiki dump file from Google Drive
 echo "Downloading Wiki dump file from Google Drive..."
-gdown "$DUMP_FILE_LINK" -O "$DUMP_FILE"
+gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$DUMP_FILE"
 if [ $? -ne 0 ]; then
     echo "Error downloading Wiki dump file from Google Drive"
     exit 1
