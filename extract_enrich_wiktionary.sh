@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Default values for environment variables
-REPO_DIR=${REPO_DIR:-"./"}
-MODEL_DIR=${MODEL_DIR:-"$REPO_DIR/models"}
-DUMP_FILE=${DUMP_FILE:-"$REPO_DIR/test.ttl"}
-WIKTIONARY_FILE=${WIKTIONARY_FILE:-"$REPO_DIR/wiktionary.tsv"}
-EXAMPLES_FILE=${EXAMPLES_FILE:-"$REPO_DIR/wiktionary_examples.tsv"}
-PREDS_FILE=${PREDS_FILE:-"$REPO_DIR/wiktionary_preds.tsv"}
-ENRICHED_FILE=${ENRICHED_FILE:-"$REPO_DIR/enriched_wiktionary.tsv"}
+# REPO_DIR=${REPO_DIR:-"./"}
+MODEL_DIR=${MODEL_DIR:-"./models"}
+DUMP_FILE=${DUMP_FILE:-"./test.ttl"}
+WIKTIONARY_FILE=${WIKTIONARY_FILE:-"./wiktionary.tsv"}
+EXAMPLES_FILE=${EXAMPLES_FILE:-"./wiktionary_examples.tsv"}
+PREDS_FILE=${PREDS_FILE:-"./wiktionary_preds.tsv"}
+ENRICHED_FILE=${ENRICHED_FILE:-"./enriched_wiktionary.tsv"}
 
 
 # Google Drive file links and names
@@ -32,7 +32,7 @@ fi
 
 # Step 1: Extract wiktionary.tsv from the .ttl dump file
 echo "Starting step 1: Extracting wiktionary.tsv from the .ttl dump file"
-python3 "$REPO_DIR/extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
+python3 "./extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 1: extract_wiki.py failed"
     exit 1
