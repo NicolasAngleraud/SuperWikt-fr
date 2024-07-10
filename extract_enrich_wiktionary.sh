@@ -3,34 +3,31 @@
 # Default values for environment variables
 REPO_DIR=${REPO_DIR:-"./"}
 MODEL_DIR=${MODEL_DIR:-"${REPO_DIR}models"}
-DUMP_FILE=${DUMP_FILE:-"${REPO_DIR}test.ttl"}
+BZ2_FILE="${REPO_DIR}fr_dbnary_ontolex_20240501.ttl.bz2"
+DUMP_FILE=${DUMP_FILE:-"${REPO_DIR}wiktionary.ttl"}
 WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}wiktionary.tsv"}
 EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}wiktionary_examples.tsv"}
 PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}enriched_wiktionary.tsv"}
 
-
-# Google Drive file links and names
+# Google Drive file IDs and names
 DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
 DEF_MODEL_FILE_NAME="def_lem_clf.params"
 EX_MODEL_FILE_ID="1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ"
 EX_MODEL_FILE_NAME="ex_clf.params"
 
-
 # Create model directory if it does not exist
 mkdir -p "$MODEL_DIR"
 
-BZ2_FILE="${REPO_DIR}fr_dbnary_ontolex_20240501.ttl.bz2"
-OUTPUT_TTL="${REPO_DIR}/test.ttl"
 
 # Check if the .bz2 file exists
 if [ -f "$BZ2_FILE" ]; then
     echo "Extracting TTL file from $BZ2_FILE..."
 
     # Extract .ttl file from .bz2 file
-    bunzip2 -c "$BZ2_FILE" > "$OUTPUT_TTL"
+    bunzip2 -c "$BZ2_FILE" > "$DUMP_FILE"
 
-    echo "Extraction complete. TTL file saved to $OUTPUT_TTL"
+    echo "Extraction complete. TTL file saved to $DUMP_FILE"
 else
     echo "Error: $BZ2_FILE not found."
     exit 1

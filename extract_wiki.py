@@ -6,7 +6,7 @@ def extract_wiktionary(input_file, output_file):
 	with open(input_file, 'r', encoding='utf-8') as file:
 		for i, line in enumerate(file):
 		    print(line.strip())
-		    if i >= 77: break
+		    if i >= 76: break
 
 
 def main():
