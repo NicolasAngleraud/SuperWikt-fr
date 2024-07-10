@@ -12,8 +12,7 @@ sp_sym = '##'
 
 
 def data_analysis(input_file):
-	datafile = input_file
-	df_senses = pd.read_csv(tsv_file, sep='\t')
+	df_senses = pd.read_csv(input_file, sep='\t')
 	
 	examples = []
 	for i in range(1, 24):
