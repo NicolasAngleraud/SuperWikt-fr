@@ -13,13 +13,50 @@ PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}/wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}/enriched_wiktionary.tsv"}
 VENV_DIR=${VENV_DIR:-"$PARENT_DIR/venv"}
 
+# Function to install python3-venv package if needed
+install_python3_venv() {
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo "Python 3 is not installed. Please install Python 3."
+        exit 1
+    fi
+
+    # Check if python3-venv is available
+    if python3 -m venv --help >/dev/null 2>&1; then
+        echo "python3-venv is available."
+    else
+        echo "python3-venv is not available. Installing python3-venv package..."
+
+        # Install python3-venv package (for Debian/Ubuntu)
+        if command -v apt >/dev/null 2>&1; then
+            sudo apt update
+            sudo apt install -y python3-venv
+        else
+            echo "Error: Could not install python3-venv. Your system package manager is not supported."
+            exit 1
+        fi
+
+        # Verify installation
+        if python3 -m venv --help >/dev/null 2>&1; then
+            echo "python3-venv installation successful."
+        else
+            echo "Error: Failed to install python3-venv. Please install it manually and try again."
+            exit 1
+        fi
+    fi
+}
+
 # Function to create and activate virtual environment
 setup_virtualenv() {
+    install_python3_venv
+
+    # Create virtual environment
     if [ ! -d "$VENV_DIR" ]; then
         echo "Creating virtual environment in $VENV_DIR..."
         python3 -m venv "$VENV_DIR"
         echo "Virtual environment created."
     fi
+
+    # Activate virtual environment
     echo "Activating virtual environment..."
     source "$VENV_DIR/bin/activate"
     echo "Virtual environment activated."
@@ -27,7 +64,7 @@ setup_virtualenv() {
     # Install required libraries
     echo "Installing required libraries..."
     pip install --upgrade pip
-    pip install -r "${REPO_DIR}/requirements.txt"
+    pip install -r "$REPO_DIR/requirements.txt"
     echo "Libraries installed."
 }
 
