@@ -13,7 +13,7 @@ PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}/wiktionary_preds.tsv"}
 ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}/enriched_wiktionary.tsv"}
 VENV_DIR=${VENV_DIR:-"$PARENT_DIR/venv"}
 
-
+'''
 # Function to create and activate virtual environment
 setup_virtualenv() {
 
@@ -38,7 +38,7 @@ setup_virtualenv() {
 
 # Set up virtual environment and install libraries
 setup_virtualenv
-
+'''
 
 # Google Drive file IDs and names
 DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
