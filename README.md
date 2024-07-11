@@ -7,14 +7,19 @@ Purpose
 
 Steps
 
-    Step 1: Extract Wiktionary Data
-     The script starts by extracting Wiktionary data from a specified dump file (wiktionary.ttl obtained by extracting it from a bz2 archive) using a Python script (extract_wiki.py). The extracted data is saved as wiktionary.tsv.
+ - Step 1: Extract Wiktionary Data
+   script : extract_wiki.py
+     The script starts by extracting Wiktionary data from a specified dump file (wiktionary.ttl obtained by extracting it from a bz2 archive). The extracted data is saved as wiktionary.tsv.
+     TODO: define what is kept exactly
      
     Step 2: Process Examples
      Next, the script processes examples from the wiktionary.tsv file to create wiktionary_examples.tsv. This step involves another Python script (process_examples.py), which prepares example data for subsequent analysis.
+     TODO: add what "process" mean : tabulated format , output columns
+     Spacy is used to tokenize, lemmatization to identify the rank of the token in the exemplar sentence, whose sense is illustrated
     
     Step 3: Generate Predictions
-     Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). This step employs get_preds.py, a Python script that utilizes pre-trained models and algorithms to predict semantic classes for each lexical sense of the wiktioanry based on the processed data. The pre-trained classifiers are downloaded from google drive using gdown and stored in a folder named 'models'.
+    script : get_preds.py 
+     Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). It applies the classifier of definitions and the classifier of exemplar sentences, and combines it using a weighted sum of scores. The classifiers are downloaded from a url and stored locally to $OUT/models
     
     Step 4: Enrich Wiktionary Data
      Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
@@ -45,7 +50,7 @@ Requirements
         transformers
         matplotlib
         spacy
-        gdown
+	wget
 
 Notes
 
