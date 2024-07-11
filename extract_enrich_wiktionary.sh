@@ -1,18 +1,15 @@
 #!/bin/bash
 
 # Default values for environment variables
-SCRIPT_DIR=$(dirname "$0")
-REPO_DIR=${REPO_DIR:-"$SCRIPT_DIR"}
-PARENT_DIR=$(dirname "$SCRIPT_DIR")
-MODEL_DIR=${MODEL_DIR:-"${REPO_DIR}/models"}
-BZ2_FILE="${REPO_DIR}/fr_dbnary_ontolex_20240501.ttl.bz2"
-DUMP_FILE=${DUMP_FILE:-"${REPO_DIR}/wiktionary.ttl"}
-WIKTIONARY_FILE=${WIKTIONARY_FILE:-"${REPO_DIR}/wiktionary.tsv"}
-EXAMPLES_FILE=${EXAMPLES_FILE:-"${REPO_DIR}/wiktionary_examples.tsv"}
-PREDS_FILE=${PREDS_FILE:-"${REPO_DIR}/wiktionary_preds.tsv"}
-ENRICHED_FILE=${ENRICHED_FILE:-"${REPO_DIR}/enriched_wiktionary.tsv"}
-VENV_DIR=${VENV_DIR:-"$PARENT_DIR/venv"}
-
+REPO_DIR=$(dirname "$0")
+OUT=$REPO_DIR/out
+MODEL_DIR=$OUT/models
+BZ2_FILE=${REPO_DIR}/fr_dbnary_ontolex_20240501.ttl.bz2
+DUMP_FILE=${OUT}/wiktionary.ttl
+WIKTIONARY_FILE=${OUT}/wiktionary.tsv
+EXAMPLES_FILE=${OUT}/wiktionary_examples.tsv
+PREDS_FILE=${OUT}/wiktionary_preds.tsv
+ENRICHED_FILE=${OUT}/enriched_wiktionary.tsv
 
 
 # Google Drive file IDs and names
@@ -22,6 +19,7 @@ EX_MODEL_FILE_ID="1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ"
 EX_MODEL_FILE_NAME="ex_clf.params"
 
 # Create model directory if it does not exist
+mkdir -p $OUT
 mkdir -p "$MODEL_DIR"
 
 # Download DEF model from Google Drive
