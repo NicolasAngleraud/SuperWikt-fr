@@ -83,5 +83,22 @@ if [ $? -ne 0 ]; then
 fi
 
 
+
+# Step 3: Generate wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv
+echo "Starting step 3: Generating wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv"
+python3 "${REPO_DIR}/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR"
+if [ $? -ne 0 ]; then
+    echo "Error in step 3: get_preds.py failed"
+    exit 1
+fi
+
+# Step 4: Generate enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv
+echo "Starting step 4: Generating enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv"
+python3 "${REPO_DIR}/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
+if [ $? -ne 0 ]; then
+    echo "Error in step 4: enrich_wiktionary.py failed"
+    exit 1
+fi
+
 echo "Pipeline completed successfully"
 
