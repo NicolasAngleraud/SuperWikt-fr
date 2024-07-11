@@ -23,13 +23,11 @@ Usage
 
 To execute the script and perform the above steps:
 
-    Clone the Repository: Clone the repository containing extract_enrich_wiktionary.sh and the required Python scripts (extract_wiki.py, process_examples.py, get_preds.py, enrich_wiktionary.py).
+    Clone the Repository: Clone the repository containing extract_enrich_wiktionary.sh, the bz2 archive fr_dbnary_ontolex_20240501.ttl.bz2 (can be replaced with a more recent one) containing the Wiktionary ttl dump file and the required Python scripts (extract_wiki.py, process_examples.py, get_preds.py, enrich_wiktionary.py, dataEncoder.py, lexicalClf.py, ).
 
     Set Up Environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment (venv or virtualenv) to manage dependencies.
 
     Run the Shell Script: Execute extract_enrich_wiktionary.sh from the command line:
-
-    bash
 
     ./extract_enrich_wiktionary.sh
 
