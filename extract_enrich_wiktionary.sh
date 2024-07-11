@@ -2,6 +2,8 @@
 
 # Default values for environment variables
 REPO_DIR=$(dirname "$0")
+# customize this output dir if needed
+# all files created by this script are stored in $OUT
 OUT=$REPO_DIR/out
 MODEL_DIR=$OUT/models
 BZ2_FILE=${REPO_DIR}/fr_dbnary_ontolex_20240501.ttl.bz2
@@ -11,22 +13,21 @@ EXAMPLES_FILE=${OUT}/wiktionary_examples.tsv
 PREDS_FILE=${OUT}/wiktionary_preds.tsv
 ENRICHED_FILE=${OUT}/enriched_wiktionary.tsv
 
+# models' url
+URL="http://www.linguist.univ-paris-diderot.fr/~mcandito/nangleraud_wikt_supersenses/models/"
 
-# Google Drive file IDs and names
-DEF_MODEL_FILE_ID="1J9PAVP74KSNCG9PX0OaL6Zzc8WV6E7st"
 DEF_MODEL_FILE_NAME="def_lem_clf.params"
-EX_MODEL_FILE_ID="1ZM2Nlp5oZQJv0f0xRZvKIwRXtJb2OkMQ"
 EX_MODEL_FILE_NAME="ex_clf.params"
 
 # Create model directory if it does not exist
 mkdir -p $OUT
 mkdir -p "$MODEL_DIR"
 
-# Download DEF model from Google Drive
-echo "Downloading DEF model from Google Drive..."
-gdown "https://drive.google.com/uc?id=$DEF_MODEL_FILE_ID" -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
+# Download DEF model 
+echo "Downloading DEF model ..."
+wget $URL/$DEF_MODEL_FILE_NAME -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
-    echo "Error downloading DEF model from Google Drive"
+    echo "Error downloading DEF model"
     exit 1
 fi
 
