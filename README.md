@@ -1,5 +1,5 @@
 # StageM2
-This repository contains a shell script (extract_enrich_wiktionary.sh) designed to automate the extraction and enrichment of Wiktionary data using Python scripts. This README provides an overview of the script's purpose and the steps involved. The repository contains as well base content for the training of classifiers able to do coarse-grained semantic classification of lexical senses from the Wiktionary or of noun occurences in context.
+This repository contains a shell script (extract_enrich_wiktionary.sh) designed to automate the extraction and enrichment of Wiktionary data using Python scripts. This README provides an overview of the script's purpose and the steps involved. The repository contains as well content for the supervised training of classifiers able to do coarse-grained semantic classification of lexical senses from the Wiktionary or of noun occurences in context, which can take the form of code scripts (lexicalClf.py, dataEncoder.py, main.py, test_arllm.py) or annotated data (data.xlsx).
 
 Purpose
 
