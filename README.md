@@ -14,7 +14,7 @@ Steps
      Next, the script processes examples from the wiktionary.tsv file to create wiktionary_examples.tsv. This step involves another Python script (process_examples.py), which prepares example data for subsequent analysis.
     
     Step 3: Generate Predictions
-     Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). This step employs get_preds.py, a Python script that utilizes pre-trained models and algorithms to predict semantic classes for each lexical sense of the wiktioanry based on the processed data.
+     Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). This step employs get_preds.py, a Python script that utilizes pre-trained models and algorithms to predict semantic classes for each lexical sense of the wiktioanry based on the processed data. The pre-trained classifiers are downloaded from google drive using gdown and stored in a folder named 'models'.
     
     Step 4: Enrich Wiktionary Data
      Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
