@@ -21,7 +21,7 @@ EX_MODEL_FILE_NAME="ex_clf.params"
 
 # Create model directory if it does not exist
 mkdir -p $OUT
-mkdir -p "$MODEL_DIR"
+mkdir -p $MODEL_DIR
 
 # Download DEF model 
 echo "Downloading DEF model ..."
@@ -31,11 +31,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Download EX model from Google Drive
-echo "Downloading EX model from Google Drive..."
-gdown "https://drive.google.com/uc?id=$EX_MODEL_FILE_ID" -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
+# Download EX model 
+echo "Downloading EX model ..."
+wget $URL/$EX_MODEL_FILE_NAME -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
-    echo "Error downloading EX model from Google Drive"
+    echo "Error downloading EX model"
     exit 1
 fi
 
@@ -55,7 +55,7 @@ fi
 
 # Step 1: Extract wiktionary.tsv from the .ttl dump file
 echo "Starting step 1: Extracting wiktionary.tsv from the .ttl dump file"
-python3 "${REPO_DIR}/extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
+python3 "$REPO_DIR/extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 1: extract_wiki.py failed"
     exit 1
@@ -75,7 +75,7 @@ SPACY_MODEL="fr_core_news_lg"
 echo "Downloading Spacy model: $SPACY_MODEL"
 download_spacy_model $SPACY_MODEL
 
-python3 "${REPO_DIR}/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
+python3 "$REPO_DIR/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 2: process_examples.py failed"
     exit 1
@@ -85,7 +85,7 @@ fi
 
 # Step 3: Generate wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv
 echo "Starting step 3: Generating wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv"
-python3 "${REPO_DIR}/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR"
+python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR"
 if [ $? -ne 0 ]; then
     echo "Error in step 3: get_preds.py failed"
     exit 1
@@ -93,7 +93,7 @@ fi
 
 # Step 4: Generate enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv
 echo "Starting step 4: Generating enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv"
-python3 "${REPO_DIR}/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
+python3 "$REPO_DIR/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 4: enrich_wiktionary.py failed"
     exit 1
