@@ -627,7 +627,7 @@ def predict_wiki(self, wiki_encoder):
     
     # Initialize an empty list for each supersense
     for supersense in SUPERSENSES:
-        predictions[supersense] = []
+        predictions[f"{supersense}_log_prob"] = []
     
     with torch.no_grad():
         for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):

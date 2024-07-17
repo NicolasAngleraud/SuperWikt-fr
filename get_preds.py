@@ -56,4 +56,4 @@ if __name__ == "__main__":
 	wiktionary_predictions = lex_clf.predict_wiki(wiki_encoder)
 	
 	wiki_df = pd.DataFrame(wiktionary_predictions)
-	wiki_df.to_csv(wiki_pred_file, sep='\t', index=False)
+	wiki_df.to_csv(wiki_pred_file, sep='\t', index=False, encoding='utf-8')
