@@ -13,6 +13,22 @@ EXAMPLES_FILE=${OUT}/wiktionary_examples.tsv
 PREDS_FILE=${OUT}/wiktionary_preds.tsv
 ENRICHED_FILE=${OUT}/enriched_wiktionary.tsv
 
+# Set a default base value
+DEFAULT_DEVICE_ID="cpu"
+
+# Check if a specific value is provided as an argument or environment variable
+if [ -n "$SPECIFIC_DEVICE_ID" ]; then
+    DEVICE_ID="$SPECIFIC_DEVICE_ID"
+else
+    DEVICE_ID="$DEFAULT_DEVICE_ID"
+fi
+
+if [ "$DEVICE_ID" != "cpu" ]; then
+    echo "Selected DEVICE_ID: cuda:$DEVICE_ID"
+else
+    echo "Selected DEVICE_ID: $DEVICE_ID"
+fi
+
 # models' url
 URL="http://www.linguist.univ-paris-diderot.fr/~mcandito/nangleraud_wikt_supersenses/models/"
 
@@ -84,7 +100,7 @@ fi
 
 # Step 3: Generate wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv
 echo "Starting step 3: Generating wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv"
-python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR"
+python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR" --device_id "$DEVICE_ID"
 if [ $? -ne 0 ]; then
     echo "Error in step 3: get_preds.py failed"
     exit 1

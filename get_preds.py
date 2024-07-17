@@ -13,8 +13,16 @@ if __name__ == "__main__":
 	parser.add_argument('--input_examples', required=True, help='Path to the input TSV file.')
 	parser.add_argument('--output', required=True, help='Path to the output TSV file.')
 	parser.add_argument('--model_dir', required=True, help='Path to the output TSV file.')
+	parser.add_argument('--device_id', required=True, help='ID of the GPU or CPU used for the computation of the models calculations.')
 
 	args = parser.parse_args()
+	
+	device_id = args.device_id
+	if device_id != 'cpu':
+		if torch.cuda.is_available():
+			DEVICE = torch.device("cuda:" + args.device_id)
+	else:
+		DEVICE = 'cpu'
 	
 	params = {
 	"nb_epochs": 100,
