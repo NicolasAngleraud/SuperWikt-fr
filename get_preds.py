@@ -14,6 +14,11 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 	
+	MODEL_NAME = "flaubert/flaubert_large_cased"
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+	
+	def_lem_clf_file = args.model_dir + "/def_lem_clf.params"
+	ex_clf_file = args.model_dir + "/ex_clf.params"
 	
 	wiki_def_file = args.input_wiktionary
 	wiki_example_file = args.input_examples
