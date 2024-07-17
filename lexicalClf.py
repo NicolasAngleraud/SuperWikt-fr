@@ -627,7 +627,7 @@ class lexicalClf_V1():
 		
 		# Initialize an empty list for each supersense
 		for supersense in SUPERSENSES:
-		    predictions[f"{supersense}_log_prob"] = []
+		    predictions[f"{supersense}_score"] = []
 		
 		with torch.no_grad():
 		    for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):
@@ -665,7 +665,7 @@ class lexicalClf_V1():
 		        log_probs = torch.squeeze(log_probs)
 		        log_probs = log_probs.cpu().numpy()
 		        for i, supersense in enumerate(SUPERSENSES):
-		            predictions[f"{supersense}_log_prob"].append(log_probs[i])
+		            predictions[f"{supersense}_score"].append(log_probs[i])
 		            
 		return predictions
 

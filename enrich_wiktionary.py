@@ -57,8 +57,8 @@ if __name__ == "__main__":
 	wiktionnaire = args.input_wiktionary
 	wiktionnaire_preds = args.input_preds
 
-	df_wiki = pd.read_csv('wiktionnaire.tsv', sep='\t')
-	df_wiki_preds = pd.read_csv('wiktionnaire_preds.tsv', sep='\t')
+	df_wiki = pd.read_csv(wiktionnaire, sep='\t')
+	df_wiki_preds = pd.read_csv(wiktionnaire_preds, sep='\t')
 
 	# Convert the class_mapping dictionary to a DataFrame
 	class_mapping_df = pd.DataFrame(class_mapping).T.reset_index()
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 	df_final['lemma'] = df_final['lemma_y']
 
 
-	columns_order = ['sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels','definition'] + [f'example_{i}' for i in range(1, 24)] + ['pred'] + [f"{ss}_log_prob" for ss in SUPERSENSES]
+	columns_order = ['sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels','definition'] + [f'example_{i}' for i in range(1, 24)] + ['pred'] + [f"{ss}_score" for ss in SUPERSENSES]
 
 	columns_to_convert = ['lemma', 'definition'] + [f'example_{i}' for i in range(1, 24)]
 
