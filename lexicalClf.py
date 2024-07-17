@@ -620,44 +620,53 @@ class lexicalClf_V1():
 		
 		return accuracy, predictions
 		
-	def predict_wiki(self, wiki_encoder):
-		self.def_lem_clf.eval()
-		self.ex_clf.eval()
-		predictions = {"lemma":[], "sense_id":[], "pred":[]}
-		with torch.no_grad():
-			for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):
-				
-				if definition_with_lemma_encoded is not None: 
-					def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
-					def_weight = self.coeff_def
-				else:
-					def_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
-					def_weight = 0
-				
-				if bert_input_examples:
-					ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
-					ex_log_probs = torch.stack(ex_log_probs)
-					ex_log_probs = torch.mean(ex_log_probs, dim=0)
-					ex_weight = self.coeff_ex
-				
-				else:
-					ex_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
-					ex_weight = 0
-				
-				log_probs = def_weight * def_log_probs + ex_weight * ex_log_probs
-				
-				if torch.all(log_probs == 0).item():
-					pred = ''
-					
-				else:
-					predicted_index = torch.argmax(log_probs, dim=1).item()
-					pred = SUPERSENSES[predicted_index]
-				
-				predictions['lemma'].append(lemma)
-				predictions['sense_id'].append(sense_id)
-				predictions['pred'].append(pred)
-				
-		return predictions
+def predict_wiki(self, wiki_encoder):
+    self.def_lem_clf.eval()
+    self.ex_clf.eval()
+    predictions = {"lemma": [], "sense_id": [], "pred": []}
+    
+    # Initialize an empty list for each supersense
+    for supersense in SUPERSENSES:
+        predictions[supersense] = []
+    
+    with torch.no_grad():
+        for definition_with_lemma_encoded, bert_input_examples, tg_trks_examples, sense_id, lemma in wiki_encoder.encoded_senses(device=self.device):
+            
+            if definition_with_lemma_encoded is not None: 
+                def_log_probs = self.def_lem_clf.forward(definition_with_lemma_encoded)
+                def_weight = self.coeff_def
+            else:
+                def_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
+                def_weight = 0
+            
+            if bert_input_examples:
+                ex_log_probs = [self.ex_clf.forward(input_, torch.tensor(tg_trk).unsqueeze(0)) for input_, tg_trk in zip(bert_input_examples, tg_trks_examples)]
+                ex_log_probs = torch.stack(ex_log_probs)
+                ex_log_probs = torch.mean(ex_log_probs, dim=0)
+                ex_weight = self.coeff_ex
+            
+            else:
+                ex_log_probs = torch.zeros(len(SUPERSENSES)).to(self.device)
+                ex_weight = 0
+            
+            log_probs = def_weight * def_log_probs + ex_weight * ex_log_probs
+            
+            if torch.all(log_probs == 0).item():
+                pred = ''
+            else:
+                predicted_index = torch.argmax(log_probs, dim=0).item()
+                pred = SUPERSENSES[predicted_index]
+            
+            predictions['lemma'].append(lemma)
+            predictions['sense_id'].append(sense_id)
+            predictions['pred'].append(pred)
+            
+            # Append log probabilities to the respective supersense columns
+            log_probs = log_probs.cpu().numpy()
+            for i, supersense in enumerate(SUPERSENSES):
+                predictions[supersense].append(log_probs[i])
+                
+    return predictions
 
 
 
