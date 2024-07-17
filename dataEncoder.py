@@ -448,14 +448,14 @@ class corpusEncoder(exampleEncoder):
 class wikiEncoder():
 	def __init__(self, def_datafile, ex_datafile, tokenizer, use_sample=False, sample_size=32):
 		self.tokenizer = tokenizer
+		
 		self.def_datafile = def_datafile
 		self.ex_datafile = ex_datafile
 		
 		self.df_definitions = pd.read_csv(def_datafile, sep='\t')
 		self.df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
-
-		self.df_examples = pd.read_csv(ex_datafile, sep='\t')		
-		self.df_examples = pd.read_excel(ex_datafile, engine='openpyxl')
+		
+		self.df_examples = pd.read_csv(ex_datafile, sep='\t')
 		self.df_examples = self.df_examples[self.df_examples['word_rank'] >= 0]
 		self.df_examples['lemma'] = self.df_examples['lemma'].str.replace('_', ' ')
 		
