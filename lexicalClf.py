@@ -664,7 +664,7 @@ class lexicalClf_V1():
 		        # Append log probabilities to the respective supersense columns
 		        log_probs = log_probs.cpu().numpy()
 		        for i, supersense in enumerate(SUPERSENSES):
-		            predictions[supersense].append(log_probs[i])
+		            predictions[f"{supersense}_log_prob"].append(log_probs[i])
 		            
 		return predictions
 
