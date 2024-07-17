@@ -654,7 +654,7 @@ class lexicalClf_V1():
 		        if torch.all(log_probs == 0).item():
 		            pred = ''
 		        else:
-		            predicted_index = torch.argmax(log_probs, dim=0).item()
+		            predicted_index = torch.argmax(log_probs, dim=1).item()
 		            pred = SUPERSENSES[predicted_index]
 		        
 		        predictions['lemma'].append(lemma)
