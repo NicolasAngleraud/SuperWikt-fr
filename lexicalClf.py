@@ -662,8 +662,8 @@ class lexicalClf_V1():
 		        predictions['pred'].append(pred)
 		        
 		        # Append log probabilities to the respective supersense columns
+		        log_probs = torch.squeeze(log_probs)
 		        log_probs = log_probs.cpu().numpy()
-		        print(log_probs)
 		        for i, supersense in enumerate(SUPERSENSES):
 		            predictions[f"{supersense}_log_prob"].append(log_probs[i])
 		            
