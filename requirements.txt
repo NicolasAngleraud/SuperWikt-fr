@@ -6,5 +6,5 @@ numpy
 transformers
 matplotlib
 spacy
-gdown
+wget
 
