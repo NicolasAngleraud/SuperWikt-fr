@@ -16,6 +16,17 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 	
+	params = {
+	"nb_epochs": 100,
+	"batch_size": 16,
+	"hidden_layer_size": 768,
+	"patience": 2,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
+	"frozen": False,
+	"max_seq_length": 100
+	}
+	
 	MODEL_NAME = "flaubert/flaubert_large_cased"
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
@@ -31,7 +42,7 @@ if __name__ == "__main__":
 	coeff_ex = 0.68
 	coeff_def = 0.80
 	
-	lex_clf = clf.lexicalClf_V1(params_def, params_ex, DEVICE, coeff_ex, coeff_def)
+	lex_clf = clf.lexicalClf_V1(params, params, DEVICE, coeff_ex, coeff_def)
 	lex_clf.load_clf(def_lem_clf_file, ex_clf_file)
 	
 	wiktionary_predictions = lex_clf.predict_wiki(wiki_encoder)
