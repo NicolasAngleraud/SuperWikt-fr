@@ -2,6 +2,8 @@ import pandas as pd
 import argparse
 import dataEncoder as data
 import lexicalClf as clf
+from transformers import AutoModel, AutoTokenizer, AutoConfig
+
 
 
 if __name__ == "__main__":
