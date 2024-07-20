@@ -1,7 +1,7 @@
 # StageM2
 This repository contains a shell script (extract_enrich_wiktionary.sh) designed to automate the extraction and enrichment of Wiktionary data using Python scripts. This README provides an overview of the script's purpose and the steps involved. The repository contains as well content for the supervised training of classifiers able to do coarse-grained semantic classification of lexical senses from the Wiktionary or of noun occurences in context, which can take the form of code scripts (lexicalClf.py, dataEncoder.py, main.py, test_arllm.py) or annotated data (data.xlsx).
 
-**Purpose**
+## Predict supersenses
 
 The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
 
@@ -53,6 +53,12 @@ To execute the script and perform the above steps:
 **Notes**
 
 Customize file paths and script parameters (DUMP_FILE, WIKTIONARY_FILE, etc.) in extract_enrich_wiktionary.sh as per your environment and dataset location. Ensure adequate permissions (chmod +x extract_enrich_wiktionary.sh) to execute the shell script.
+
+
+## Retraining models
+
+indiquer les scripts pour l'entraînement des modèles
+
 
 **Contributors**
 

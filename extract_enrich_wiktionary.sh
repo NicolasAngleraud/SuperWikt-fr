@@ -70,6 +70,7 @@ else
 fi
 
 # Step 1: Extract wiktionary.tsv from the .ttl dump file
+# TODO: summarize what is extracted exactly, put columns header
 echo "Starting step 1: Extracting wiktionary.tsv from the .ttl dump file"
 python3 "$REPO_DIR/extract_wiki.py" --input "$DUMP_FILE" --output "$WIKTIONARY_FILE"
 if [ $? -ne 0 ]; then
@@ -79,6 +80,7 @@ fi
 
 
 # Step 2: Generate wiktionary_examples.tsv from wiktionary.tsv
+# TODO: wiktionary_examples.tsv contains only examples (describe columns)
 echo "Starting step 2: Generating wiktionary_examples.tsv from wiktionary.tsv"
 # Function to download Spacy model if not already present
 download_spacy_model() {
@@ -91,6 +93,7 @@ SPACY_MODEL="fr_core_news_lg"
 echo "Downloading Spacy model: $SPACY_MODEL"
 download_spacy_model $SPACY_MODEL
 
+# TODO: Describe the process
 python3 "$REPO_DIR/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 2: process_examples.py failed"
@@ -99,6 +102,7 @@ fi
 
 
 # Step 3: Generate wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv
+# Apply the definition and example classifiers and combined their respective outcomes
 echo "Starting step 3: Generating wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv"
 python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR" --device_id "$DEVICE_ID"
 if [ $? -ne 0 ]; then
@@ -107,7 +111,7 @@ if [ $? -ne 0 ]; then
 fi
 
 
-# Step 4: Generate enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv
+# Step 4: Generate enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv / Réinjection des prédictions dans le fichier de Wiktionnaire et mapping vers les hypersenses / put columns header
 echo "Starting step 4: Generating enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv"
 python3 "$REPO_DIR/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
 if [ $? -ne 0 ]; then
