@@ -42,8 +42,9 @@ def percentage(decimal):
 
 def get_parser_args():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-device_id", choices=['cpu', '0', '1', '2', '3'], help="Id of the GPU.")
-	parser.add_argument("-data_file", default="./data.tsv", help="The tsv file containing all the annotated sense data from wiktionary.")
+	parser.add_argument("--device_id", choices=['cpu', '0', '1', '2', '3'], help="Id of the GPU.")
+	parser.add_argument("--sense_data_file", default="./sense_data.tsv", help="The tsv file containing all the annotated sense data from wiktionary.")
+	parser.add_argument("--ex_data_file", default="./ex_data.tsv", help="The tsv file containing all the annotated examples data from wiktionary.")
 	parser.add_argument('--out', required=True, help='Path to the output folder where to save the predictions from trained models.')
 	parser.add_argument('--model_dir', required=True, help='Path to the folder where to save the trained models.')
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
@@ -62,8 +63,8 @@ if __name__ == '__main__':
 		DEVICE = 'cpu'
 	
 	
-	def_lem_clf_file = './def_lem_clf.params'
-	ex_clf_file = './ex_clf.params'
+	def_lem_clf_file = 'args.model_dir/NEW_def_lem_clf.params'
+	ex_clf_file = 'args.model_dir/NEW_ex_clf.params'
 
 	
 	params_def = {
@@ -87,32 +88,32 @@ if __name__ == '__main__':
 	"frozen": False,
 	"max_seq_length": 100
 	}
-	
+	args.ex_datafile, 
 	
 	
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 	print('ENCODING DEFINITIONS DATA...\n')
-	train_definitions_encoder = data.definitionEncoder(args.data_file, "train", tokenizer, use_sample=False)
+	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_datafile, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
-	freq_dev_definitions_encoder = data.definitionEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_datafile, "freq-dev", tokenizer, use_sample=False)
 	freq_dev_definitions_encoder.encode()
-	rand_dev_definitions_encoder = data.definitionEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_datafile, "rand-dev", tokenizer, use_sample=False)
 	rand_dev_definitions_encoder.encode()
-	freq_test_definitions_encoder = data.definitionEncoder(args.data_file, "freq-test", tokenizer, use_sample=False)
+	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_datafile, "freq-test", tokenizer, use_sample=False)
 	freq_test_definitions_encoder.encode()
-	rand_test_definitions_encoder = data.definitionEncoder(args.data_file, "rand-test", tokenizer, use_sample=False)
+	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_datafile, "rand-test", tokenizer, use_sample=False)
 	rand_test_definitions_encoder.encode()
 	print('DEFINITIONS DATA ENCODED.\n')
 	
 	print('TRAINING DEFINITION CLASSIFIER...\n')
 	def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
-	def_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_clf_file)
+	def_clf.train_clf(train_definitions_encoder, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 	print('DEFINITION CLASSIFIER TRAINED.\n')
 	print('LOADING BEST DEFINITION CLASSIFIER...\n')
 	def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
-	def_clf.load_clf(def_clf_file)
+	def_clf.load_clf(def_lem_clf_file)
 	print('BEST DEFINITION CLASSIFIER LOADED.\n')
 	
 	
@@ -153,15 +154,15 @@ if __name__ == '__main__':
 	
 	
 	print('ENCODING EXAMPLES DATA...\n')
-	train_examples_encoder = data.exampleEncoder(args.data_file, "train", tokenizer, use_sample=False, sub_corpus="wiki")
+	train_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_datafile, "train", tokenizer, use_sample=False, sub_corpus="wiki")
 	train_examples_encoder.encode()
-	freq_dev_examples_encoder = data.exampleEncoder(args.data_file, "freq-dev", tokenizer, use_sample=False, sub_corpus="wiki")
+	freq_dev_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_datafile, "freq-dev", tokenizer, use_sample=False, sub_corpus="wiki")
 	freq_dev_examples_encoder.encode()
-	rand_dev_examples_encoder = data.exampleEncoder(args.data_file, "rand-dev", tokenizer, use_sample=False, sub_corpus="wiki")
+	rand_dev_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_datafile, "rand-dev", tokenizer, use_sample=False, sub_corpus="wiki")
 	rand_dev_examples_encoder.encode()
-	freq_test_examples_encoder = data.exampleEncoder(args.data_file, "freq-test", tokenizer, use_sample=False, sub_corpus="wiki")
+	freq_test_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_datafile, "freq-test", tokenizer, use_sample=False, sub_corpus="wiki")
 	freq_test_examples_encoder.encode()
-	rand_test_examples_encoder = data.exampleEncoder(args.data_file, "rand-test", tokenizer, use_sample=False, sub_corpus="wiki")
+	rand_test_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_datafile, "rand-test", tokenizer, use_sample=False, sub_corpus="wiki")
 	rand_test_examples_encoder.encode()
 	print('EXAMPLES DATA ENCODED.\n')
 	

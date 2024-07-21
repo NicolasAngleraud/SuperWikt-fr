@@ -6,8 +6,8 @@ REPO_DIR=$(dirname "$0")
 # all files created by this script are stored in $OUT
 OUT=$REPO_DIR/out
 MODEL_DIR=$OUT/models
-DATA_FILE=${REPO_DIR}/data.tsv
-
+SENSE_DATA_FILE=${REPO_DIR}/sense_data.tsv
+EX_DATA_FILE=${REPO_DIR}/ex_data.tsv
 
 # Set a default base value
 DEFAULT_DEVICE_ID="cpu"
@@ -33,7 +33,7 @@ mkdir -p $MODEL_DIR
 
 # Encoding of annotated data for FlauBERT large processing and training of definition and example classifiers
 echo "Encoding of annotated data for FlauBERT large processing and training of definition and example classifiers"
-python3 "$REPO_DIR/train_def_ex_lex_clf.py" --input "$DATA_FILE" --out "$OUT"  --device_id "$DEVICE_ID" --model_dir "$MODEL_DIR"
+python3 "$REPO_DIR/train_def_ex_lex_clf.py" --sense_data_file "$SENSE_DATA_FILE" --ex_data_file "$EX_DATA_FILE" --out "$OUT"  --device_id "$DEVICE_ID" --model_dir "$MODEL_DIR"
 if [ $? -ne 0 ]; then
     echo "Error: train_def_ex_lex_clf.py failed"
     exit 1
