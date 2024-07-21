@@ -47,7 +47,7 @@ if __name__ == "__main__":
 	
 	wiki_encoder = data.wikiEncoder(def_datafile=wiki_def_file, ex_datafile=wiki_example_file, tokenizer=tokenizer, use_sample=False, sample_size=1000)
 	
-	coeff_ex = 0.68
+	coeff_ex = 0.65
 	coeff_def = 0.80
 	
 	lex_clf = clf.lexicalClf_V1(params, params, DEVICE, coeff_ex, coeff_def)
