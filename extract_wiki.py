@@ -53,7 +53,7 @@ def extract_wiki_paragraphs(input_file):
 	for par in paragraphs:
 		for l in par:
 			print(l)
-			print()
+		print()
 
 	return paragraphs
 	
