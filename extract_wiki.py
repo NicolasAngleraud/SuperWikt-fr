@@ -35,14 +35,23 @@ def extract_wiki_paragraphs(input_file):
 	paragraphs = []
 	with open(input_file, 'r', encoding='utf-8') as file:
 		paragraph = []
+		add_paragraph = False
 
 		for i, line in enumerate(file):
+		
+			if "rdf:type" in line:
+				for rdf_type in allowed_rdf_types:
+					if rdf_type in line:
+						add_paragraph = True
+						break
 
 			if line.startswith('@prefix'): continue
 
 			elif not line.strip() and len(paragraph)>0:
-				paragraphs.append(paragraph)
+			
+				if add_paragraph: paragraphs.append(paragraph)
 				paragraph = []
+				add_paragraph = False
 
 			else:
 				line = line.strip()
@@ -54,7 +63,7 @@ def extract_wiki_paragraphs(input_file):
 
 	return paragraphs
 	
-
+"""
 def filter_paragraphs(paragraphs):
 	print("Filtering irrelevant paragraphs from Wiktionary data...")
 	
@@ -72,7 +81,7 @@ def filter_paragraphs(paragraphs):
 	print("Filtered irrelevant paragraphs from Wiktionary data.")
 	print(f"{len(filtered_paragraphs)} relevant paragraphs left to process for the extraction of the Wiktionary.")
 	return filtered_paragraphs
-
+"""
 
 def parse_paragraphs(paragraphs_list, output_file):
 	pass
@@ -87,7 +96,7 @@ def main():
 
     paragraphs = extract_wiki_paragraphs(args.input)
     
-    paragraphs = filter_paragraphs(paragraphs)
+    # paragraphs = filter_paragraphs(paragraphs)
     
     parse_paragraphs(paragraphs, args.output)
 
