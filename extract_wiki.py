@@ -31,14 +31,14 @@ lang = "fra"
 
 
 def extract_wiki_paragraphs(input_file):
-	
+	print("Extracting paragraphs of Wiktionary data from ttl file...")
 	paragraphs = []
 	with open(input_file, 'r', encoding='utf-8') as file:
 		paragraph = []
 
 		for i, line in enumerate(file):
 
-			if line.startswith('@'): continue
+			if line.startswith('@prefix'): continue
 
 			elif not line.strip() and len(paragraph)>0:
 				paragraphs.append(paragraph)
@@ -50,13 +50,28 @@ def extract_wiki_paragraphs(input_file):
 
 			#if i >= 76: break
 
-	print(len(paragraphs))
+	print(f"Extracted {len(paragraphs)} paragraphs of Wiktionary data from ttl file.")
 
 	return paragraphs
 	
 
 def filter_paragraphs(paragraphs):
-	return paragraphs
+	print("Filtering irrelevant paragraphs from Wiktionary data...")
+	
+	filtered_paragraphs = []
+	while len(paragraphs) > 0:
+		
+		par = paragraphs.pop(0)
+		for line in par:
+			if "rdf:type" in line:
+				for rdf_type in allowed_rdf_types:
+					if rdf_type in line:
+						filtered_paragraphs.append(par)
+						break
+	
+	print("Filtered irrelevant paragraphs from Wiktionary data.")
+	print(f"{len(filtered_paragraphs)} relevant paragraphs left to process for the extraction of the Wiktionary.")
+	return filtered_paragraphs
 
 
 def parse_paragraphs(paragraphs_list, output_file):
