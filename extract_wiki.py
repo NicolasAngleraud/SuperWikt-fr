@@ -32,29 +32,35 @@ lang = "fra"
 
 def extract_wiki_paragraphs(input_file):
 	print("Extracting paragraphs of Wiktionary data from ttl file...")
-	paragraphs = []
-	with open(input_file, 'r', encoding='utf-8') as file:
-		paragraph = []
-		add_paragraph = False
 
+	with open(input_file, 'r', encoding='utf-8') as file:
+		nb_paragraphs = 0
+		add_paragraph = False
+		paragraph = []
 		for i, line in enumerate(file):
 		
-			if "rdf:type" in line:
-				for rdf_type in allowed_rdf_types:
-					if rdf_type in line:
-						add_paragraph = True
-						break
+			
 
 			if line.startswith('@prefix'): continue
 
 			elif not line.strip() and len(paragraph)>0:
 			
-				if add_paragraph: paragraphs.append(paragraph)
-				paragraph = []
+				if add_paragraph:
+					parse_paragraph(paragraph)
+					nb_paragraphs += 1
+					
 				add_paragraph = False
+				paragraph = []
 
 			else:
 				line = line.strip()
+				
+				if "rdf:type" in line:
+					for rdf_type in allowed_rdf_types:
+						if rdf_type in line:
+							add_paragraph = True
+							break
+							
 				paragraph.append(line)
 
 			#if i >= 76: break
@@ -63,27 +69,8 @@ def extract_wiki_paragraphs(input_file):
 
 	return paragraphs
 	
-"""
-def filter_paragraphs(paragraphs):
-	print("Filtering irrelevant paragraphs from Wiktionary data...")
-	
-	filtered_paragraphs = []
-	while len(paragraphs) > 0:
-		
-		par = paragraphs.pop(0)
-		for line in par:
-			if "rdf:type" in line:
-				for rdf_type in allowed_rdf_types:
-					if rdf_type in line:
-						filtered_paragraphs.append(par)
-						break
-	
-	print("Filtered irrelevant paragraphs from Wiktionary data.")
-	print(f"{len(filtered_paragraphs)} relevant paragraphs left to process for the extraction of the Wiktionary.")
-	return filtered_paragraphs
-"""
 
-def parse_paragraphs(paragraphs_list, output_file):
+def parse_paragraph(paragraph):
 	pass
 
 
@@ -95,8 +82,6 @@ def main():
     args = parser.parse_args()
 
     paragraphs = extract_wiki_paragraphs(args.input)
-    
-    # paragraphs = filter_paragraphs(paragraphs)
     
     parse_paragraphs(paragraphs, args.output)
 
