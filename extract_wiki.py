@@ -34,7 +34,7 @@ def parse_paragraph(paragraph):
 	pass
 
 
-def extract_wiki_paragraphs(input_file):
+def extract_wiki_paragraphs(input_file, output_file):
 	print("Extracting paragraphs of Wiktionary data from ttl file...")
 
 	with open(input_file, 'r', encoding='utf-8') as file:
@@ -80,7 +80,7 @@ def main():
 
     args = parser.parse_args()
 
-    paragraphs = extract_wiki_paragraphs(args.input)
+    paragraphs = extract_wiki_paragraphs(args.input, args.output)
     
 
 if __name__ == "__main__":
