@@ -35,26 +35,26 @@ def extract_wiki_paragraphs(input_file):
 	paragraphs = []
 	with open(input_file, 'r', encoding='utf-8') as file:
 		paragraph = []
-		
+
 		for i, line in enumerate(file):
-		
+
 			if line.startswith('@'): continue
-			
+
 			elif not line.strip() and len(paragraph)>0:
 				paragraphs.append(paragraph)
 				paragraph = []
-				
-		    else:
-		    	line = line.strip()
-		    	paragraph.append(line)
-		    	
-		    if i >= 76: break
-		    
+
+			else:
+				line = line.strip()
+				paragraph.append(line)
+
+			if i >= 76: break
+
 	for par in paragraphs:
-		for l in par:
-			print(l)
-		print()
-		
+	for l in par:
+	print(l)
+	print()
+
 	return paragraphs
 	
 
