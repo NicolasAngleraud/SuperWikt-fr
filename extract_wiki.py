@@ -51,9 +51,9 @@ def extract_wiki_paragraphs(input_file):
 			if i >= 76: break
 
 	for par in paragraphs:
-	for l in par:
-	print(l)
-	print()
+		for l in par:
+			print(l)
+			print()
 
 	return paragraphs
 	
