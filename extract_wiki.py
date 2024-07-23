@@ -30,6 +30,10 @@ labels_to_ignore = ["vieilli", "archaïque", "désuet", "archaïque, orthographe
 lang = "fra"
 
 
+def parse_paragraph(paragraph):
+	pass
+
+
 def extract_wiki_paragraphs(input_file):
 	print("Extracting paragraphs of Wiktionary data from ttl file...")
 
@@ -68,9 +72,6 @@ def extract_wiki_paragraphs(input_file):
 	print(f"Extracted {nb_paragraphs} paragraphs of Wiktionary data from ttl file.")
 	
 
-def parse_paragraph(paragraph):
-	pass
-
 
 def main():
     parser = argparse.ArgumentParser(description="Extract wiktionary data from a TTL dump file.")
@@ -81,7 +82,6 @@ def main():
 
     paragraphs = extract_wiki_paragraphs(args.input)
     
-    parse_paragraphs(paragraphs, args.output)
 
 if __name__ == "__main__":
     main()
