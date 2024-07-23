@@ -41,7 +41,7 @@ mkdir -p $MODEL_DIR
 
 # Download DEF model 
 echo "Downloading DEF model ..."
-wget $URL/$DEF_MODEL_FILE_NAME -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
+# wget $URL/$DEF_MODEL_FILE_NAME -O "$MODEL_DIR/$DEF_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading DEF model"
     exit 1
@@ -49,7 +49,7 @@ fi
 
 # Download EX model 
 echo "Downloading EX model ..."
-wget $URL/$EX_MODEL_FILE_NAME -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
+# wget $URL/$EX_MODEL_FILE_NAME -O "$MODEL_DIR/$EX_MODEL_FILE_NAME"
 if [ $? -ne 0 ]; then
     echo "Error downloading EX model"
     exit 1
@@ -91,10 +91,10 @@ download_spacy_model() {
 # Download the required Spacy model
 SPACY_MODEL="fr_core_news_lg"
 echo "Downloading Spacy model: $SPACY_MODEL"
-download_spacy_model $SPACY_MODEL
+# download_spacy_model $SPACY_MODEL
 
 # TODO: Describe the process
-python3 "$REPO_DIR/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
+# python3 "$REPO_DIR/process_examples.py" --input "$WIKTIONARY_FILE" --output "$EXAMPLES_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 2: process_examples.py failed"
     exit 1
@@ -104,7 +104,7 @@ fi
 # Step 3: Generate wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv
 # Apply the definition and example classifiers and combined their respective outcomes
 echo "Starting step 3: Generating wiktionary_preds.tsv using wiktionary.tsv and wiktionary_examples.tsv"
-python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR" --device_id "$DEVICE_ID"
+# python3 "$REPO_DIR/get_preds.py" --input_wiktionary "$WIKTIONARY_FILE" --input_examples "$EXAMPLES_FILE" --output "$PREDS_FILE" --model_dir "$MODEL_DIR" --device_id "$DEVICE_ID"
 if [ $? -ne 0 ]; then
     echo "Error in step 3: get_preds.py failed"
     exit 1
@@ -113,7 +113,7 @@ fi
 
 # Step 4: Generate enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv / Réinjection des prédictions dans le fichier de Wiktionnaire et mapping vers les hypersenses / put columns header
 echo "Starting step 4: Generating enriched_wiktionary.tsv using wiktionary.tsv and wiktionary_preds.tsv"
-python3 "$REPO_DIR/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
+# python3 "$REPO_DIR/enrich_wiktionary.py" --input_wiktionary "$WIKTIONARY_FILE" --input_preds "$PREDS_FILE" --output "$ENRICHED_FILE"
 if [ $? -ne 0 ]; then
     echo "Error in step 4: enrich_wiktionary.py failed"
     exit 1

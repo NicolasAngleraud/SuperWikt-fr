@@ -48,12 +48,9 @@ def extract_wiki_paragraphs(input_file):
 				line = line.strip()
 				paragraph.append(line)
 
-			if i >= 76: break
+			#if i >= 76: break
 
-	for par in paragraphs:
-		for l in par:
-			print(l)
-		print()
+	print(len(paragraphs))
 
 	return paragraphs
 	
