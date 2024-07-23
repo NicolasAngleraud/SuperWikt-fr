@@ -65,7 +65,7 @@ def extract_wiki_paragraphs(input_file):
 
 			#if i >= 76: break
 
-	print(f"Extracted {len(paragraphs)} paragraphs of Wiktionary data from ttl file.")
+	print(f"Extracted {nb_paragraphs} paragraphs of Wiktionary data from ttl file.")
 
 	return paragraphs
 	
