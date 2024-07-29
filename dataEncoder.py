@@ -57,7 +57,7 @@ class Encoder:
 		self.df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
 		self.df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
 		
-		self.df_examples = pd.read_excel(ex_datafile, sep='\t')
+		self.df_examples = pd.read_csv(ex_datafile, sep='\t')
 		self.df_examples = self.df_examples[self.df_examples['supersense'].isin(SUPERSENSES)]
 		self.df_examples = self.df_examples[self.df_examples['word_rank'] >= 0]
 		self.df_examples = self.df_examples[(self.df_examples['example'] != "") & (self.df_examples['example'].notna())]
