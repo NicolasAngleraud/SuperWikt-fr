@@ -240,7 +240,7 @@ def data2df(wiki_data, output_file):
 						labels = sense['labels']
 						definition = sense['definition']
 						examples = sense['examples']
-						for k, label in enumerate(labels): print("LABEL_{k+1}: ", label)
+						for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
 						print("DEFINITION: ", definition)
 						for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
 
