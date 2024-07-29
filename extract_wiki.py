@@ -155,7 +155,7 @@ def parse_form(paragraph, wiki_data):
 		wiki_data['forms'][form] = {'gender':gender}
 	else:
 		raise TypeError("Form not found.")
-	if not gender: raise TypeError(f"Form '{form}' seems empty.")
+	# if not gender: raise TypeError(f"Form '{form}' seems empty.")
 			
 def parse_paragraph(paragraph, rdf_type, wiki_data):
 	if rdf_type == "dbnary:Page":
