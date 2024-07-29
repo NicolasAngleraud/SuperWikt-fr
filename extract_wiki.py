@@ -249,7 +249,7 @@ def data2df(wiki_data, output_file):
 						# for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
 						
 						row_data = {
-						'page': page, 
+						'page': page_id, 
 						'entry_id': entry_id, 
 						'sense_id': sense_id, 
 						'pos': pos,
