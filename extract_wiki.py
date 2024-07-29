@@ -80,7 +80,7 @@ def parse_page(paragraph, wiki_data):
 		wiki_data['pages'][page] = {'entry_ids':entry_ids}
 	else:
 		raise TypeError("Page not found.")
-	if not entry_ids: raise TypeError(f"Page '{page}' seems empty.")
+	if not entry_ids and page not in ['main_page']: raise TypeError(f"Page '{page}' seems empty.")
 		
 		
 def parse_entry(paragraph, wiki_data):
