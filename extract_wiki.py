@@ -256,7 +256,7 @@ def data2df(wiki_data, output_file):
 						'labels': labels_str,
 						'definition': definition}
 						for n, example in enumerate(examples): row_data[f'example_{n+1}'] = example
-						rows.append(row_data, ignore_index=True)
+						rows.append(row_data)
 
 	df = pd.DataFrame(rows, columns=columns)
 	df = df.fillna(np.nan)
