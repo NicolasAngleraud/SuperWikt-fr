@@ -104,7 +104,7 @@ def parse_entry(paragraph, wiki_data):
 		wiki_data['entries'][entry] = {'pos':pos, 'form_id':form_id, 'sense_ids':sense_ids}
 	else:
 		raise TypeError("Entry not found.")
-	if not sense_ids: raise TypeError(f"Entry '{entry}' seems empty.")
+	#if not sense_ids: raise TypeError(f"Entry '{entry}' seems empty.")
 	
 	
 def parse_sense(paragraph, wiki_data):
