@@ -88,9 +88,6 @@ if __name__ == '__main__':
 	"frozen": False,
 	"max_seq_length": 100
 	}
-	args.ex_datafile, 
-	
-	
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
