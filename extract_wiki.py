@@ -243,7 +243,7 @@ def data2df(wiki_data, output_file):
 								# print("SENSE: ", sense_id)
 								sense = senses[sense_id]
 								labels = sense['labels']
-								labels_str = " , ".join(labels)
+								labels_str = " , ".join(labels) if labels else None
 								definition = sense['definition']
 								examples = sense['examples']
 								# for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
