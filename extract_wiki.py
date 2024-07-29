@@ -86,6 +86,8 @@ def parse_entry(paragraph, wiki_data):
 	pos = None
 	form_id = None
 	sense_ids = None
+	for i, line in enumerate(paragraph): print(f"LINE {i}:", line)
+	
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
