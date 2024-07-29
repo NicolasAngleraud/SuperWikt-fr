@@ -219,7 +219,7 @@ def data2df(wiki_data, output_file):
 	forms = wiki_data['forms']
 	
 	for page_id in pages:
-		page = pages[page]
+		page = pages[page_id]
 		entry_ids = page["entry_ids"]
 		print("PAGE: ", page_id)
 		for entry_id in entry_ids:
