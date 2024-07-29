@@ -73,7 +73,7 @@ def parse_page(paragraph, wiki_data):
 		if i == 0:
 			page = normalization_id(line.split('\t')[0])
 		if "dbnary:describes" in line:
-			entry_ids = [normalization_id(el.strip().strip(' .').strip().strip('.')) for el in line.split('dbnary:describes')[1].strip().split()[0].strip().split(' , ') if el.strip('.').strip()]
+			entry_ids = [normalization_id(el.strip().strip(' .').strip().strip('.')) for el in line.split('dbnary:describes')[1].strip().split(" .")[0].strip().split(' , ') if el.strip('.').strip()]
 	if page: 
 		wiki_data['pages'][page] = {'entry_ids':entry_ids}
 	else:
@@ -89,6 +89,7 @@ def parse_entry(paragraph, wiki_data):
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
+			print("ENTRY:" , line.split('\t')[0])
 			entry = normalization_id(line.split('\t')[0])
 		if "partOfSpeech" in line:
 			for cat in allowed_categories:
@@ -96,7 +97,7 @@ def parse_entry(paragraph, wiki_data):
 		if "ontolex:canonicalForm" in line:
 			form_id = normalization_id(line.split("ontolex:canonicalForm")[1].strip(";").strip())
 		if "ontolex:sense" in line:
-			sense_ids = [normalization_id(el.strip().strip(' .').strip().strip('.')) for el in line.split('ontolex:sense')[1].strip().split()[0].strip().split(' , ') if el.strip('.').strip()]
+			sense_ids = [normalization_id(el.strip().strip(' .').strip().strip('.')) for el in line.split('ontolex:sense')[1].strip().split(" .")[0].strip().split(' , ') if el.strip('.').strip()]
 	if entry:
 		wiki_data['entries'][entry] = {'pos':pos, 'form_id':form_id, 'sense_ids':sense_ids}
 	else:
