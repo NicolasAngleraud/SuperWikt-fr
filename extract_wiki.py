@@ -3,6 +3,7 @@ import argparse
 
 
 
+MAX_NB_EXAMPLES = 23
 
 allowed_relations = ["rdf:type",
                      "lexinfo:partOfSpeech",
