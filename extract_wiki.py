@@ -27,7 +27,7 @@ allowed_rdf_types = ["ontolex:LexicalSense",
 
 allowed_categories = ["lexinfo:noun", '"-nom-"', '"-nom-pr-"', "lexinfo:properNoun"]
 
-cat2pos = {"lexinfo:noun": "noun", '"-nom-"': "noun", "-nom-pr-": "proper_noun", "lexinfo:properNoun": "proper_noun"}
+cat2pos = {"lexinfo:noun": "noun", '"-nom-"': "noun", '"-nom-pr-"': "proper_noun", "lexinfo:properNoun": "proper_noun"}
 
 labels_to_ignore = ["vieilli", "archaïque", "désuet"]
 
