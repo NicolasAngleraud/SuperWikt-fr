@@ -31,6 +31,8 @@ cat2pos = {"lexinfo:noun": "noun", '"-nom-"': "noun", '"-nom-pr-"': "proper_noun
 
 labels_to_ignore = ["vieilli", "archaïque", "désuet"]
 
+allowed_pos = ['noun', 'proper_noun']
+
 lang = "fra"
 
 def extract_labels_definition(text):
@@ -263,6 +265,20 @@ def data2df(wiki_data, output_file):
 
 	df = pd.DataFrame(rows, columns=columns)
 	df = df.fillna(np.nan)
+	
+
+	df = df[df['pos'].isin(allowed_pos) & df['pos'].notna()]
+
+	def contains_labels_to_ignore(labels, labels_to_ignore):
+		return any(label in labels for label in labels_to_ignore)
+
+	df = df[~df['labels'].apply(lambda x: contains_labels_to_ignore(x, labels_to_ignore))]
+
+	example_columns = [col for col in df.columns if col.startswith('example')]
+	df = df[~((df['definition'] == '') & df[example_columns].apply(lambda row: row.eq('').all(), axis=1))]
+
+	df.reset_index(drop=True, inplace=True)
+	
 	df.to_csv(output_file, sep='\t', index=False)
 						
 
