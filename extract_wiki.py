@@ -170,9 +170,6 @@ def parse_paragraph(paragraph, rdf_type, wiki_data):
 
 def extract_wiki_data(input_file):
 	print("Extracting paragraphs of Wiktionary data from ttl file...")
-	
-	columns = ['page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'labels', 'synonyms', 'gender', 'definition'] + [f'example_{i}' for i in range(1, 26)]
-	df = pd.DataFrame(columns=columns)
 
 	with open(input_file, 'r', encoding='utf-8') as file:
 		nb_paragraphs = 0
@@ -212,7 +209,10 @@ def extract_wiki_data(input_file):
 	
 	
 def data2df(wiki_data, output_file):
-		
+	
+	columns = ['page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
+	df = pd.DataFrame(columns=columns)
+	
 	pages = wiki_data['pages']
 	entries = wiki_data['entries']
 	senses = wiki_data['senses']
@@ -221,28 +221,45 @@ def data2df(wiki_data, output_file):
 	for page_id in pages:
 		page = pages[page_id]
 		entry_ids = page["entry_ids"]
-		print("PAGE: ", page_id)
+		# print("PAGE: ", page_id)
 		for entry_id in entry_ids:
 			if entry_id in entries:
 				gender = None
-				print("ENTRY: ", entry_id)
+				# print("ENTRY: ", entry_id)
 				entry = entries[entry_id]
 				pos = entry['pos']
 				form_id = entry['form_id']
 				if form_id in forms: gender = forms[form_id]['gender']
 				sense_ids = entry['sense_ids']
-				print("POS: ", pos)
-				print("GENDER: ", gender)
+				# print("POS: ", pos)
+				# print("GENDER: ", gender)
 				for sense_id in sense_ids:
 					if sense_id in senses:
-						print("SENSE: ", sense_id)
+						# print("SENSE: ", sense_id)
 						sense = senses[sense_id]
 						labels = sense['labels']
+						labels_str = " , ".join(labels)
 						definition = sense['definition']
 						examples = sense['examples']
-						for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
-						print("DEFINITION: ", definition)
-						for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
+						# for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
+						# print("DEFINITION: ", definition)
+						# for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
+						
+						row_data = {
+						'page': page, 
+						'entry_id': entry_id, 
+						'sense_id': sense_id, 
+						'pos': pos,
+						'gender': gender,
+						'labels': labels_str,
+						'definition': definition}
+						for n, example in enumerate(examples): row_data[f'example_{n+1}'] = example
+						df = df.append(row_data, ignore_index=True)
+
+
+	df = df.fillna(np.nan)
+	df.to_csv(output_file, sep='\t', index=False)
+						
 
 
 def main():
