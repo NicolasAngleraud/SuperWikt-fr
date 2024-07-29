@@ -71,7 +71,7 @@ def parse_page(paragraph, wiki_data):
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
-			page = normalization_id(line.split('\t')[0])
+			page = normalization_id(line.split()[0])
 		if "dbnary:describes" in line:
 			entry_ids = [normalization_id(el.strip().strip(' .').strip().strip('.')) for el in line.split('dbnary:describes')[1].strip().split(" .")[0].strip().split(' , ') if el.strip('.').strip()]
 	if page: 
@@ -92,8 +92,8 @@ def parse_entry(paragraph, wiki_data):
 		line = line.strip()
 		if i == 0:
 			print("LINE:", line)
-			print("ENTRY:" , line.split('\t')[0])
-			entry = normalization_id(line.split('\t')[0])
+			print("ENTRY:" , line.split()[0])
+			entry = normalization_id(line.split()[0])
 		if "partOfSpeech" in line:
 			for cat in allowed_categories:
 				if cat in line: pos = cat2pos[cat]
@@ -117,7 +117,7 @@ def parse_sense(paragraph, wiki_data):
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
-			sense = normalization_id(line.split('\t')[0])
+			sense = normalization_id(line.split()[0])
 		if "skos:definition" in line and "rdf:value" in line:
 			text = line.split('rdf:value')[1].strip().strip('"')
 			end_index = text.find(end_mark)
@@ -149,7 +149,7 @@ def parse_form(paragraph, wiki_data):
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
-			form = normalization_id(line.split('\t')[0])
+			form = normalization_id(line.split()[0])
 		if "lexinfo:gender" in line:
 			gender = line.split("lexinfo:gender")[1].split('lexinfo:')[1].strip(';').strip()
 	if form:
