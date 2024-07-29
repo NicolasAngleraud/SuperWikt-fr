@@ -89,6 +89,7 @@ def parse_entry(paragraph, wiki_data):
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
+			print("LINE:", line)
 			print("ENTRY:" , line.split('\t')[0])
 			entry = normalization_id(line.split('\t')[0])
 		if "partOfSpeech" in line:
