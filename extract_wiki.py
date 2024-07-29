@@ -23,9 +23,9 @@ allowed_rdf_types = ["ontolex:LexicalSense",
                      "ontolex:Word",
                      "ontolex:MultiWordExpression"]
 
-allowed_categories = ["lexinfo:noun", '"-nom-"']
+allowed_categories = ["lexinfo:noun", '"-nom-"', '"-nom-pr-"', "lexinfo:properNoun"]
 
-cat2pos = {"lexinfo:noun": "noun", '"-nom-"': "noun"}
+cat2pos = {"lexinfo:noun": "noun", '"-nom-"': "noun", "-nom-pr-": "proper_noun", "lexinfo:properNoun": "proper_noun"}
 
 labels_to_ignore = ["vieilli", "archaïque", "désuet"]
 
@@ -86,13 +86,10 @@ def parse_entry(paragraph, wiki_data):
 	pos = None
 	form_id = None
 	sense_ids = None
-	for i, line in enumerate(paragraph): print(f"LINE {i}:", line)
 	
 	for i, line in enumerate(paragraph):
 		line = line.strip()
 		if i == 0:
-			print("LINE:", line)
-			print("ENTRY:" , line.split()[0])
 			entry = normalization_id(line.split()[0])
 		if "partOfSpeech" in line:
 			for cat in allowed_categories:
