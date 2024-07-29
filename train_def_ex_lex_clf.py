@@ -63,8 +63,8 @@ if __name__ == '__main__':
 		DEVICE = 'cpu'
 	
 	
-	def_lem_clf_file = 'args.model_dir/NEW_def_lem_clf.params'
-	ex_clf_file = 'args.model_dir/NEW_ex_clf.params'
+	def_lem_clf_file = args.model_dir + '/NEW_def_lem_clf.params'
+	ex_clf_file = args.model_dir + '/NEW_ex_clf.params'
 
 	
 	params_def = {
@@ -136,16 +136,16 @@ if __name__ == '__main__':
 	print()
 	
 	freq_dev_def_df = pd.DataFrame(freq_dev_predictions)
-	freq_dev_def_df.to_csv('args.out/def_freq_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	freq_dev_def_df.to_csv(args.out+'/def_freq_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	rand_dev_def_df = pd.DataFrame(rand_dev_predictions)
-	rand_dev_def_df.to_csv('args.out/def_rand_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	rand_dev_def_df.to_csv(args.out+'/def_rand_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	freq_test_def_df = pd.DataFrame(freq_test_predictions)
-	freq_test_def_df.to_csv('args.out/def_freq_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	freq_test_def_df.to_csv(args.out+'/def_freq_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	rand_test_def_df = pd.DataFrame(rand_test_predictions)
-	rand_test_def_df.to_csv('args.out/def_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	rand_test_def_df.to_csv(args.out+'/def_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	
 	
@@ -192,15 +192,15 @@ if __name__ == '__main__':
 	print()
 	
 	freq_dev_ex_df = pd.DataFrame(freq_dev_predictions)
-	freq_dev_ex_df.to_csv('args.out/ex_freq_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	freq_dev_ex_df.to_csv(args.out+'/ex_freq_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
-	rand_dev_ex_df.to_csv('args.out/ex_rand_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	rand_dev_ex_df.to_csv(args.out+'/ex_rand_dev_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	freq_test_ex_df = pd.DataFrame(freq_test_predictions)
-	freq_test_ex_df.to_csv('args.out/ex_freq_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	freq_test_ex_df.to_csv(args.out+'/ex_freq_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	rand_test_ex_df = pd.DataFrame(rand_test_predictions)
-	rand_test_ex_df.to_csv('args.out/ex_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
+	rand_test_ex_df.to_csv(args.out+'/ex_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	print('DEFINITIONS AND EXAMPLES MODELS TRAINED.\n')
