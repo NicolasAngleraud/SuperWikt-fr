@@ -56,7 +56,7 @@ def extract_labels_definition(text):
     return labels, definition
     
         
-def normalization_id(full_id, lang):
+def normalization_id(full_id, lang=lang):
     if full_id.startswith(lang + ":"):
         return full_id.removeprefix(lang + ":").strip('_')
     elif full_id.startswith("<http://kaiko.getalp.org/dbnary/"):
