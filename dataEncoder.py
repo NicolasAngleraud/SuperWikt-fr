@@ -49,7 +49,8 @@ class Encoder:
 	def __init__(self, sense_datafile, ex_datafile, dataset, tokenizer, use_sample=False, sample_size=32):
 	
 		self.tokenizer = tokenizer
-		self.datafile = datafile
+		self.sense_datafile = sense_datafile
+		self.ex_datafile = ex_datafile
 		
 		self.df_definitions = pd.read_csv(sense_datafile, sep='\t')
 		self.df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
