@@ -121,8 +121,8 @@ def parse_sense(paragraph, wiki_data):
 		if "skos:definition" in line and "rdf:value" in line:
 			text = line.split('rdf:value')[1].strip().strip('"')
 			end_index = text.find(end_mark)
-			if index != -1: 
-				definition = text[:index].strip().strip('"').strip()
+			if end_index != -1: 
+				definition = text[:end_index].strip().strip('"').strip()
 			else:
 				definition = text.strip().strip(';').strip(']').strip('[').strip().strip('"').strip()
 			labels, definition = extract_labels_definition(definition)
@@ -130,8 +130,8 @@ def parse_sense(paragraph, wiki_data):
 		if "skos:example" in line and "rdf:value" in line:
 			text = line.split('rdf:value')[1].strip().strip('"')
 			end_index = text.find(end_mark)
-			if index != -1: 
-				example = text[:index].strip().strip('"').strip()
+			if end_index != -1: 
+				example = text[:end_index].strip().strip('"').strip()
 			else:
 				example = text.strip().strip(';').strip(']').strip('[').strip().strip('"').strip()
 			examples.append(example)
