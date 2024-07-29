@@ -212,10 +212,35 @@ def extract_wiki_data(input_file):
 	
 	
 def data2df(wiki_data, output_file):
-	for key, value in wiki_data.items():
-		print("KEY: ", key)
-		print("VALUE: ", value)
+		
+	pages = wiki_data['pages']
+	entries = wiki_data['entries']
+	senses = wiki_data['senses']
+	forms = wiki_data['forms']
 	
+	for page_id in pages:
+		page = pages[page]
+		entry_ids = page["entry_ids"]
+		print("PAGE: ", page_id)
+		for entry_id in entry_ids:
+			if entry_id in entries:
+				gender = None
+				print("ENTRY: ", entry_id)
+				entry = entries[entry_id]
+				pos = entry['pos']
+				form_id = entry['form_id']
+				if form_id in forms: gender = forms[form_id]['gender']
+				sense_ids = entry['sense_ids']
+				print("POS: ", pos)
+				print("gender", gender)
+				for sense_id in sense_ids:
+					if sense_id in senses:
+						print("SENSE: ", sense_id)
+						sense = senses[sense_id]
+						definition = sense['definition']
+						examples = sense['examples']
+						print("DEFINITION: ", definition)
+						for j, example in enumerate(examples): print(f"EXAMPLE_{j}", example)
 
 
 def main():
