@@ -271,7 +271,8 @@ def data2df(wiki_data, output_file):
 
 	def contains_labels_to_ignore(labels, labels_to_ignore):
 		return any(label in labels for label in labels_to_ignore)
-
+	
+	df = df.astype(str)
 	df = df[~df['labels'].apply(lambda x: contains_labels_to_ignore(x, labels_to_ignore))]
 
 	example_columns = [col for col in df.columns if col.startswith('example')]
