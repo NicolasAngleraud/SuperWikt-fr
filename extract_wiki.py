@@ -225,39 +225,41 @@ def data2df(wiki_data, output_file):
 		page = pages[page_id]
 		entry_ids = page["entry_ids"]
 		# print("PAGE: ", page_id)
-		for entry_id in entry_ids:
-			if entry_id in entries:
-				gender = None
-				# print("ENTRY: ", entry_id)
-				entry = entries[entry_id]
-				pos = entry['pos']
-				form_id = entry['form_id']
-				if form_id in forms: gender = forms[form_id]['gender']
-				sense_ids = entry['sense_ids']
-				# print("POS: ", pos)
-				# print("GENDER: ", gender)
-				for sense_id in sense_ids:
-					if sense_id in senses:
-						# print("SENSE: ", sense_id)
-						sense = senses[sense_id]
-						labels = sense['labels']
-						labels_str = " , ".join(labels)
-						definition = sense['definition']
-						examples = sense['examples']
-						# for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
-						# print("DEFINITION: ", definition)
-						# for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
-						
-						row_data = {
-						'page': page_id, 
-						'entry_id': entry_id, 
-						'sense_id': sense_id, 
-						'pos': pos,
-						'gender': gender,
-						'labels': labels_str,
-						'definition': definition}
-						for n, example in enumerate(examples): row_data[f'example_{n+1}'] = example
-						rows.append(row_data)
+		if entry_ids:
+			for entry_id in entry_ids:
+				if entry_id in entries:
+					gender = None
+					# print("ENTRY: ", entry_id)
+					entry = entries[entry_id]
+					pos = entry['pos']
+					form_id = entry['form_id']
+					if form_id in forms: gender = forms[form_id]['gender']
+					sense_ids = entry['sense_ids']
+					# print("POS: ", pos)
+					# print("GENDER: ", gender)
+					if sense_ids:
+						for sense_id in sense_ids:
+							if sense_id in senses:
+								# print("SENSE: ", sense_id)
+								sense = senses[sense_id]
+								labels = sense['labels']
+								labels_str = " , ".join(labels)
+								definition = sense['definition']
+								examples = sense['examples']
+								# for k, label in enumerate(labels): print(f"LABEL_{k+1}: ", label)
+								# print("DEFINITION: ", definition)
+								# for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
+								
+								row_data = {
+								'page': page_id, 
+								'entry_id': entry_id, 
+								'sense_id': sense_id, 
+								'pos': pos,
+								'gender': gender,
+								'labels': labels_str,
+								'definition': definition}
+								for n, example in enumerate(examples): row_data[f'example_{n+1}'] = example
+								rows.append(row_data)
 
 	df = pd.DataFrame(rows, columns=columns)
 	df = df.fillna(np.nan)
