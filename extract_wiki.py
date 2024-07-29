@@ -232,15 +232,17 @@ def data2df(wiki_data, output_file):
 				if form_id in forms: gender = forms[form_id]['gender']
 				sense_ids = entry['sense_ids']
 				print("POS: ", pos)
-				print("gender", gender)
+				print("GENDER: ", gender)
 				for sense_id in sense_ids:
 					if sense_id in senses:
 						print("SENSE: ", sense_id)
 						sense = senses[sense_id]
+						labels = sense['labels']
 						definition = sense['definition']
 						examples = sense['examples']
+						for k, label in enumerate(labels): print("LABEL_{k+1}: ", label)
 						print("DEFINITION: ", definition)
-						for j, example in enumerate(examples): print(f"EXAMPLE_{j}", example)
+						for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
 
 
 def main():
