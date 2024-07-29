@@ -212,7 +212,8 @@ def extract_wiki_data(input_file):
 def data2df(wiki_data, output_file):
 	
 	columns = ['page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
-	df = pd.DataFrame(columns=columns)
+	
+	rows = []
 	
 	pages = wiki_data['pages']
 	entries = wiki_data['entries']
@@ -255,9 +256,9 @@ def data2df(wiki_data, output_file):
 						'labels': labels_str,
 						'definition': definition}
 						for n, example in enumerate(examples): row_data[f'example_{n+1}'] = example
-						df = df.append(row_data, ignore_index=True)
+						rows.append(row_data, ignore_index=True)
 
-
+	df = pd.DataFrame(rows, columns=columns)
 	df = df.fillna(np.nan)
 	df.to_csv(output_file, sep='\t', index=False)
 						
