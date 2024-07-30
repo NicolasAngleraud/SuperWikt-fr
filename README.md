@@ -35,26 +35,45 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
 
 - Step 1: Extract Wiktionary Data
 	
-	script : extract_wiki.py. The script starts by extracting Wiktionary data from a specified dump file (wiktionary.ttl obtained by extracting it from a bz2 archive). The extracted data is saved as wiktionary.tsv.
-     TODO: define what is kept exactly
+	script : extract_wiki.py. 
+	input: 
+	output: 
+	
+	The script starts by extracting Wiktionary data from a specified dump file (wiktionary.ttl obtained by extracting it from a bz2 archive). The extracted data is saved as wiktionary.tsv.
      
 - Step 2: Process Examples
 	
-	script: process_examples.py. Next, the script processes examples from the wiktionary.tsv file to create wiktionary_examples.tsv. This step involves another Python script (), which prepares example data for subsequent analysis.
+	script: process_examples.py. 
+	input: 
+	output:
+	
+	Next, the script processes examples from the wiktionary.tsv file to create wiktionary_examples.tsv. This step involves another Python script (), which prepares example data for subsequent analysis.
      TODO: add what "process" mean : tabulated format , output columns
      Spacy is used to tokenize, lemmatization to identify the rank of the token in the exemplar sentence, whose sense is illustrated
     
 - Step 3: Generate Predictions
 	
-	script : get_preds.py. Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). It applies the classifier of definitions and the classifier of exemplar sentences, and combines it using a weighted sum of scores. The classifiers are downloaded from a url and stored locally to $OUT/models
+	script : get_preds.py. 
+	input: 
+	output:
+	
+	Using both wiktionary.tsv and wiktionary_examples.tsv, the script generates predictions (wiktionary_preds.tsv). It applies the classifier of definitions and the classifier of exemplar sentences, and combines it using a weighted sum of scores. The classifiers are downloaded from a url and stored locally to $OUT/models
     
 - Step 4: Enrich Wiktionary Data
 	
-	script: enrich_wiktionary.py. Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
+	script: enrich_wiktionary.py. 
+	input:
+	output:
+	
+	Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
 
 ## 2. Retraining models
 
-indiquer les scripts pour l'entraînement des modèles
+script:
+input:
+output:
+
+Description
 
 
 ## TO BE NOTED
