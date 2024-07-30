@@ -99,11 +99,11 @@ Description
 
 To execute the scripts and perform the above steps:
 
-- Clone the Repository
+- Clone the repository
 
-- Set Up Environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment (venv or virtualenv) to manage dependencies.
+- Set up environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment (venv or virtualenv) to manage dependencies.
 
-- Run the desired Shell Script: Execute extract_enrich_wiktionary.sh from the command lines: ./extract_enrich_wiktionary.sh and ./train_new_def_ex_model.sh.
+- Run the desired Shell script from the command lines: extract_enrich_wiktionary.sh and train_new_def_ex_model.sh.
 
 **Requirements**
 
