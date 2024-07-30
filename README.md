@@ -19,9 +19,9 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **train_def_ex_lex_clf.py**: Python script implementing the training and evaluation of the definition and example classifiers based on FlauBERT large.
 
-- **sense_data.tsv**: TSV file containig the sense data from Wiktionary.
+- **sense_data.tsv**: tsv file containig the sense data from Wiktionary.
 
-- **ex_data.tsv**: TSV file containing the tokenized examples and the ranks of the target words for each sense.
+- **ex_data.tsv**: tsv file containing the tokenized examples and the ranks of the target words for each sense.
 
 - **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containing the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
 
@@ -31,24 +31,24 @@ There are two main pipelines:
 
 ## 1. Producing the resource
 
-The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
+Shell script: **extract_enrich_wiktionary.sh**
 
 **Steps**
 
 - **Step 1: Extract Wiktionary Data**
 	
-	**script**: extract_wiki.py. 
+	**Python script**: extract_wiki.py 
 	
-	**input**: 
+	**Input**: bz2 archive containing a Wiktionary ttl dump file
 	
-	**output**: 
+	**Output**: tsv file wiktionary.tsv containing the following columns: 'page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition', 'example_i' for i between 1 and 23
 	
 	
-	The script starts by extracting Wiktionary data from a specified dump file (wiktionary.ttl obtained by extracting it from a bz2 archive). The extracted data is saved as wiktionary.tsv.
+	The extractions filters out senses who have at least one label indication obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
      
 - **Step 2: Process Examples**
 	
-	**script**: process_examples.py. 
+	**script**: process_examples.py
 	
 	**input**: 
 	
@@ -61,7 +61,7 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
     
 - **Step 3: Generate Predictions**
 	
-	**script**: get_preds.py. 
+	**script**: get_preds.py
 	
 	**input**: 
 	
@@ -72,7 +72,7 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
     
 - **Step 4: Enrich Wiktionary Data**
 	
-	**script**: enrich_wiktionary.py. 
+	**script**: enrich_wiktionary.py
 	
 	**input**:
 	
@@ -84,7 +84,9 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
 
 ## 2. Training models
 
-**script**:
+Shell script: **train_new_def_ex_model.sh**
+
+**script**: 
 
 **input**:
 
