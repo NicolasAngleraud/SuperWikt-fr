@@ -286,7 +286,7 @@ def data2df(wiki_data, output_file):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract wiktionary data from a TTL dump file.")
+    parser = argparse.ArgumentParser(description="Extract Wiktionary data from a TTL dump file.")
     parser.add_argument('--input', required=True, help='Path to the input TTL dump file.')
     parser.add_argument('--output', required=True, help='Path to the output TSV file.')
     args = parser.parse_args()

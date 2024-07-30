@@ -60,17 +60,17 @@ if __name__ == "__main__":
 	df_wiki = pd.read_csv(wiktionnaire, sep='\t')
 	df_wiki_preds = pd.read_csv(wiktionnaire_preds, sep='\t')
 
-	# Convert the class_mapping dictionary to a DataFrame
+
 	class_mapping_df = pd.DataFrame(class_mapping).T.reset_index()
 	class_mapping_df.columns = ['pred', 'supersense', 'hypersense']
 
-	# Merge the predictions DataFrame with the class mapping DataFrame
+
 	df_merged = pd.merge(df_wiki_preds, class_mapping_df, on='pred', how='left')
 
-	# Merge the resulting DataFrame with the info DataFrame on sense_id
+
 	df_final = pd.merge(df_wiki, df_merged, on='sense_id', how='left')
 
-	# Update supersense and hypersense columns
+
 	df_final['supersense'] = df_final['supersense_y']
 	df_final['hypersense'] = df_final['hypersense_y']
 	df_final['lemma'] = df_final['lemma_y']

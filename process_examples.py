@@ -42,13 +42,11 @@ def data_analysis(input_file):
 
 def compound_lemma(lemma, sentence, special_token=sp_sym):
 	lemma = str(lemma)
-	# Split the lemma into individual words
+
 	lemma_words = lemma.split()
 
-	# Join the lemma words with the special token
 	compound_lemma = special_token.join(lemma_words).replace("'", f"'{sp_sym}")
 
-	# Replace spaces in the sentence with the compound lemma
 	result_sentence = sentence.replace(' '.join(lemma_words), compound_lemma)
 
 	return result_sentence
@@ -103,7 +101,7 @@ def find_rank(lemma, tokenized_words):
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser(description="Process wiktionary examples from a TSV file and outputs the resultings processed examples in a TSV file.")
+	parser = argparse.ArgumentParser(description="Process wiktionary examples from a TSV file and outputs the resultings processed examples in a TSV file with the tokenized examples and the target word ranks.")
 	parser.add_argument('--input', required=True, help='Path to the input TSV file.')
 	parser.add_argument('--output', required=True, help='Path to the output TSV file.')
 

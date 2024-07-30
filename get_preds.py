@@ -8,11 +8,11 @@ from transformers import AutoModel, AutoTokenizer, AutoConfig
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser(description="Generating wiktionary_preds.tsv using input Wiktionary tsv file and input Wiktionary examples tsv file.")
-	parser.add_argument('--input_wiktionary', required=True, help='Path to the input TSV file.')
-	parser.add_argument('--input_examples', required=True, help='Path to the input TSV file.')
-	parser.add_argument('--output', required=True, help='Path to the output TSV file.')
-	parser.add_argument('--model_dir', required=True, help='Path to the output TSV file.')
+	parser = argparse.ArgumentParser(description="Predicts the most likely supersense and each supersense scores for each sense of the input Wiktionary resource.")
+	parser.add_argument('--input_wiktionary', required=True, help='Path to the input TSV file containing Wiktionary sense data.')
+	parser.add_argument('--input_examples', required=True, help='Path to the input TSV file containing Wiktionary example data for each sense.')
+	parser.add_argument('--output', required=True, help='Path to the output folder to save produced files.')
+	parser.add_argument('--model_dir', required=True, help='Path to the folder where the saved parameters of the trained classifiers are stored.')
 	parser.add_argument('--device_id', required=True, help='ID of the GPU or CPU used for the computation of the models calculations.')
 
 	args = parser.parse_args()

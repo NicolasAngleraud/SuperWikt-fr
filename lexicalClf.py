@@ -625,7 +625,7 @@ class lexicalClf_V1():
 		self.ex_clf.eval()
 		predictions = {"lemma": [], "sense_id": [], "pred": []}
 		
-		# Initialize an empty list for each supersense
+
 		for supersense in SUPERSENSES:
 		    predictions[f"{supersense}_full_score"] = []
 		    predictions[f"{supersense}_def_score"] = []
@@ -663,7 +663,7 @@ class lexicalClf_V1():
 		        predictions['sense_id'].append(sense_id)
 		        predictions['pred'].append(pred)
 		        
-		        # Append log probabilities to the respective supersense columns
+
 		        log_probs = torch.squeeze(log_probs)
 		        log_probs = log_probs.cpu().numpy()
 		        for i, supersense in enumerate(SUPERSENSES):
@@ -724,10 +724,8 @@ class KANClf():
 
 	def __init__(self, params, bert_model_name, DEVICE):
 
-		# Load model configuration
 		self.config = AutoConfig.from_pretrained(bert_model_name)
 
-		# Set embedding layer size
 		self.embedding_layer_size = self.config.hidden_size
 
 		self.hidden_layer_size = params['hidden_layer_size']
@@ -750,10 +748,8 @@ class KANClf():
 		X_train = torch.load('./train_embeddings.pt').to(self.device)
 		y_train = torch.load('./train_supersenses.pt').to(self.device)
 		
-		# Generate a random permutation of indices
 		indices = torch.randperm(X_train.size(0))
 
-		# Shuffle X_train and y_train tensors using the same permutation
 		X_train = X_train[indices]
 		y_train = y_train[indices]
 		
@@ -767,9 +763,9 @@ class KANClf():
 		dataset['test_label'] = y_test
 		
 		def train_acc():
-			batch_size = 500  # Set your desired batch size
+			batch_size = 500
 			num_samples = X_train.shape[0]
-			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
+			num_batches = (num_samples + batch_size - 1) // batch_size 
 
 			total_correct = 0
 			total_samples = 0
@@ -778,25 +774,21 @@ class KANClf():
 				start_idx = i * batch_size
 				end_idx = min((i + 1) * batch_size, num_samples)
 
-				# Get batch
 				X_batch = X_train[start_idx:end_idx]
 				y_batch = y_train[start_idx:end_idx]
 
-				# Get predictions for the batch
 				predictions = torch.argmax(self.kan(X_batch), dim=1)
 
-				# Calculate accuracy for the batch
 				total_correct += torch.sum(predictions == y_batch)
 				total_samples += y_batch.size(0)
 
-			# Calculate overall accuracy
 			accuracy = total_correct / total_samples
 			return accuracy
 
 		def test_acc():
-			batch_size = 500  # Set your desired batch size
+			batch_size = 500 
 			num_samples = X_test.shape[0]
-			num_batches = (num_samples + batch_size - 1) // batch_size  # Calculate the number of batches
+			num_batches = (num_samples + batch_size - 1) // batch_size
 
 			total_correct = 0
 			total_samples = 0
@@ -805,18 +797,14 @@ class KANClf():
 				start_idx = i * batch_size
 				end_idx = min((i + 1) * batch_size, num_samples)
 
-				# Get batch
 				X_batch = X_test[start_idx:end_idx]
 				y_batch = y_test[start_idx:end_idx]
 
-				# Get predictions for the batch
 				predictions = torch.argmax(self.kan(X_batch), dim=1)
 
-				# Calculate accuracy for the batch
 				total_correct += torch.sum(predictions == y_batch)
 				total_samples += y_batch.size(0)
 
-			# Calculate overall accuracy
 			accuracy = total_correct / total_samples
 			return accuracy
 
