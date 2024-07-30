@@ -15,13 +15,13 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **get_preds.py**: Python script used to apply the supersense classifiers on each sense of the resource and get the predicted class as well as the scores of each class.
 
-- **enrich_wiktionary.py**: Python script used to fill the resource with the classes and scores from a file containing the predictions made for each sense.
+- **enrich_wiktionary.py**: Python script used to fill the resource with the predicted classes and scores from a file containing the predictions made for each sense.
 
 - **train_def_ex_lex_clf.py**: Python script implementing the training and evaluation of the definition and example classifiers based on FlauBERT large.
 
-- **sense_data.tsv**: tsv file containig the sense data from Wiktionary.
+- **sense_data.tsv**: tsv file containig the annotated sense data from Wiktionary used for training and evaluation.
 
-- **ex_data.tsv**: tsv file containing the tokenized examples and the ranks of the target words for each sense.
+- **ex_data.tsv**: tsv file containing the tokenized examples and the ranks of the target words for each annotated sense.
 
 - **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containing the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
 
