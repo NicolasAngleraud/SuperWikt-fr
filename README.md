@@ -23,7 +23,7 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **ex_data.tsv**: TSV file containing the tokenized examples and the ranks of the target words for each sense.
 
-- **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containig the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
+- **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containing the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
 
 
 
