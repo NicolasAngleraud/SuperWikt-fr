@@ -31,7 +31,7 @@ There are two main pipelines:
 
 ## 1. Producing the resource
 
-Shell script: **extract_enrich_wiktionary.sh**
+**Shell script**: extract_enrich_wiktionary.sh
 
 **Steps**
 
@@ -44,20 +44,18 @@ Shell script: **extract_enrich_wiktionary.sh**
 	**Output**: tsv file wiktionary.tsv containing the following columns: 'page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition', 'example_i' for i between 1 and 23
 	
 	
-	The extractions filters out senses who have at least one label indication obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
+	The extraction filters out senses who have at least one label indication obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
      
 - **Step 2: Process Examples**
 	
 	**script**: process_examples.py
 	
-	**input**: 
+	**input**: tsv file wiktionary.tsv
 	
 	**output**:
 	
 	
-	Next, the script processes examples from the wiktionary.tsv file to create wiktionary_examples.tsv. This step involves another Python script (), which prepares example data for subsequent analysis.
-     TODO: add what "process" mean : tabulated format , output columns
-     Spacy is used to tokenize, lemmatization to identify the rank of the token in the exemplar sentence, whose sense is illustrated
+	Spacy is used to tokenize, lemmatization to identify the rank of the token in the exemplar sentence, whose sense is illustrated
     
 - **Step 3: Generate Predictions**
 	
@@ -84,7 +82,7 @@ Shell script: **extract_enrich_wiktionary.sh**
 
 ## 2. Training models
 
-Shell script: **train_new_def_ex_model.sh**
+**Shell script**: train_new_def_ex_model.sh
 
 **script**: 
 
