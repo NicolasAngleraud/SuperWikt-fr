@@ -90,7 +90,7 @@ To execute the scripts and perform the above steps:
 
 **Notes**
 
-Customize file paths and script parameters (DUMP_FILE, WIKTIONARY_FILE, etc.) in extract_enrich_wiktionary.sh as per your environment and dataset location. Ensure adequate permissions (chmod +x extract_enrich_wiktionary.sh) to execute the shell script.
+Customize file paths and script parameters in the Shell scripts as per your environment. Ensure adequate permissions (chmod +x extract_enrich_wiktionary.sh and chmod +x train_new_def_ex_model.sh) to be able to execute the shell scripts.
 
 **Contributors**
 
