@@ -27,7 +27,7 @@ This repository contains files aiming at the production of a lexical resource fo
 
 There are two main typical pipelines:
 
-## 1. Predict supersenses
+## 1. Producing the resource
 
 The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
 
@@ -79,7 +79,7 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
 	
 	Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
 
-## 2. Retraining models
+## 2. Training models
 
 script:
 
