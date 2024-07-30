@@ -72,8 +72,8 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.001,
-	"weight_decay": 0.000005,
+	"lr": 0.000005,
+	"weight_decay": 0.001,
 	"frozen": False,
 	"max_seq_length": 100
 	}
@@ -83,9 +83,10 @@ if __name__ == '__main__':
 	"batch_size": 16,
 	"hidden_layer_size": 768,
 	"patience": 2,
-	"lr": 0.000005,
+	#"lr": 0.000005,
+	"lr": 0.0001,
 	"weight_decay": 0.001,
-	"frozen": False,
+	"frozen": True,
 	"max_seq_length": 100
 	}
 	
