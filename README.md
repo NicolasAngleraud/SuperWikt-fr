@@ -80,6 +80,7 @@ The extract_enrich_wiktionary.sh script facilitates the extraction of lexical da
 	
 	
 	Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the dataset with additional semantic information, creating enriched_wiktionary.tsv.
+	
 
 ## 2. Training models
 
@@ -101,9 +102,9 @@ To execute the scripts and perform the above steps:
 
 - Clone the repository
 
-- Set up environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment (venv or virtualenv) to manage dependencies.
+- Set up environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment to manage dependencies.
 
-- Run the desired Shell script from the command lines: extract_enrich_wiktionary.sh and train_new_def_ex_model.sh.
+- Run the desired Shell script from the command lines: ***extract_enrich_wiktionary.sh*** and ***train_new_def_ex_model.sh***.
 
 **Requirements**
 
