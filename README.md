@@ -48,33 +48,33 @@ There are two main pipelines:
      
 - **Step 2: Process Examples**
 	
-	**script**: process_examples.py
+	**Python script**: process_examples.py
 	
-	**input**: tsv file wiktionary.tsv
+	**Input**: tsv file wiktionary.tsv
 	
-	**output**:tsv file wiktionary_examples.tsv with columns ('sense_id', 'lemma', 'num_ex', 'word_rank', 'example') containing tokenized examples and target word ranks
+	**Output**:tsv file wiktionary_examples.tsv with columns ('sense_id', 'lemma', 'num_ex', 'word_rank', 'example') containing tokenized examples and target word ranks
 	
 	
 	The script uses the Spacy library to tokenize examples and find the target word rank (directly or using basic transformations such as lemmatization) whose sense is illustrated.
     
 - **Step 3: Generate Predictions**
 	
-	**script**: get_preds.py
+	**Python script**: get_preds.py
 	
-	**input**: tsv file wiktionary.tsv
+	**Input**: tsv file wiktionary.tsv
 	
-	**output**: tsv file wiktionary_preds.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES) which contains the supersense predicted for each sense and the different scores from definition classifier, example classifier and their combination for each individual class
+	**Output**: tsv file wiktionary_preds.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES) which contains the supersense predicted for each sense and the different scores from definition classifier, example classifier and their combination for each individual class
 	
 	
 	The script applies the classifier of definitions and the classifier of exemplar sentences to each sense of the extracted Wiktionary, and combines them using a weighted sum of scores. The state_dict parameters of the classifiers are downloaded from a url.
     
 - **Step 4: Enrich Wiktionary Data**
 	
-	**script**: enrich_wiktionary.py
+	**Python script**: enrich_wiktionary.py
 	
-	**input**: wikitionary.tsv and wiktionary_preds.tsv
+	**Input**: wikitionary.tsv and wiktionary_preds.tsv
 	
-	**output**: tsv file that uses the predictions and class scores for each sense in wiktionary_preds.tsv to enrich with this information the Wiktionary tsv file wiktionary.tsv and get the final produced resource enriched_wiktionary.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES)
+	**Output**: tsv file that uses the predictions and class scores for each sense in wiktionary_preds.tsv to enrich with this information the Wiktionary tsv file wiktionary.tsv and get the final produced resource enriched_wiktionary.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES)
 	
 	
 	Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the extracted resource from Wiktionary with additional semantic information for each sense (supersenses, hypersenses, class scores), creating enriched_wiktionary.tsv.
@@ -84,11 +84,11 @@ There are two main pipelines:
 
 **Shell script**: train_new_def_ex_model.sh
 
-**script**: train_def_ex_lex_clf.py
+**Python script**: train_def_ex_lex_clf.py
 
-**input**: tsv file containing annotated sense data sense_data.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'nb_occ_lemma_frsemcor', 'supersense', 'set', 'ann_stage', 'labels', 'synonyms', 'definition', 'example_i' for i between 1 and 23) and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv (columns - 'sense_id', 'lemma', 'supersense', 'set', 'ann', 'num_ex', 'word_rank', 'example')
+**Input**: tsv file containing annotated sense data sense_data.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'nb_occ_lemma_frsemcor', 'supersense', 'set', 'ann_stage', 'labels', 'synonyms', 'definition', 'example_i' for i between 1 and 23) and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv (columns - 'sense_id', 'lemma', 'supersense', 'set', 'ann', 'num_ex', 'word_rank', 'example')
 
-**output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-tes, rand-test) with columns - lemma, sense_id, gold, pred, definition OR sentence
+**Output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-tes, rand-test) with columns - lemma, sense_id, gold, pred, definition OR sentence
 
 
 This script uses annotated sense data to train a definition classifier and an example classifier based on FlauBERT large, prints their performances and saves the state_dict parameters as well as predictions made on evaluation sets.
