@@ -91,7 +91,7 @@ if __name__ == '__main__':
 	}
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-	"""
+	
 	print('ENCODING DEFINITIONS DATA...\n')
 	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 	
 	rand_test_def_df = pd.DataFrame(rand_test_predictions)
 	rand_test_def_df.to_csv(args.out+'/def_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
-	"""
+	
 	
 	
 	
