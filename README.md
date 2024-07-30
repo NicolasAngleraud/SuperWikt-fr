@@ -1,5 +1,5 @@
 # StageM2
-	This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of the Wiktionary enriched with semantic information through trained classifiers able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). It contains the following files:
+This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of the Wiktionary enriched with semantic information through trained classifiers able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). It contains the following files:
 
 - extract_enrich_wiktionary.sh: Shell script implementing a pipeline meant to partialy extract information of Wiktionary from bz2 archive of a dump file and enrich the extracted resource with supersenses using trained models based on FlauBERT large.
 
@@ -34,7 +34,7 @@ There are two main typical pipelines:
 
 ## 1. Predict supersenses
 
-	The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
+The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
 
 **Steps**
 
@@ -59,7 +59,7 @@ There are two main typical pipelines:
     
 **Usage**
 
-	To execute the script and perform the above steps:
+To execute the script and perform the above steps:
 
 - Clone the Repository: Clone the repository containing extract_enrich_wiktionary.sh, the bz2 archive fr_dbnary_ontolex_20240501.ttl.bz2 (can be replaced with a more recent one) containing the Wiktionary ttl dump file and the required Python scripts (extract_wiki.py, process_examples.py, get_preds.py, enrich_wiktionary.py, dataEncoder.py, lexicalClf.py).
 
