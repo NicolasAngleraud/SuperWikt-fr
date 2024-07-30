@@ -1,33 +1,28 @@
 # StageM2
-This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of the Wiktionary enriched with semantic information through trained classifiers able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). It contains the following files:
+This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of Wiktionary enriched with semantic information through trained classifiers able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). It contains the following files:
 
 - extract_enrich_wiktionary.sh: Shell script implementing a pipeline meant to partialy extract information of Wiktionary from bz2 archive of a dump file and enrich the extracted resource with supersenses using trained models based on FlauBERT large.
 
-- train_new_def_ex_model.sh: Shell script implementing a pipepline meant to train new definition and examlple supersense classifiers using new sense annotated data. It keeps the same hyperparameters as the ones used to get current classifiers.
+- train_new_def_ex_model.sh: Shell script implementing a pipepline meant to train new definition and examlple supersense classifiers using sense annotated data. It keeps the same hyperparameters as the ones used to get current classifiers.
 
-- 
+- dataEncoder.py: Python script used to encode data to train classifiers bases on FlauBERT large.
 
-- 
+- lexicalClf.py: Python script implementing the architecture, training and evaluation of the FlauBERT large based classifiers.
 
-- 
+- extract_wiki.py: Python script used to build a tsv file containing part of the sense data of Wiktionary from a ttl dump file.
 
-- 
+- process_examples.py: Python script used to process examples of each sense and get tokenized examples with the rank of the target words in each example.
 
-- 
+- get_preds.py: Python script used to apply the supersense classifiers on each sense of the resource and get the predicted class as well as the scores of each class.
 
-- 
+- enrich_wiktionary.py: Python script used to fill the resource with the classes and scores from a file containing the predictions made for each sense.
 
-- 
+- train_def_ex_lex_clf.py: Python script implementing the training and evaluation of the definition and example classifiers based on FlauBERT large.
 
-- 
+- sense_data.tsv: TSV file containig the sense data from Wiktionary.
 
-- 
+- ex_data.tsv: TSV file containing the tokenized examples and the ranks of the target words for each sense.
 
-- 
-
-- 
-
-- 
 
 
 There are two main typical pipelines:
