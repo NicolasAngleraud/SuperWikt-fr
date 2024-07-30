@@ -41,7 +41,7 @@ There are two main pipelines:
 	
 	**Input**: bz2 archive containing a Wiktionary ttl dump file
 	
-	**Output**: tsv file wiktionary.tsv containing the following columns: 'page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition', 'example_i' for i between 1 and 23
+	**Output**: tsv file wiktionary.tsv containing the following columns - 'page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition', 'example_i' for i between 1 and 23
 	
 	
 	The extraction filters out senses who have at least one label indication obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
@@ -84,14 +84,14 @@ There are two main pipelines:
 
 **Shell script**: train_new_def_ex_model.sh
 
-**script**: 
+**script**: train_def_ex_lex_clf.py
 
-**input**:
+**input**: tsv file containing annotated sense data sense_data.tsv and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv
 
-**output**:
+**output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-tes, rand-test) with columns - lemma, sense_id, gold, pred, definition OR sentence
 
 
-Description
+This script uses annotated sense data to train a definition classifier and an example classifier based on FlauBERT large, prints their performances and saves the state_dict parameters as well as predictions made on evaluation sets.
 
 
 ## TO BE NOTED
