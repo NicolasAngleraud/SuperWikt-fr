@@ -1,7 +1,38 @@
 # StageM2
-This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of the Wiktionary enriched with semantic information through a trained classifier able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). 
+This repository contains files aiming at the production of a lexical resource for french nouns based on a partial extraction of the Wiktionary enriched with semantic information through trained classifiers able to classify a lexical sense into coarse semantic classes called supersenses (such as Person, Animal, Feeling, Cognition, Act, ...). It contains the following files:
 
-## Predict supersenses
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+- 
+
+
+There are two main typical pipelines:
+
+## 1. Predict supersenses
 
 The extract_enrich_wiktionary.sh script facilitates the extraction of lexical data from a Wiktionary dump file, processes it using Python scripts, and enriches it with semantic classes predictions.
 
@@ -55,7 +86,7 @@ To execute the script and perform the above steps:
 Customize file paths and script parameters (DUMP_FILE, WIKTIONARY_FILE, etc.) in extract_enrich_wiktionary.sh as per your environment and dataset location. Ensure adequate permissions (chmod +x extract_enrich_wiktionary.sh) to execute the shell script.
 
 
-## Retraining models
+## 2. Retraining models
 
 indiquer les scripts pour l'entraînement des modèles
 
