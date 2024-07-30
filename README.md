@@ -52,10 +52,10 @@ There are two main pipelines:
 	
 	**input**: tsv file wiktionary.tsv
 	
-	**output**:
+	**output**:tsv file wiktionary_examples.tsv with columns ('sense_id', 'lemma', 'num_ex', 'word_rank', 'example') containing tokenized examples and target word ranks
 	
 	
-	Spacy is used to tokenize, lemmatization to identify the rank of the token in the exemplar sentence, whose sense is illustrated
+	The script uses the Spacy library to tokenize examples and find the target word rank (directly or using basic transformations such as lemmatization) whose sense is illustrated.
     
 - **Step 3: Generate Predictions**
 	
@@ -86,7 +86,7 @@ There are two main pipelines:
 
 **script**: train_def_ex_lex_clf.py
 
-**input**: tsv file containing annotated sense data sense_data.tsv and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv
+**input**: tsv file containing annotated sense data sense_data.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'nb_occ_lemma_frsemcor', 'supersense', 'set', 'ann_stage', 'labels', 'synonyms', 'definition', 'example_i' for i between 1 and 23) and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv (columns - 'sense_id', 'lemma', 'supersense', 'set', 'ann', 'num_ex', 'word_rank', 'example')
 
 **output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-tes, rand-test) with columns - lemma, sense_id, gold, pred, definition OR sentence
 
