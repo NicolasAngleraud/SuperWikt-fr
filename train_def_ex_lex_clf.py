@@ -74,7 +74,7 @@ if __name__ == '__main__':
 	"patience": 2,
 	"lr": 0.001,
 	"weight_decay": 0.000005,
-	"frozen": True,
+	"frozen": False,
 	"max_seq_length": 100
 	}
 	
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 	}
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-
+	"""
 	print('ENCODING DEFINITIONS DATA...\n')
 	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, use_sample=False)
 	train_definitions_encoder.encode()
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 	
 	rand_test_def_df = pd.DataFrame(rand_test_predictions)
 	rand_test_def_df.to_csv(args.out+'/def_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
-	
+	"""
 	
 	
 	
@@ -164,10 +164,11 @@ if __name__ == '__main__':
 	print('EXAMPLES DATA ENCODED.\n')
 	
 	print('TRAINING EXAMPLE CLASSIFIER...\n')
-	ex_clf = clf.multiRankClf(params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+	ex_clf = clf.multiRankClf(params_ex, DEVICE, dropout_input=0, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	ex_clf.train_clf(train_examples_encoder, freq_dev_examples_encoder, rand_dev_examples_encoder, ex_clf_file)
 	print('EXAMPLE CLASSIFIER TRAINED.\n')
 	print('LOADING BEST EXAMPLE CLASSIFIER...\n')
+	ex_clf = clf.multiRankClf(params_ex, DEVICE, dropout_input=0, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
 	ex_clf.load_clf(ex_clf_file)
 	print('BEST EXAMPLE CLASSIFIER LOADED.\n')
 	

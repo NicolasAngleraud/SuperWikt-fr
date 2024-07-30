@@ -257,7 +257,7 @@ class monoRankClf(nn.Module):
 
 class multiRankClf(nn.Module):
 
-	def __init__(self, params, DEVICE, dropout_input=0.1, dropout_hidden=0.5, bert_model_name=MODEL_NAME):
+	def __init__(self, params, DEVICE, dropout_input=0.1, dropout_hidden=0.3, bert_model_name=MODEL_NAME):
 		super(multiRankClf, self).__init__()
 
 		self.bert_model = AutoModel.from_pretrained(bert_model_name).to(DEVICE)
