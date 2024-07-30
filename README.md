@@ -27,7 +27,7 @@ This repository contains files aiming at the production of a lexical resource fo
 
 
 
-There are two main typical pipelines:
+There are two main pipelines:
 
 ## 1. Producing the resource
 
