@@ -88,7 +88,7 @@ There are two main pipelines:
 
 **Input**: tsv file containing annotated sense data sense_data.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'nb_occ_lemma_frsemcor', 'supersense', 'set', 'ann_stage', 'labels', 'synonyms', 'definition', 'example_i' for i between 1 and 23) and the examples tsv file with the tokenized examples and target work ranks for each sense ex_data.tsv (columns - 'sense_id', 'lemma', 'supersense', 'set', 'ann', 'num_ex', 'word_rank', 'example')
 
-**Output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-test, rand-test) with columns - lemma, sense_id, gold, pred, definition OR sentence
+**Output**: New state_dict serializations for the definition and example classifiers named NEW_def_lem_clf.params and NEW_ex_clf.params, tsv prediction files for both classifiers and the four evaluation sets (freq-dev, rand-dev, freq-test, rand-test) with columns - 'lemma', 'sense_id', 'gold', 'pred', 'definition' OR 'sentence'
 
 
 This script uses annotated sense data to train a definition classifier and an example classifier based on FlauBERT large, prints their performances and saves the state_dict parameters as well as predictions made on evaluation sets.
