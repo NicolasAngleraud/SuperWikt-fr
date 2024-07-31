@@ -5,7 +5,7 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **train_new_def_ex_model.sh**: Shell script implementing a pipepline meant to train new definition and examlple supersense classifiers using sense annotated data. It keeps the same hyperparameters as the ones used to get current classifiers.
 
-- **dataEncoder.py**: Python script used to encode data to train classifiers bases on FlauBERT large.
+- **dataEncoder.py**: Python script used to encode data to train classifiers based on FlauBERT large.
 
 - **lexicalClf.py**: Python script implementing the architecture, training and evaluation of the FlauBERT large based classifiers.
 
