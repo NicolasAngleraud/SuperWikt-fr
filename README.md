@@ -31,6 +31,8 @@ There are two main pipelines:
 
 ## 1. Producing the resource
 
+ATTENTION: This pipeline, and more specifically the prediction of supersense for all senses of the Wiktionary, takes several hours to run.
+
 **Shell script**: extract_enrich_wiktionary.sh
 
 **Steps**
