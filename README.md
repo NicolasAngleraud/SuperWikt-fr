@@ -46,7 +46,7 @@ ATTENTION: This pipeline, and more specifically the prediction of supersense for
 	**Output**: tsv file wiktionary.tsv containing the following columns - 'page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition', 'example_i' for i between 1 and 23
 	
 	
-	The extraction filters out senses who have at least one label indication obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
+	The extraction filters out senses who have at least one label indicating obsolete use and senses from categories outside of noun or proper noun. The supersenses and hypersenses columns are empty for now and will be filled with the later enrichment.
      
 - **Step 2: Process Examples**
 	
