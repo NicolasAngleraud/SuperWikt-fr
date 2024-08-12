@@ -69,7 +69,7 @@ def normalization_id(full_id, lang=lang):
         return full_id
 """
 
-def normalization_id(full_id, lang):
+def normalization_id(full_id, lang=lang):
     prefix = lang + ":"
     if full_id.startswith(prefix):
         return full_id[len(prefix):].lstrip('_').rstrip('_')
