@@ -148,7 +148,10 @@ if __name__ == '__main__':
 	rand_test_def_df.to_csv(args.out+'/def_rand_test_preds.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	
-	
+
+	del def_clf
+	torch.cuda.empty_cache()
+	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	print('ENCODING EXAMPLES DATA...\n')
 	train_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, use_sample=False, sub_corpus="wiki")
