@@ -59,7 +59,7 @@ def extract_labels_definition(text):
     definition = text[i:].strip()
     return labels, definition
     
-        
+"""  
 def normalization_id(full_id, lang=lang):
     if full_id.startswith(lang + ":"):
         return full_id.removeprefix(lang + ":").strip('_')
@@ -67,7 +67,18 @@ def normalization_id(full_id, lang=lang):
         return full_id.removeprefix("<http://kaiko.getalp.org/dbnary/" + lang + "/").removesuffix(">").strip('_')
     else:
         return full_id
+"""
 
+def normalization_id(full_id, lang):
+    prefix = lang + ":"
+    if full_id.startswith(prefix):
+        return full_id[len(prefix):].lstrip('_').rstrip('_')
+    elif full_id.startswith("<http://kaiko.getalp.org/dbnary/" + lang + "/"):
+        prefix = "<http://kaiko.getalp.org/dbnary/" + lang + "/"
+        suffix = ">"
+        if full_id.endswith(suffix):
+            return full_id[len(prefix):-len(suffix)].lstrip('_').rstrip('_')
+    return full_id
 
 def parse_page(paragraph, wiki_data):
 	page = None
