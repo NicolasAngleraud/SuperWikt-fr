@@ -225,7 +225,7 @@ def extract_wiki_data(input_file):
 	
 def data2df(wiki_data, output_file):
 	
-	columns = ['page', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
+	columns = ['lemma', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
 	
 	rows = []
 	
@@ -264,7 +264,7 @@ def data2df(wiki_data, output_file):
 								# for j, example in enumerate(examples): print(f"EXAMPLE_{j+1}", example)
 								
 								row_data = {
-								'page': page_id, 
+								'lemma': page_id, 
 								'entry_id': entry_id, 
 								'sense_id': sense_id, 
 								'pos': pos,
