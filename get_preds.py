@@ -1,5 +1,6 @@
 import pandas as pd
 import argparse
+import torch
 import dataEncoder as data
 import lexicalClf as clf
 from transformers import AutoModel, AutoTokenizer, AutoConfig
