@@ -25,6 +25,10 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containing the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
 
+- **enriched_wiktionary.tsv**: tsv file containing the final resource produced with the ttl file present in this repository and the FlauBERT based definition and example classifiers stored on the website specified in the extract_enrich_wiktionary.sh file.
+
+- **memoire.pdf**: The master's thesis written in the context of this research project.
+
 
 
 There are two main pipelines:
@@ -65,7 +69,7 @@ ATTENTION: This pipeline, and more specifically the prediction of supersense for
 	
 	**Input**: tsv file wiktionary.tsv
 	
-	**Output**: tsv file wiktionary_preds.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES) which contains the supersense predicted for each sense and the different scores from definition classifier, example classifier and their combination for each individual class
+	**Output**: tsv file wiktionary_preds.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 23, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES) which contains the supersense predicted for each sense and the different scores from definition classifier, example classifier and their combination for each individual class
 	
 	
 	The script applies the classifier of definitions and the classifier of exemplar sentences to each sense of the extracted Wiktionary, and combines them using a weighted sum of scores. The state_dict parameters of the classifiers are downloaded from a url.
@@ -76,7 +80,7 @@ ATTENTION: This pipeline, and more specifically the prediction of supersense for
 	
 	**Input**: wikitionary.tsv and wiktionary_preds.tsv
 	
-	**Output**: tsv file that uses the predictions and class scores for each sense in wiktionary_preds.tsv to enrich with this information the Wiktionary tsv file wiktionary.tsv and get the final produced resource enriched_wiktionary.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 24, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES)
+	**Output**: tsv file that uses the predictions and class scores for each sense in wiktionary_preds.tsv to enrich with this information the Wiktionary tsv file wiktionary.tsv and get the final produced resource enriched_wiktionary.tsv (columns - 'sense_id', 'entry_id', 'lemma', 'supersense', 'hypersense', 'labels', 'definition', 'example_i' for i between 1 and 23, 'pred', 'ss_full_score' for ss in SUPERSENSES, 'ss_def_score' for ss in SUPERSENSES, 'ss_ex_score' for ss in SUPERSENSES)
 	
 	
 	Finally, the script enriches the Wiktionary data by combining wiktionary.tsv and wiktionary_preds.tsv. This step enhances the extracted resource from Wiktionary with additional semantic information for each sense (supersenses, hypersenses, class scores), creating enriched_wiktionary.tsv.
