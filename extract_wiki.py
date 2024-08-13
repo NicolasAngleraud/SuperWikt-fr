@@ -219,13 +219,13 @@ def extract_wiki_data(input_file):
 							
 				if line.strip(): paragraph.append(line)
 
-			# if i >= 76: break
+			if i >= 76: break
 	return wiki_data
 	
 	
 def data2df(wiki_data, output_file):
 	
-	columns = ['lemma', 'entry_id', 'sense_id', 'supersenses', 'hypersenses', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
+	columns = ['lemma', 'entry_id', 'sense_id', 'supersense', 'hypersense', 'pos', 'gender', 'labels', 'definition'] + [f'example_{i}' for i in range(1, 24)]
 	
 	rows = []
 	
