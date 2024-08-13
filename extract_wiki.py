@@ -219,7 +219,7 @@ def extract_wiki_data(input_file):
 							
 				if line.strip(): paragraph.append(line)
 
-			if i >= 76: break
+			# if i >= 76: break
 	return wiki_data
 	
 	
