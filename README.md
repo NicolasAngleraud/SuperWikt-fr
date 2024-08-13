@@ -25,11 +25,11 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **fr_dbnary_ontolex_20240501.ttl.bz2**: Archive containing the Wiktionary dump file in ttl format (RDF file). This one is contains the dump from May 1, 2024.
 
-- **enriched_wiktionary.tsv**: tsv file containing the final resource produced with the ttl file present in this repository and the FlauBERT based definition and example classifiers stored on the website specified in the extract_enrich_wiktionary.sh file.
-
 - **memoire.pdf**: The master's thesis written in the context of this research project.
 
+The produced resource can be downloaded from the following google drive link: https://drive.google.com/file/d/1BOyg3msX4ofj9wEFr07NhSlCuRElq2de/view?usp=sharing
 
+- **enriched_wiktionary.tsv**: tsv file containing the final resource produced with the ttl file present in this repository and the FlauBERT based definition and example classifiers stored on the website specified in the extract_enrich_wiktionary.sh file.
 
 There are two main pipelines:
 
