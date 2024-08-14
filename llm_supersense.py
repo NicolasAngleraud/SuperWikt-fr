@@ -11,7 +11,7 @@ SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
 
-supersenses_tok = [tokenizer(supersense, add_special_tokens=False).ids()[0] for supersense in SUPERSENSES]
+
 
 
 HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
@@ -66,7 +66,7 @@ token = "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"
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
-print(model)
+supersenses_tok = [tokenizer(supersense, add_special_tokens=False).ids()[0] for supersense in SUPERSENSES]
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
