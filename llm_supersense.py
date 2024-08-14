@@ -11,7 +11,11 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-prompt = "Le chinois est une langue"
+prompt = """Quelle est le type sémantique de l'entité associé à la définition suivante ?
+Types possibles: Animal, Plant, Act, Cognition.
+Définition: Chien qui vit dans les montagnes, souvent seul.
+Type sémantique:
+"""
 
 inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
 
@@ -24,5 +28,12 @@ outputs = model.generate(
 
 generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
+
+print()
+print("*********************************************************")
+print()
+
 print(generated_text)
 
+print()
+print("*********************************************************")
