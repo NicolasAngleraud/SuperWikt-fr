@@ -65,7 +65,6 @@ def pretty_print(prompt, pred, gold):
 
 
 model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-# token = "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"
 load_dotenv()
 hf_token = os.getenv("HUGGINGFACE_TOKEN")
 
