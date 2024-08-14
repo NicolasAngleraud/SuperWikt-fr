@@ -11,6 +11,9 @@ SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
 
+supersenses_tok = [tokenizer(supersense, add_special_tokens=False).ids()[0] for supersense in SUPERSENSES]
+
+
 HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                "stative_situation": ["attribute", "state", "feeling", "relation"],
                "animate_entity": ["animal", "person"],
@@ -72,6 +75,9 @@ df = pd.read_csv("./sense_data.tsv", sep='\t')
 definitions = df["definition"].tolist()
 gold_labels = df["supersense"].tolist()
 
+for sense in supersenses_tok: 
+	print(sense, )
+
 for definition, gold in zip(definitions, gold_labels):
 
 	prompt = f"""INSTRUCTION : Quelle est le supersense de l'entité décrite par la définition suivante ?
@@ -93,6 +99,9 @@ for definition, gold in zip(definitions, gold_labels):
 	probs = torch.nn.functional.softmax(logits_first_token, dim=-1)
 	probs = probs.cpu().numpy()
 	print(probs.shape)
+	
+	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
+	print(len(supersense_probs))
 	
 	break
 	
