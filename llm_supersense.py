@@ -5,13 +5,17 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 
-
+'''
 SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
                'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
+'''
 
-
+SUPERSENSES = ['acte', 'animal', 'objet', 'attribut', 'corps', 'pensée',
+               'communication', 'évènement', 'sentiment', 'nourriture', 'institution', 'opération',
+               'nature', 'possession', 'person', 'phénomène', 'plante', 'document',
+               'quantité', 'relation', 'état', 'substance', 'temps', 'groupe']
 
 
 HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
@@ -66,7 +70,9 @@ token = "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"
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
-supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
+supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]
+
+
 	
 id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tok)}
 
