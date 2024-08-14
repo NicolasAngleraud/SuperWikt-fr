@@ -77,6 +77,7 @@ definitions = df["definition"].tolist()
 gold_labels = df["supersense"].tolist()
 
 
+n = 0
 for definition, gold in zip(definitions, gold_labels):
 
 	prompt = f"""INSTRUCTION : Quelle est le supersense de l'entité décrite par la définition suivante ?
@@ -104,7 +105,9 @@ for definition, gold in zip(definitions, gold_labels):
 	gen_tok = supersenses_tok[best_index]
 	
 	pretty_print(prompt, gen_tok, gold)
-	break
+	
+	n += 1
+	if n>50: break
 	
 
 
