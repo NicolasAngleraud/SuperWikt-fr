@@ -5,12 +5,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 
-'''
-SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
+
+SUPERSENSES_EN = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
                'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
-'''
+
 
 SUPERSENSES = ['Action', 'Animal', 'Objet', 'Attribut', 'Corps', 'Pensée',
                'Communication', 'Evènement', 'Sentiment', 'Nourriture', 'Institution', 'Opération',
@@ -48,7 +48,7 @@ def pretty_print(prompt, pred, gold):
 	print("*********************************************************")
 	print()
 	
-	print(id2ss[pred])
+	print(SUPERSENSES_EN[id2ss[pred].index()])
 	
 	print()
 	print("*********************************************************")
