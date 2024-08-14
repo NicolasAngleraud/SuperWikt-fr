@@ -49,7 +49,7 @@ outputs = model.generate(
     inputs['input_ids'], 
     attention_mask=inputs['attention_mask'],
     max_length=100,
-    temperature=0., 
+    do_sample=False, 
     num_return_sequences=1
 )
 
