@@ -44,7 +44,7 @@ def pretty_print(prompt, gen_tok, gold):
 	print("*********************************************************")
 	print()
 	
-	print(gen_tok)
+	print(id2ss[gen_tok])
 	
 	print()
 	print("*********************************************************")
@@ -67,6 +67,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
+id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tok)}
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -75,8 +76,6 @@ df = pd.read_csv("./sense_data.tsv", sep='\t')
 definitions = df["definition"].tolist()
 gold_labels = df["supersense"].tolist()
 
-for sense in supersenses_tok: 
-	print(sense, )
 
 for definition, gold in zip(definitions, gold_labels):
 
@@ -98,11 +97,13 @@ for definition, gold in zip(definitions, gold_labels):
 	logits_first_token = logits[0, -1, :]
 	probs = torch.nn.functional.softmax(logits_first_token, dim=-1)
 	probs = probs.cpu().numpy()
-	print(probs.shape)
 	
 	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
-	print(len(supersense_probs))
+
+	best_index = np.argmax(supersense_probs)
+	gen_tok = supersenses_tok[best_index]
 	
+	pretty_print(prompt, gen_tok, gold)
 	break
 	
 
