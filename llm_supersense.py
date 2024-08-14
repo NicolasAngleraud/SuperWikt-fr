@@ -67,6 +67,10 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
+
+for ss_toks in [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]:
+	print(ss_toks)
+	
 id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tok)}
 
 if tokenizer.pad_token_id is None:
@@ -92,7 +96,7 @@ for definition, gold in zip(definitions, gold_labels):
 	input_ids = inputs['input_ids']
 	
 	with torch.no_grad():
-		outputs = model(input_ids)
+		outputs = model(input_ids, use_cache=False)
 		logits = outputs.logits
 
 	logits_first_token = logits[0, -1, :]
