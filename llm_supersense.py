@@ -1,10 +1,15 @@
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from huggingface_hub import login
 
 
 model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+
+token = "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"
+login(token)
+
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
+model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=True)
 
 prompt = "Once upon a time"
 
