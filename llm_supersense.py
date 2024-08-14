@@ -13,7 +13,7 @@ if tokenizer.pad_token_id is None:
 
 prompt = """Quelle est le type sémantique de l'entité associé à la définition suivante ?
 Types possibles: Animal, Plant, Act, Cognition.
-Définition: Chien qui vit dans les montagnes, souvent seul.
+Définition: Sentiment éprouvé lors d'une situation difficile.
 Type sémantique:
 """
 
