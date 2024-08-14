@@ -32,7 +32,7 @@ NB_CLASSES = len(supersense2i)
 
 
 
-def pretty_print(prompt, gen_tok, gold):
+def pretty_print(prompt, pred, gold):
 	print()
 	print()
 	print("*********************************************************")
@@ -48,7 +48,7 @@ def pretty_print(prompt, gen_tok, gold):
 	print("*********************************************************")
 	print()
 	
-	print(id2ss[gen_tok])
+	print(pred)
 	
 	print()
 	print("*********************************************************")
@@ -70,11 +70,10 @@ token = "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"
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
-supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
+supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]
 
-
-	
-id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tokens)}
+nb_toks = max([len(el) for el in supersenses_tokens])
+print("NB TOKS", nb_toks)
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -86,7 +85,7 @@ gold_labels = df["supersense"].tolist()
 
 n = 0
 for definition, gold in zip(definitions, gold_labels):
-
+	break
 	prompt = f"""INSTRUCTION : Quelle est le type sémantique de l'entité décrite par la définition suivante ?
 	DEFINITION: {definition}
 	TYPE SEMANTIQUE:
