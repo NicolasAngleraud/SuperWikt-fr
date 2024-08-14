@@ -12,10 +12,10 @@ SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
 '''
 
-SUPERSENSES = ['action', 'animal', 'objet', 'attribut', 'corps', 'pensée',
-               'communication', 'évènement', 'sentiment', 'nourriture', 'institution', 'opération',
-               'nature', 'possession', 'personne', 'phénomène', 'plante', 'document',
-               'quantité', 'relation', 'état', 'substance', 'temps', 'groupe']
+SUPERSENSES = ['Action', 'Animal', 'Objet', 'Attribut', 'Corps', 'Pensée',
+               'Communication', 'Evènement', 'Sentiment', 'Nourriture', 'Institution', 'Opération',
+               'Nature', 'Possession', 'Personne', 'Phénomène', 'Plante', 'Document',
+               'Quantité', 'Relation', 'Etat', 'Substance', 'Temps', 'Groupe']
 
 
 HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
@@ -48,7 +48,7 @@ def pretty_print(prompt, pred, gold):
 	print("*********************************************************")
 	print()
 	
-	print(pred)
+	print(id2ss[pred])
 	
 	print()
 	print("*********************************************************")
@@ -70,10 +70,9 @@ token = "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"
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
-supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]
+supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
-nb_toks = max([len(el) for el in supersenses_tokens])
-print("NB TOKS", nb_toks)
+id2ss = {id_tok: SUPERSENSES[i] for enumerate(supersenses_tok)}
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -94,6 +93,7 @@ for definition, gold in zip(definitions, gold_labels):
 	inputs = tokenizer(prompt, return_tensors="pt")
 	input_ids = inputs['input_ids']
 	
+	for
 	with torch.no_grad():
 		outputs = model(input_ids, use_cache=False)
 		logits = outputs.logits
