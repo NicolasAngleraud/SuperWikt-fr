@@ -39,7 +39,7 @@ if tokenizer.pad_token_id is None:
 
 prompt = """Quelle est le type sémantique de l'entité associé à la définition suivante ?
 Types possibles: Animal, Plant, Act, Cognition, Feeling.
-Définition: Sentiment éprouvé lors d'une situation difficile.
+Définition: Idée intéressante qui survient lors de la contemplation d'un tableau.
 Type sémantique:
 """
 
@@ -48,7 +48,8 @@ inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
 outputs = model.generate(
     inputs['input_ids'], 
     attention_mask=inputs['attention_mask'],
-    max_length=100, 
+    max_length=100,
+    temperature=0., 
     num_return_sequences=1
 )
 
