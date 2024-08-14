@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-
+from dotenv import load_dotenv
+import os
 
 
 
@@ -63,12 +64,16 @@ def pretty_print(prompt, pred, gold):
 	print("*********************************************************")
 
 
-
 model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-token = "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"
+# token = "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"
+load_dotenv()
+hf_token = os.getenv("HUGGINGFACE_TOKEN")
 
-tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
-model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
+if hf_token is None:
+    raise ValueError("HUGGINGFACE_TOKEN environment variable is not set.")
+
+tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
