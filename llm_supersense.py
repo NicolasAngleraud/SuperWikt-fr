@@ -72,7 +72,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
-id2ss = {id_tok: SUPERSENSES[i] for i, id_tok enumerate(supersenses_tok)}
+id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
