@@ -20,7 +20,7 @@ def pretty_print(prompt, generated_text):
 	print("*********************************************************")
 	print()
 	
-	print(generated_text[len(prompt):])
+	print(generated_text[len(prompt)-1:])
 	
 	print()
 	print()
