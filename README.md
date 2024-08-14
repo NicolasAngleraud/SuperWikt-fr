@@ -108,13 +108,13 @@ To execute the scripts and perform the above steps:
 
 - Clone the repository
 
-- Set up environment: Ensure Python 3.x and necessary packages are installed. Optionally, create a virtual environment to manage dependencies.
+- Set up environment: Ensure Python >=3.7 and necessary packages are installed. Optionally, create a virtual environment to manage dependencies.
 
 - Run the desired Shell script from the command lines: ***extract_enrich_wiktionary.sh*** and ***train_new_def_ex_model.sh***.
 
 **Requirements**
 
-    Python 3.x
+    Python >=3.7
     Required Python packages (specified in requirements.txt or installed manually):
         pandas
         argparse
