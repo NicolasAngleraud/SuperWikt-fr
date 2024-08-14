@@ -77,14 +77,14 @@ id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-df = pd.read_csv("./sense_data.tsv", sep='\t')
+df = pd.read_csv("./sense_data.tsv", sep='\t', low_memory=False)
 definitions = df["definition"].tolist()
 gold_labels = df["supersense"].tolist()
 
 
 n = 0
 for definition, gold in zip(definitions, gold_labels):
-	break
+	
 	prompt = f"""INSTRUCTION : Quelle est le type sémantique de l'entité décrite par la définition suivante ?
 	DEFINITION: {definition}
 	TYPE SEMANTIQUE:
