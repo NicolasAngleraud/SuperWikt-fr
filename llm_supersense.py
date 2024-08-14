@@ -67,9 +67,6 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
-
-for ss_toks in [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]:
-	print(ss_toks)
 	
 id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tok)}
 
@@ -84,12 +81,9 @@ gold_labels = df["supersense"].tolist()
 n = 0
 for definition, gold in zip(definitions, gold_labels):
 
-	prompt = f"""INSTRUCTION : Quelle est le supersense de l'entité décrite par la définition suivante ?
-	
-	SUPERSENSES: 'act', 'animal', 'artifact', 'attribute', 'body', 'cognition', 'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition', 'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition', 'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson'.
-	
+	prompt = f"""INSTRUCTION : Quelle est le type sémantique de l'entité décrite par la définition suivante ?
 	DEFINITION: {definition}
-	SUPERSENSE:
+	TYPE SEMANTIQUE:
 	"""
 
 	inputs = tokenizer(prompt, return_tensors="pt")
@@ -153,7 +147,13 @@ def pretty_print(prompt, generated_text, gold):
 	print()
 	print("*********************************************************")
 
+prompt = f'''INSTRUCTION : Quelle est le type sémantique de l'entité décrite par la définition suivante ?
 
+SUPERSENSES: 'act', 'animal', 'artifact', 'attribute', 'body', 'cognition', 'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition', 'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition', 'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson'.
+
+DEFINITION: {definition}
+SUPERSENSE:
+'''
 outputs = model.generate(
 	inputs['input_ids'], 
 	attention_mask=inputs['attention_mask'],
