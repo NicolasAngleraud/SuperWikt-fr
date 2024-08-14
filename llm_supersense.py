@@ -72,6 +72,8 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
+for el in supersenses_tok: print(el)
+
 id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 
 if tokenizer.pad_token_id is None:
@@ -85,9 +87,10 @@ gold_labels = df["supersense"].tolist()
 n = 0
 for definition, gold in zip(definitions, gold_labels):
 	
-	prompt = f"""INSTRUCTION : Quelle est le type sémantique de l'entité décrite par la définition suivante ?
+	prompt = f"""INSTRUCTION : Parmi les types Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quel est le type sémantique le plus adapté pour décrire la définition suivante ?
+	
 	DEFINITION: {definition}
-	TYPE SEMANTIQUE:
+	TYPE SEMANTIQUE: 
 	"""
 
 	inputs = tokenizer(prompt, return_tensors="pt")
@@ -102,10 +105,10 @@ for definition, gold in zip(definitions, gold_labels):
 	probs = torch.nn.functional.softmax(logits_first_token, dim=-1)
 	probs = probs.cpu().numpy()
 	
-	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tokens]
+	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
 
 	best_index = np.argmax(supersense_probs)
-	gen_tok = supersenses_tokens[best_index]
+	gen_tok = supersenses_tok[best_index]
 	
 	pretty_print(prompt, gen_tok, gold)
 	
