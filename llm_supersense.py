@@ -70,7 +70,7 @@ token = "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"
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
-supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES]
+supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
 
 	
