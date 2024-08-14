@@ -45,7 +45,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-df = pd.read_csv("./sense_data.csv", sep='\t')
+df = pd.read_csv("./sense_data.tsv", sep='\t')
 definitions = df["definition"].tolist()
 gold_labels = df["supersense"].tolist()
 
