@@ -12,9 +12,9 @@ SUPERSENSES = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson']
 '''
 
-SUPERSENSES = ['acte', 'animal', 'objet', 'attribut', 'corps', 'pensée',
+SUPERSENSES = ['action', 'animal', 'objet', 'attribut', 'corps', 'pensée',
                'communication', 'évènement', 'sentiment', 'nourriture', 'institution', 'opération',
-               'nature', 'possession', 'person', 'phénomène', 'plante', 'document',
+               'nature', 'possession', 'personne', 'phénomène', 'plante', 'document',
                'quantité', 'relation', 'état', 'substance', 'temps', 'groupe']
 
 
@@ -74,7 +74,7 @@ supersenses_tokens = [tokenizer.encode(supersense, add_special_tokens=False) for
 
 
 	
-id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tok)}
+id2ss = {idx: SUPERSENSES[i] for i, idx in enumerate(supersenses_tokens)}
 
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -103,10 +103,10 @@ for definition, gold in zip(definitions, gold_labels):
 	probs = torch.nn.functional.softmax(logits_first_token, dim=-1)
 	probs = probs.cpu().numpy()
 	
-	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
+	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tokens]
 
 	best_index = np.argmax(supersense_probs)
-	gen_tok = supersenses_tok[best_index]
+	gen_tok = supersenses_tokens[best_index]
 	
 	pretty_print(prompt, gen_tok, gold)
 	
