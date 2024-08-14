@@ -1,4 +1,5 @@
 import pandas as pd
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
