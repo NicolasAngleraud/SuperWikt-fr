@@ -48,7 +48,7 @@ def pretty_print(prompt, pred, gold):
 	print("*********************************************************")
 	print()
 	
-	print(SUPERSENSES_EN[id2ss[pred].index()])
+	print(SUPERSENSES_EN[SUPERSENSES.index(id2ss[pred])])
 	
 	print()
 	print("*********************************************************")
@@ -72,7 +72,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 
 supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 
-for el in supersenses_tok: print(el)
+assert len(supersenses_tok) == len(list(set(supersenses_tok)))
 
 id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 
