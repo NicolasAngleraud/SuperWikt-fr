@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 
-def pretty_print(prompt, generated_text):
+def pretty_print(prompt, generated_text, gold):
 	print()
 	print()
 	print("*********************************************************")
@@ -23,6 +23,14 @@ def pretty_print(prompt, generated_text):
 	print(generated_text[len(prompt)-1:])
 	
 	print()
+	print("*********************************************************")
+	print("GOLD SUPERSENSE")
+	print("*********************************************************")
+	print()
+	
+	print(gold)
+	
+	print()
 	print()
 	print("*********************************************************")
 
@@ -37,23 +45,31 @@ model = AutoModelForCausalLM.from_pretrained(model_name, token=token)
 if tokenizer.pad_token_id is None:
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-prompt = """Quelle est le type sémantique de l'entité associé à la définition suivante ?
-Types possibles: Animal, Plant, Act, Cognition, Feeling.
-Définition: Idée intéressante qui survient lors de la contemplation d'un tableau.
-Type sémantique:
-"""
+df = pd.read_csv("./sense_data.csv", sep='\t')
+definitions = df["definition"].tolist()
+gold_labels = df["supersense"].tolist()
 
-inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
+for definition, gold in zip(definitions, gold_labels):
 
-outputs = model.generate(
-    inputs['input_ids'], 
-    attention_mask=inputs['attention_mask'],
-    max_length=100,
-    do_sample=False, 
-    num_return_sequences=1
-)
+	prompt = f"""INSTRUCTION : Quelle est le supersense de l'entité décrite par la définition suivante ?
+	
+	SUPERSENSES: 'act', 'animal', 'artifact', 'attribute', 'body', 'cognition', 'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition', 'object', 'possession', 'person', 'phenomenon', 'plant', 'artifact*cognition', 'quantity', 'relation', 'state', 'substance', 'time', 'groupxperson'.
+	
+	DEFINITION: {definition}
+	SUPERSENSE:
+	"""
 
-generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+	inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
 
-pretty_print(prompt, generated_text)
+	outputs = model.generate(
+		inputs['input_ids'], 
+		attention_mask=inputs['attention_mask'],
+		max_length=200,
+		temperature=0.1, 
+		num_return_sequences=1
+	)
+
+	generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+	pretty_print(prompt, generated_text, gold)
 
