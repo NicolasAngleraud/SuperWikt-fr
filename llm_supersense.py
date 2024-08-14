@@ -93,7 +93,7 @@ for definition, gold in zip(definitions, gold_labels):
 	inputs = tokenizer(prompt, return_tensors="pt")
 	input_ids = inputs['input_ids']
 	
-	for
+
 	with torch.no_grad():
 		outputs = model(input_ids, use_cache=False)
 		logits = outputs.logits
