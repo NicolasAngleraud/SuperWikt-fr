@@ -141,6 +141,9 @@ class promptEncoder:
 	def encode(self):
 		
 		df_definitions = pd.read_csv(self.data_file, sep='\t')
+		df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES_EN)]
+		df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
+		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 		
 		tokenizer = self.tokenizer
 		
