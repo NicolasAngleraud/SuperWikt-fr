@@ -32,8 +32,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES_EN)}
 NB_CLASSES = len(supersense2i)
-#supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
-#id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
+
 
 
 
@@ -79,10 +78,13 @@ def def_to_prompt(definition):
 
 class promptEncoder:
 	
-	def __init__(self, data_file, tokenizer, device):
+	def __init__(self, data_file, tokenizer, device, dataset, use_sample=False, sample_size=32):
 		self.data_file = data_file
 		self.tokenizer = tokenizer
 		self.device = device
+		self.dataset = dateset
+		self.use_sample = use_sample
+		self.sample_size = sample_size
 	
 	
 	def truncate(self, sentences, word_ranks=[], max_length=100):
@@ -143,8 +145,11 @@ class promptEncoder:
 		
 		df_definitions = pd.read_csv(self.data_file, sep='\t', low_memory=False).astype(str)
 		df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES_EN)]
+		df_definitions = df_definitions[df_definitions['set']==self.dataset]
 		df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
 		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
+		
+		if self.use_sample: df_definitions = df_definitions.sample(self.sample_size)
 		
 		tokenizer = self.tokenizer
 		
@@ -209,6 +214,31 @@ class promptEncoder:
 
 
 
+class LlamaSupersenseClfLM(nn.Module):
+	
+	def __init__(self):
+		super(LlamaSupersenseClfLM, self).__init__()
+		
+	def forward(self):
+		pass
+		
+	def train_clf(self):
+		pass
+		
+	def save_clf(self):
+		pass
+		
+	def load_clf(self):
+		pass
+		
+	def predict(self):
+		pass
+		
+	def predict_and_evaluate(self):
+		pass
+		
+		
+
 class LlamaSupersenseClf(nn.Module):
 	
 	def __init__(self):
@@ -231,7 +261,8 @@ class LlamaSupersenseClf(nn.Module):
 		
 	def predict_and_evaluate(self):
 		pass
-	
+		
+		
 '''
 n = 0
 for definition, gold in zip(definitions, gold_labels):
@@ -289,7 +320,10 @@ if __name__ == '__main__':
 
 	tokenizer.pad_token_id = tokenizer.eos_token_id
 	
-	data_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device)
+	supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
+	id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
+	
+	data_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='train')
 	
 	data_encoder.encode()
 	
