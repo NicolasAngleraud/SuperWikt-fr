@@ -140,7 +140,7 @@ class promptEncoder:
 		
 	def encode(self):
 		
-		df_definitions = pd.read_csv(self.data_file, sep='\t', low_memory=False)
+		df_definitions = pd.read_csv(self.data_file, sep='\t', low_memory=False).astype(str)
 		df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES_EN)]
 		df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
 		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
@@ -290,9 +290,9 @@ if __name__ == '__main__':
 	
 	data_encoder.encode()
 	
-	print(len(data_encoder.prompts_encoded[0]))
-	print(len(data_encoder.supersenses_encoded[0]))
-	print(len(data_encoder.lemmas[0]))
-	print(len(data_encoder.senses_ids[0]))
+	print(data_encoder.prompts_encoded[0])
+	print(data_encoder.supersenses_encoded[0])
+	print(data_encoder.lemmas[0])
+	print(data_encoder.senses_ids[0])
 	
 	print("Process done.")
