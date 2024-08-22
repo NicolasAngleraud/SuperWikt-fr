@@ -82,7 +82,7 @@ class promptEncoder:
 		self.data_file = data_file
 		self.tokenizer = tokenizer
 		self.device = device
-		self.dataset = dateset
+		self.dataset = dataset
 		self.use_sample = use_sample
 		self.sample_size = sample_size
 	
