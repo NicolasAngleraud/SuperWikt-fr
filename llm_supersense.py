@@ -69,7 +69,7 @@ def pretty_print(prompt, pred, gold):
 
 
 def def_to_prompt(definition):
-	return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quel est la classe sémantique la plus adaptée pour décrire la définition suivante ?
+	return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quelle est la classe sémantique la plus adaptée pour décrire la définition suivante ?
 	
 	###DEFINITION : {definition}
 	
@@ -295,4 +295,13 @@ if __name__ == '__main__':
 	print(data_encoder.lemmas[0])
 	print(data_encoder.senses_ids[0])
 	print(tokenizer.decode(data_encoder.prompts_encoded[0]['input_ids'].squeeze(), skip_special_tokens=True))
+	
+	data_encoder.shuffle_data()
+	
+	print(data_encoder.prompts_encoded[0])
+	print(data_encoder.supersenses_encoded[0])
+	print(data_encoder.lemmas[0])
+	print(data_encoder.senses_ids[0])
+	print(tokenizer.decode(data_encoder.prompts_encoded[0]['input_ids'].squeeze(), skip_special_tokens=True))
+	
 	print("Process done.")
