@@ -29,7 +29,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                "other": ["institution", "possession", "time"]
                }
                       
-supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES)}
+supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES_EN)}
 NB_CLASSES = len(supersense2i)
 #supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 #id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
