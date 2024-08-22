@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
+from random import shuffle
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from dotenv import load_dotenv
 import os
