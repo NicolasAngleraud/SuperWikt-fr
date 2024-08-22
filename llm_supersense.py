@@ -303,7 +303,7 @@ if __name__ == '__main__':
 		print(supersense_encoded)
 		print(lemma)
 		print(sense_id)
-		print(tokenizer.decode(prompt_encoded['input_ids'].squeeze(), skip_special_tokens=True))
+		print(tokenizer.decode(prompt_encoded.squeeze(), skip_special_tokens=True))
 		
 	
 	print("Process done.")
