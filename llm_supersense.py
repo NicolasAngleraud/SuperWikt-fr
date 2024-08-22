@@ -294,11 +294,12 @@ if __name__ == '__main__':
 	data_encoder.encode()
 	
 	i=0
-	for prompt_encoded, supersense_encoded, lemma, sense_id in data_encoder.make_batches():
+	for prompt_encoded, supersense_encoded, attention_mask, lemma, sense_id in data_encoder.make_batches():
 		if i>0: break
 		i+=1
 		
 		print(prompt_encoded)
+		print(attention_mask)
 		print(supersense_encoded)
 		print(lemma)
 		print(sense_id)
