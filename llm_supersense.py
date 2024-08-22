@@ -290,9 +290,9 @@ if __name__ == '__main__':
 	
 	data_encoder.encode()
 	
-	print(len(data_encoder.prompts_encoded))
-	print(len(data_encoder.supersenses_encoded))
-	print(len(data_encoder.lemmas))
-	print(len(data_encoder.senses_ids))
+	print(len(data_encoder.prompts_encoded[0]))
+	print(len(data_encoder.supersenses_encoded[0]))
+	print(len(data_encoder.lemmas[0]))
+	print(len(data_encoder.senses_ids[0]))
 	
 	print("Process done.")
