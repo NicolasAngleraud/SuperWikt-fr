@@ -294,6 +294,5 @@ if __name__ == '__main__':
 	print(data_encoder.supersenses_encoded[0])
 	print(data_encoder.lemmas[0])
 	print(data_encoder.senses_ids[0])
-    print(tokenizer.decode(prompts_encoded[0]['input_ids'], skip_special_tokens=True))
-    
+	print(tokenizer.decode(prompts_encoded[0]['input_ids'], skip_special_tokens=True))
 	print("Process done.")
