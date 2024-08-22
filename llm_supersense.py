@@ -194,16 +194,18 @@ class promptEncoder:
 			end_idx = k+batch_size if k+batch_size <= len(self.supersenses_encoded) else len(self.supersenses_encoded)
 			k += batch_size
 
-			b_prompts_encoded = self.prompts_encoded[start_idx:end_idx]
+			b_prompts_encoded = [prompt_encoded['input_ids'] for prompt in self.prompts_encoded[start_idx:end_idx]]
+			b_attention_masks = [prompt_encoded['attention_mask'] for prompt in self.prompts_encoded[start_idx:end_idx]]
 			b_supersenses_encoded = self.supersenses_encoded[start_idx:end_idx]
 			b_senses_ids = self.senses_ids[start_idx:end_idx]
 			b_lemmas = self.lemmas[start_idx:end_idx]
 
 			b_prompts_encoded = torch.tensor(b_prompts_encoded).to(device)
+			b_attention_masks = torch.tensor(b_attention_masks).to(device)
 			b_supersenses_encoded = torch.tensor(b_supersenses_encoded).to(device)
 			
 
-			yield b_prompts_encoded, b_supersenses_encoded, b_senses_ids, b_lemmas
+			yield b_prompts_encoded, b_supersenses_encoded, b_attention_masks, b_senses_ids, b_lemmas
 
 
 
