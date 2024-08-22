@@ -155,7 +155,7 @@ class promptEncoder:
 		definitions_with_lemma = [f"{lemma.replace('_',' ')} = {definition}" for definition, lemma in zip(definitions, lemmas)]
 		
 		prompts = [def_to_prompt(definition) for definition in definitions_with_lemma]
-		prompts_encoded = [tokenizer.encode(text=prompt, add_special_tokens=True) for prompt in prompts]
+		prompts_encoded = [tokenizer(prompt, add_special_tokens=True, return_tensors='pt') for prompt in prompts]
 		
 		#prompts_encoded, _ = self.truncate(prompts_encoded)
 		#prompts_encoded = self.pad(prompts_encoded, pad_id=2)
