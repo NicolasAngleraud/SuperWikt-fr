@@ -286,6 +286,4 @@ if __name__ == '__main__':
 	
 	data_encoder.encode()
 	
-	
-	
-	return 0
+	print("Process done.")
