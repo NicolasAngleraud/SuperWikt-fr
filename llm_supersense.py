@@ -255,9 +255,11 @@ class LlamaSupersenseClfLM(nn.Module):
 	def evaluate(self, data_encoder, supersenses_tok):
 		self.eval()
 		accuracy = 0
+		k = 0
 		with torch.no_grad():
 			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
-				
+				k+=1
+				print("BATCH ", k)
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
 				supersense_probs = log_probs[:, supersenses_tok]  # shape: (batch_size, num_classes)
@@ -361,6 +363,7 @@ if __name__ == '__main__':
 	
 	train_encoder.encode()
 	
-	model.evaluate(train_encoder, supersenses_tok)
+	accuracy_train = model.evaluate(train_encoder, supersenses_tok)
 	
+	print("TRAIN ACCURACY = ", accuracy_train)
 	print("Process done.")
