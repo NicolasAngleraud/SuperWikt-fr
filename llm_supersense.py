@@ -256,7 +256,7 @@ class LlamaSupersenseClfLM(nn.Module):
 		self.eval()
 		accuracy = 0
 		with torch.no_grad():
-			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
@@ -271,7 +271,7 @@ class LlamaSupersenseClfLM(nn.Module):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
 		with torch.no_grad():
-			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
