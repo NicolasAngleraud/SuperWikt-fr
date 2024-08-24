@@ -151,6 +151,8 @@ class promptEncoder:
 		
 		if self.use_sample: df_definitions = df_definitions.sample(self.sample_size)
 		
+		self.length = len(df_definitions['definition'].tolist())
+		
 		tokenizer = self.tokenizer
 		
 		definitions = df_definitions['definition'].tolist()
@@ -216,11 +218,30 @@ class promptEncoder:
 
 class LlamaSupersenseClfLM(nn.Module):
 	
-	def __init__(self):
+	def __init__(self, params, tokenizer, hf_token, device):
 		super(LlamaSupersenseClfLM, self).__init__()
+		self.tokenizer = tokenizer
+		self.device = device
+		self.params = params
+		self.llm = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token).to(self.device)
 		
-	def forward(self):
-		pass
+		
+	def forward(self, prompt_enc, mask):
+		outputs = model(prompt_enc, attention_mask=mask, use_cache=False)
+		logits = outputs.logits
+		
+		#logits_first_token = logits[0, -1, :]
+		#log_probs = torch.nn.functional.log_softmax(logits_first_token, dim=-1)
+		
+		logits_last_token = logits[:, -1, :]  # shape: (batch_size, vocab_size)
+		log_probs = torch.nn.functional.log_softmax(logits_last_token, dim=-1)  # shape: (batch_size, vocab_size)
+		
+		# gen_toks = supersenses_tok[best_indices]
+		# probs = probs.cpu().numpy()
+		# supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
+		# best_index = np.argmax(supersense_probs)
+		# gen_tok = supersenses_tok[best_index]
+		return log_probs
 		
 	def train_clf(self):
 		pass
@@ -231,11 +252,51 @@ class LlamaSupersenseClfLM(nn.Module):
 	def load_clf(self):
 		pass
 		
-	def predict(self):
-		pass
+	def evaluate(self, data_encoder):
+		self.eval()
+		accuracy = 0
+		with torch.no_grad():
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				
+				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
+				supersense_probs = log_probs[:, supersenses_tok]  # shape: (batch_size, num_classes)
+				predicted_indices = torch.argmax(supersense_probs, dim=-1)  # shape: (batch_size,)
+				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				
+			return accuracy / data_encoder.length
+			
+	
+	def predict(self, data_encoder):
+		self.eval()
+		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
+		with torch.no_grad():
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				
+				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
+				supersense_probs = log_probs[:, supersenses_tok]  # shape: (batch_size, num_classes)
+				predicted_indices = torch.argmax(supersense_probs, dim=-1).tolist()  # shape: (batch_size,)
+				
+				pred = [SUPERSENSES_EN[SUPERSENSES.index(id2ss[i])] for i in predicted_indices]
+				gold = [SUPERSENSES_EN[i] for i in b_supersenses_encoded.tolist()]
+				prompts = [self.tokenizer.decode(token_ids.tolist(), skip_special_tokens=True) for token_ids in b_prompts_encoded]
+				definitions = [prompt.split('###DEFINITION : ')[1].split('###TYPE SEMANTIQUE :')[0].strip()  for prompt in prompts]
+				
+				predictions['lemma'].extend(b_lemmas)
+				predictions['sense_id'].extend(b_senses_ids)
+				predictions['gold'].extend(gold)
+				predictions['pred'].extend(pred)
+				predictions['definition'].extend(definitions)
+				
+			return predictions
+	
+	def evaluate_and_predict(self, data_encoder):
+	
+		accuracy = self.evaluate(data_encoder)
+		predictions = self.predict(data_encoder)
 		
-	def predict_and_evaluate(self):
-		pass
+		return accuracy, predictions	
 		
 		
 
@@ -263,43 +324,11 @@ class LlamaSupersenseClf(nn.Module):
 		pass
 		
 		
-'''
-n = 0
-for definition, gold in zip(definitions, gold_labels):
-	
-	prompt = f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quel est la classe sémantique la plus adaptée pour décrire la définition suivante ?
-	
-	###DEFINITION: {definition}
-	
-	###TYPE SEMANTIQUE: 
-	"""
 
-	inputs = tokenizer(prompt, return_tensors="pt")
-	input_ids = inputs['input_ids']
-	
-
-	with torch.no_grad():
-		outputs = model(input_ids, use_cache=False)
-		logits = outputs.logits
-
-	logits_first_token = logits[0, -1, :]
-	probs = torch.nn.functional.softmax(logits_first_token, dim=-1)
-	probs = probs.cpu().numpy()
-	
-	supersense_probs = [probs[ss_tok] for ss_tok in supersenses_tok]
-
-	best_index = np.argmax(supersense_probs)
-	gen_tok = supersenses_tok[best_index]
-	
-	pretty_print(prompt, gen_tok, gold)
-	
-	n += 1
-	if n>50: break
-	
 #NB_CLASSES = 30
 #model.lm_head = torch.nn.Linear(in_features=model.lm_head.in_features, out_features=NB_CLASSES)
 #print(model)
-'''
+
 
 if __name__ == '__main__':
 	
@@ -316,7 +345,6 @@ if __name__ == '__main__':
 		raise ValueError("HUGGINGFACE_TOKEN environment variable is not set.")
 
 	tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
-	#model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
 
 	tokenizer.pad_token_id = tokenizer.eos_token_id
 	
