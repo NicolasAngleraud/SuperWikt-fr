@@ -252,7 +252,7 @@ class LlamaSupersenseClfLM(nn.Module):
 	def load_clf(self):
 		pass
 		
-	def evaluate(self, data_encoder):
+	def evaluate(self, data_encoder, supersenses_tok):
 		self.eval()
 		accuracy = 0
 		with torch.no_grad():
@@ -267,7 +267,7 @@ class LlamaSupersenseClfLM(nn.Module):
 			return accuracy / data_encoder.length
 			
 	
-	def predict(self, data_encoder):
+	def predict(self, data_encoder, supersenses_tok, id2ss):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
 		with torch.no_grad():
@@ -291,10 +291,10 @@ class LlamaSupersenseClfLM(nn.Module):
 				
 			return predictions
 	
-	def evaluate_and_predict(self, data_encoder):
+	def evaluate_and_predict(self, data_encoder, supersenses_tok, id2ss):
 	
-		accuracy = self.evaluate(data_encoder)
-		predictions = self.predict(data_encoder)
+		accuracy = self.evaluate(data_encoder, supersenses_tok)
+		predictions = self.predict(data_encoder, supersenses_tok, id2ss)
 		
 		return accuracy, predictions	
 		
@@ -304,6 +304,9 @@ class LlamaSupersenseClf(nn.Module):
 	
 	def __init__(self):
 		super(LlamaSupersenseClf, self).__init__()
+		#NB_CLASSES = 30
+		#model.lm_head = torch.nn.Linear(in_features=model.lm_head.in_features, out_features=NB_CLASSES)
+		#print(model)
 		
 	def forward(self):
 		pass
@@ -325,9 +328,7 @@ class LlamaSupersenseClf(nn.Module):
 		
 		
 
-#NB_CLASSES = 30
-#model.lm_head = torch.nn.Linear(in_features=model.lm_head.in_features, out_features=NB_CLASSES)
-#print(model)
+
 
 
 if __name__ == '__main__':
@@ -338,6 +339,10 @@ if __name__ == '__main__':
 	
 	model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 	
+	params = {
+		"batch_size": 1
+	}
+	
 	load_dotenv()
 	hf_token = os.getenv("HUGGINGFACE_TOKEN")
 
@@ -345,27 +350,17 @@ if __name__ == '__main__':
 		raise ValueError("HUGGINGFACE_TOKEN environment variable is not set.")
 
 	tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
-
 	tokenizer.pad_token_id = tokenizer.eos_token_id
+	
+	model = LlamaSupersenseClfLM(params, tokenizer, hf_token, device)
 	
 	supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 	id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 	
-	data_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='train')
+	train_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='train')
 	
-	data_encoder.encode()
+	train_encoder.encode()
 	
-	i=0
-	for prompt_encoded, supersense_encoded, attention_mask, lemma, sense_id in data_encoder.make_batches():
-		if i>0: break
-		i+=1
-		
-		print(prompt_encoded)
-		print(attention_mask)
-		print(supersense_encoded)
-		print(lemma)
-		print(sense_id)
-		print(tokenizer.decode(prompt_encoded.squeeze(), skip_special_tokens=True))
-		
+	model.evaluate(train_encoder, supersenses_tok)
 	
 	print("Process done.")
