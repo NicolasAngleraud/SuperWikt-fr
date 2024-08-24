@@ -227,7 +227,7 @@ class LlamaSupersenseClfLM(nn.Module):
 		
 		
 	def forward(self, prompt_enc, mask):
-		outputs = model(prompt_enc, attention_mask=mask, use_cache=False)
+		outputs = self.llm(prompt_enc, attention_mask=mask, use_cache=False)
 		logits = outputs.logits
 		
 		#logits_first_token = logits[0, -1, :]
