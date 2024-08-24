@@ -359,11 +359,14 @@ if __name__ == '__main__':
 	supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 	id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 	
-	train_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='train')
+	freq_dev_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='freq-dev')
+	freq_dev_encoder.encode()
+	accuracy_freq_dev = model.evaluate(freq_dev_encoder, supersenses_tok)
+	print("FREQ DEV ACCURACY = ", accuracy_freq_dev)
+
+	rand_dev_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='rand-dev')
+	rand_dev_encoder.encode()
+	accuracy_rand_dev = model.evaluate(rand_dev_encoder, supersenses_tok)
+	print("RAND DEV ACCURACY = ", accuracy_rand_dev)	
 	
-	train_encoder.encode()
-	
-	accuracy_train = model.evaluate(train_encoder, supersenses_tok)
-	
-	print("TRAIN ACCURACY = ", accuracy_train)
 	print("Process done.")
