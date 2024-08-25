@@ -34,7 +34,7 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
 
 def enss2frss(enss):
 	mapping = dict(zip(SUPERSENSES_EN, SUPERSENSES))
-    return mapping.get(enss, "Element not found")
+	return mapping.get(enss, "Element not found")
                       
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES_EN)}
