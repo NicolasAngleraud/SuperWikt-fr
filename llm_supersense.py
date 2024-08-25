@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 
 
+np.random.seed(42)
 
 SUPERSENSES_EN = ['act', 'animal', 'artifact', 'attribute', 'body', 'cognition',
                'communication', 'event', 'feeling', 'food', 'institution', 'act*cognition',
@@ -29,6 +30,12 @@ HYPERSENSES = {"dynamic_situation": ["act", "event", "phenomenon"],
                "quantification": ["quantity", "part", "group"],
                "other": ["institution", "possession", "time"]
                }
+
+
+def enss2frss(enss):
+	mapping = dict(zip(SUPERSENSES_EN, SUPERSENSES))
+    return mapping.get(enss, "Element not found")
+                      
                       
 supersense2i = {supersense: i for i, supersense in enumerate(SUPERSENSES_EN)}
 NB_CLASSES = len(supersense2i)
@@ -68,12 +75,20 @@ def pretty_print(prompt, pred, gold):
 
 
 
-def def_to_prompt(definition):
-	return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quelle est la classe sémantique la plus adaptée pour décrire la définition suivante ?
+def def_to_prompt(definition, few_shot_examples=None):
+	
+	if few_shot_examples:
+		few_shot_prompt = '\n'.join([f"###DEFINITION : {example[0]} --> ###CLASSE SEMANTIQUE : {example[1]}" for example in few_shot_examples])
+		return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quelle est la classe sémantique la plus adaptée pour décrire la définition suivante ?
+{few_shot_prompt}
+###DEFINITION : {definition} --> ###CLASSE SEMANTIQUE : """
+
+	else:
+		return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quelle est la classe sémantique la plus adaptée pour décrire la définition suivante ?
 	
 ###DEFINITION : {definition}
 	
-###TYPE SEMANTIQUE : """
+###CLASSE SEMANTIQUE : """
 
 
 class promptEncoder:
@@ -149,6 +164,9 @@ class promptEncoder:
 		df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
 		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 		
+		few_shot_examples = df_definitions.groupby('supersense', group_keys=False).apply(lambda x: x.sample(1))
+		few_shot_examples = [(definition, enss2frss(supersense)) for definition, supersense in zip(few_shot_examples['definition'].tolist(),few_shot_examples['supersense'].tolist())]
+		
 		if self.use_sample: df_definitions = df_definitions.sample(self.sample_size)
 		
 		self.length = len(df_definitions['definition'].tolist())
@@ -162,7 +180,7 @@ class promptEncoder:
 		
 		definitions_with_lemma = [f"{lemma.replace('_',' ')} = {definition}" for definition, lemma in zip(definitions, lemmas)]
 		
-		prompts = [def_to_prompt(definition) for definition in definitions_with_lemma]
+		prompts = [def_to_prompt(definition, few_shot_examples) for definition in definitions_with_lemma]
 		prompts_encoded = [tokenizer(prompt, add_special_tokens=True) for prompt in prompts]
 		
 		#prompts_encoded, _ = self.truncate(prompts_encoded)
@@ -359,11 +377,13 @@ if __name__ == '__main__':
 	supersenses_tok = [tokenizer.encode(supersense, add_special_tokens=False)[0] for supersense in SUPERSENSES]
 	id2ss = {id_tok: SUPERSENSES[i] for i, id_tok in enumerate(supersenses_tok)}
 	
+	'''
 	freq_dev_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='freq-dev')
 	freq_dev_encoder.encode()
 	accuracy_freq_dev = model.evaluate(freq_dev_encoder, supersenses_tok)
 	print("FREQ DEV ACCURACY = ", accuracy_freq_dev)
-
+	'''
+	
 	rand_dev_encoder = promptEncoder(data_file=data_file, tokenizer=tokenizer, device=device, dataset='rand-dev')
 	rand_dev_encoder.encode()
 	accuracy_rand_dev = model.evaluate(rand_dev_encoder, supersenses_tok)
