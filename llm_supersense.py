@@ -181,6 +181,8 @@ class promptEncoder:
 		definitions_with_lemma = [f"{lemma.replace('_',' ')} = {definition}" for definition, lemma in zip(definitions, lemmas)]
 		
 		prompts = [def_to_prompt(definition, few_shot_examples) for definition in definitions_with_lemma]
+		
+		print(prompts[0])
 		prompts_encoded = [tokenizer(prompt, add_special_tokens=True) for prompt in prompts]
 		
 		#prompts_encoded, _ = self.truncate(prompts_encoded)
@@ -275,9 +277,9 @@ class LlamaSupersenseClfLM(nn.Module):
 		accuracy = 0
 		k = 0
 		with torch.no_grad():
-			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, b_senses_ids, b_lemmas in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
 				k+=1
-				print("BATCH ", k)
+				print("BATCH ", k, b_senses_ids)
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
 				supersense_probs = log_probs[:, supersenses_tok]  # shape: (batch_size, num_classes)
@@ -291,7 +293,7 @@ class LlamaSupersenseClfLM(nn.Module):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "definition":[]}
 		with torch.no_grad():
-			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, _, _ in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
+			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, b_senses_ids, b_lemmas in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
 				
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
