@@ -75,10 +75,15 @@ def pretty_print(prompt, pred, gold):
 
 
 
-def def_to_prompt(definition, few_shot_examples=None):
+def def_to_prompt(definition, few_shot_examples=None, use_lemma=True):
 	
 	if few_shot_examples:
-		few_shot_prompt = '\n'.join([f"###DEFINITION : {example[0]} --> ###CLASSE SEMANTIQUE : {example[1]}" for example in few_shot_examples])
+		if use_lemma:
+			few_shot_prompt = '\n'.join([f"###DEFINITION : {example[2]} = {example[0]} --> ###CLASSE SEMANTIQUE : {example[1]}" for example in few_shot_examples])
+		
+		else:
+			few_shot_prompt = '\n'.join([f"###DEFINITION : {example[0]} --> ###CLASSE SEMANTIQUE : {example[1]}" for example in few_shot_examples])
+			
 		return f"""###INSTRUCTION : Parmi les classes sémantiques Action, Animal, Objet, Attribut, Corps, Pensée, Communication, Evènement, Sentiment, Nourriture, Institution, Opération, Nature, Possession, Personne, Phénomène, Plante, Document, Quantité, Relation, Etat, Substance, Temps, Groupe, quelle est la classe sémantique la plus adaptée pour décrire la définition suivante ?
 {few_shot_prompt}
 ###DEFINITION : {definition} --> ###CLASSE SEMANTIQUE : """
@@ -156,7 +161,7 @@ class promptEncoder:
 		return sentences_with_special_tokens, rks
 		
 		
-	def encode(self):
+	def encode(self, use_lemma=True):
 		
 		df_definitions = pd.read_csv(self.data_file, sep='\t', low_memory=False).astype(str)
 		df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES_EN)]
@@ -165,7 +170,7 @@ class promptEncoder:
 		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 		
 		few_shot_examples = df_definitions.groupby('supersense', group_keys=False).apply(lambda x: x.sample(1))
-		few_shot_examples = [(definition, enss2frss(supersense)) for definition, supersense in zip(few_shot_examples['definition'].tolist(),few_shot_examples['supersense'].tolist())]
+		few_shot_examples = [(definition, enss2frss(supersense), lemma.replace('_',' ')) for definition, supersense, lemma in zip(few_shot_examples['definition'].tolist(), few_shot_examples['supersense'].tolist(), few_shot_examples['lemma'].tolist())]
 		
 		if self.use_sample: df_definitions = df_definitions.sample(self.sample_size)
 		
@@ -178,9 +183,9 @@ class promptEncoder:
 		lemmas = df_definitions['lemma'].tolist()
 		senses_ids = df_definitions['sense_id'].tolist()
 		
-		definitions_with_lemma = [f"{lemma.replace('_',' ')} = {definition}" for definition, lemma in zip(definitions, lemmas)]
-		
-		prompts = [def_to_prompt(definition, few_shot_examples) for definition in definitions_with_lemma]
+		if use_lemma: definitions = [f"{lemma.replace('_',' ')} = {definition}" for definition, lemma in zip(definitions, lemmas)]
+
+		prompts = [def_to_prompt(definition, few_shot_examples, use_lemma) for definition in definitions]
 		
 		print(prompts[0])
 		prompts_encoded = [tokenizer(prompt, add_special_tokens=True) for prompt in prompts]
