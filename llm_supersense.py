@@ -286,7 +286,7 @@ class LlamaSupersenseClfLM(nn.Module):
 		with torch.no_grad():
 			for b_prompts_encoded, b_supersenses_encoded, b_attention_masks, b_senses_ids, b_lemmas in data_encoder.make_batches(batch_size=self.params['batch_size'], shuffle_data=False):
 				k+=1
-				print("BATCH ", k, b_senses_ids)
+				#print("BATCH ", k, b_senses_ids)
 				
 				log_probs = self.forward(b_prompts_encoded, b_attention_masks)
 				supersense_probs = log_probs[:, supersenses_tok]  # shape: (batch_size, num_classes)
