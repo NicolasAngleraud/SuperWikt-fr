@@ -165,11 +165,13 @@ class promptEncoder:
 		
 		df_definitions = pd.read_csv(self.data_file, sep='\t', low_memory=False).astype(str)
 		df_definitions = df_definitions[df_definitions['supersense'].isin(SUPERSENSES_EN)]
-		df_definitions = df_definitions[df_definitions['set']==self.dataset]
 		df_definitions = df_definitions[(df_definitions['definition'] != "") & (df_definitions['definition'].notna())]
 		df_definitions['lemma'] = df_definitions['lemma'].str.replace('_', ' ')
 		
-		few_shot_examples = df_definitions.groupby('supersense', group_keys=False).apply(lambda x: x.sample(1))
+		train_df = df_definitions[df_definitions['set']=='train']
+		df_definitions = df_definitions[df_definitions['set']==self.dataset]
+		
+		few_shot_examples = train_df.groupby('supersense', group_keys=False).apply(lambda x: x.sample(1))
 		few_shot_examples = [(definition, enss2frss(supersense), lemma.replace('_',' ')) for definition, supersense, lemma in zip(few_shot_examples['definition'].tolist(), few_shot_examples['supersense'].tolist(), few_shot_examples['lemma'].tolist())]
 		
 		if self.use_sample: df_definitions = df_definitions.sample(self.sample_size)
