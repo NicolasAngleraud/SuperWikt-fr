@@ -1,10 +1,14 @@
-pandas
-argparse
-torch
-sacremoses
-numpy
-transformers
-matplotlib
-spacy
-wget
+fr-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_lg-3.6.0/fr_core_news_lg-3.6.0-py3-none-any.whl
+matplotlib==3.3.4
+numpy==1.19.5
+pandas==1.1.5
+sacremoses==0.0.53
+spacy==3.6.1
+spacy-legacy==3.0.12
+spacy-loggers==1.0.5
+torch==1.10.2+cu102
+torch-scatter==2.0.9
+torchaudio==0.10.2+cu102
+torchvision==0.11.3+cu102
+transformers==4.18.0
 
