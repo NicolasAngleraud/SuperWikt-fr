@@ -388,6 +388,7 @@ if __name__ == '__main__':
 	
 	print(supersenses_tok)
 	print(id2ss)
+	print([tokenizer.encode(supersense, add_special_tokens=False) for supersense in SUPERSENSES])
 	print([tokenizer.decode(supersense_id) for supersense_id in supersenses_tok])
 	
 	'''
