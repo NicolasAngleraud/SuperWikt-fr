@@ -53,6 +53,8 @@ class Encoder:
 		self.sense_datafile = sense_datafile
 		self.ex_datafile = ex_datafile
 		
+		self.dataset = dataset
+		
 		self.df_definitions = pd.read_csv(sense_datafile, sep='\t')
 		self.df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
 		self.df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
