@@ -123,17 +123,16 @@ if __name__ == '__main__':
 	train_encoder_9000.truncate_senses(k=9000)
 
 	
-	print("NB SENSES FULL", len(train_definitions_encoder.senses_ids))
-	print("NB SENSES TRUCATION 1000", len(train_encoder_1000.senses_ids))
-	print("NB SENSES TRUCATION 2000", len(train_encoder_2000.senses_ids))
-	print("NB SENSES TRUCATION 3000", len(train_encoder_3000.senses_ids))
-	print("NB SENSES TRUCATION 4000", len(train_encoder_4000.senses_ids))
-	print("NB SENSES TRUCATION 5000", len(train_encoder_5000.senses_ids))
-	print("NB SENSES TRUCATION 6000", len(train_encoder_6000.senses_ids))
-	print("NB SENSES TRUCATION 7000", len(train_encoder_7000.senses_ids))
-	print("NB SENSES TRUCATION 8000", len(train_encoder_8000.senses_ids))
-	print("NB SENSES TRUCATION 9000", len(train_encoder_9000.senses_ids))
-	
+	print(train_encoder_1000.senses_ids[:10])
+	print(train_encoder_2000.senses_ids[:10])
+	print(train_encoder_3000.senses_ids[:10])
+	print(train_encoder_4000.senses_ids[:10])
+	print(train_encoder_5000.senses_ids[:10])
+	print(train_encoder_6000.senses_ids[:10])
+	print(train_encoder_7000.senses_ids[:10])
+	print(train_encoder_8000.senses_ids[:10])
+	print(train_encoder_9000.senses_ids[:10])
+	print(train_definitions_encoder.senses_ids[:10])
 	
 	"""
 	print('TRAINING DEFINITION CLASSIFIER...\n')
