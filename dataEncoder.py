@@ -174,7 +174,7 @@ class definitionEncoder(Encoder):
 		self.supersenses_encoded = supersenses_encoded
 		self.lemmas = lemmas
 		self.senses_ids = senses_ids
-		
+	
 		
 	def shuffle_data(self):
 	
@@ -188,6 +188,14 @@ class definitionEncoder(Encoder):
 		self.supersenses_encoded = supersenses_encoded
 		self.lemmas = lemmas
 		self.senses_ids = senses_ids
+	
+	
+	def truncate_senses(self, k):
+		self.definitions_with_lemma_encoded = self.definitions_with_lemma_encoded[:k]
+		self.definitions_without_lemma_encoded = self.definitions_without_lemma_encoded[:k]
+		self.supersenses_encoded = self.supersenses_encoded[:k]
+		self.lemmas = self.lemmas[:k]
+		self.senses_ids = self.senses_ids[:k]
 		
 	def make_batches(self, batch_size, device, shuffle_data=False):
 		if shuffle_data: self.shuffle_data()
