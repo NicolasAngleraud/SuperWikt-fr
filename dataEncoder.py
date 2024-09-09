@@ -10,6 +10,7 @@ import numpy as np
 from transformers import AutoModel, AutoTokenizer
 from matplotlib import pyplot as plt
 import warnings
+import copy
 warnings.filterwarnings("ignore")
 
 
