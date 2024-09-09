@@ -97,7 +97,7 @@ if __name__ == '__main__':
 	
 	
 	train_encoder = train_definitions_encoder.clone()
-	train_encoder = train_encoder.truncate_senses(k=2500)
+	train_encoder.truncate_senses(k=2500)
 	
 	
 	print("NB SENSES FULL", len(train_definitions_encoder.senses_ids))
