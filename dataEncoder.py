@@ -144,25 +144,25 @@ class definitionEncoder(Encoder):
 
 	
 	def clone(self):
-        new_instance = definitionEncoder(
-            sense_datafile=self.sense_datafile,
-            ex_datafile=self.ex_datafile,
-            dataset=self.dataset,
-            tokenizer=self.tokenizer,
-            use_sample=self.use_sample,
-            sample_size=self.sample_size
-        )
+		new_instance = definitionEncoder(
+										sense_datafile=self.sense_datafile,
+										ex_datafile=self.ex_datafile,
+										dataset=self.dataset,
+										tokenizer=self.tokenizer,
+										use_sample=self.use_sample,
+										sample_size=self.sample_size
+										)
 
-        new_instance.df_definitions = self.df_definitions.copy()
-        new_instance.df_examples = self.df_examples.copy()
-        
-        new_instance.definitions_with_lemma_encoded = copy.deepcopy(self.definitions_with_lemma_encoded)
-        new_instance.definitions_without_lemma_encoded = copy.deepcopy(self.definitions_without_lemma_encoded)
-        new_instance.supersenses_encoded = copy.deepcopy(self.supersenses_encoded)
-        new_instance.lemmas = copy.deepcopy(self.lemmas)
-        new_instance.senses_ids = copy.deepcopy(self.senses_ids)
+		new_instance.df_definitions = self.df_definitions.copy()
+		new_instance.df_examples = self.df_examples.copy()
 
-        return new_instance
+		new_instance.definitions_with_lemma_encoded = copy.deepcopy(self.definitions_with_lemma_encoded)
+		new_instance.definitions_without_lemma_encoded = copy.deepcopy(self.definitions_without_lemma_encoded)
+		new_instance.supersenses_encoded = copy.deepcopy(self.supersenses_encoded)
+		new_instance.lemmas = copy.deepcopy(self.lemmas)
+		new_instance.senses_ids = copy.deepcopy(self.senses_ids)
+
+		return new_instance
 		
 	
 	def encode(self):
