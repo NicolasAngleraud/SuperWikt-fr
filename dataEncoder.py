@@ -141,6 +141,19 @@ class definitionEncoder(Encoder):
 	def __init__(self, sense_datafile, ex_datafile, dataset, tokenizer, use_sample=False, sample_size=32):
 		super().__init__(sense_datafile, ex_datafile, dataset, tokenizer, use_sample, sample_size)
 
+	
+	def __deepcopy__(self, memo):
+
+		new_instance = self.__class__.__new__(self.__class__)
+		memo[id(self)] = new_instance
+
+		for attr, value in self.__dict__.items():
+			if attr == 'tokenizer':
+				setattr(new_instance, attr, self.tokenizer)
+			else:
+				setattr(new_instance, attr, copy.deepcopy(value, memo))
+
+		return new_instance
 		
 	
 	def encode(self):
