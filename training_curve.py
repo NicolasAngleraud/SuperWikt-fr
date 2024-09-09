@@ -15,7 +15,6 @@ import warnings
 import lexicalClf as clf
 import subprocess
 import dataEncoder as data
-import copy
 warnings.filterwarnings("ignore")
 
 
@@ -97,7 +96,7 @@ if __name__ == '__main__':
 	
 	
 	
-	train_encoder = copy.deepcopy(train_definitions_encoder)
+	train_encoder = train_encoder.clone()
 	train_encoder = train_encoder.truncate_senses(k=2500)
 	
 	
