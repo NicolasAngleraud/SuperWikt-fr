@@ -46,8 +46,8 @@ def get_parser_args():
 	parser.add_argument("--device_id", choices=['cpu', '0', '1', '2', '3'], help="Id of the device used for computation.")
 	parser.add_argument("--sense_data_file", default="./sense_data.tsv", help="The tsv file containing all the annotated sense data from Wiktionary.")
 	parser.add_argument("--ex_data_file", default="./ex_data.tsv", help="The tsv file containing all the annotated examples data from Wiktionary.")
-	parser.add_argument('--out', required=True, help='Path to the output folder where to save the predictions from trained models.')
-	parser.add_argument('--model_dir', required=True, help='Path to the folder where to save the trained models.')
+	#parser.add_argument('--out', required=True, help='Path to the output folder where to save the predictions from trained models.')
+	#parser.add_argument('--model_dir', required=True, help='Path to the folder where to save the trained models.')
 	parser.add_argument('-v', "--trace", action="store_true", help="Toggles the verbose mode. Default=False")
 	args = parser.parse_args()
 	return args
