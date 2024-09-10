@@ -79,20 +79,20 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	print('ENCODING DEFINITIONS DATA...\n')
-	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, use_sample=False)
+	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=True, use_sample=False)
 	train_definitions_encoder.encode()
 	train_definitions_encoder.shuffle_data()
 	
-	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, use_sample=False)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, remove_demonyms=True, use_sample=False)
 	freq_dev_definitions_encoder.encode()
 	
-	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, use_sample=False)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=True, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 	
-	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, use_sample=False)
+	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=True, use_sample=False)
 	freq_test_definitions_encoder.encode()
 	
-	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, use_sample=False)
+	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, remove_demonyms=True, use_sample=False)
 	rand_test_definitions_encoder.encode()
 	
 	train_encoder_1000 = train_definitions_encoder.clone()
