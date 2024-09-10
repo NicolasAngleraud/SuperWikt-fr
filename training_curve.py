@@ -110,11 +110,7 @@ if __name__ == '__main__':
 	print('DEFINITIONS DATA ENCODED.\n')
 	
 	results = []
-	
-	for enc in [train_encoder_2000, train_encoder_4000, train_encoder_6000, train_encoder_8000, train_definitions_encoder, freq_dev_definitions_encoder, freq_test_definitions_encoder, rand_dev_definitions_encoder, rand_test_definitions_encoder]:
-		print(enc.length)
-	
-	"""
+
 	
 	for nb, enc in zip([2000, 4000, 6000, 8000, 10000], [train_encoder_2000, train_encoder_4000, train_encoder_6000, train_encoder_8000, train_definitions_encoder]):
 	
@@ -179,4 +175,4 @@ if __name__ == '__main__':
 	
 	df = pd.DataFrame(results)
 	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
-	"""
+	
