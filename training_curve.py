@@ -61,7 +61,7 @@ if __name__ == '__main__':
 		DEVICE = 'cpu'
 	
 	
-	def_lem_clf_file = './out/models/NEW_def_lem_clf.params'
+	def_lem_clf_file = f'./out/models/NEW_def_lem_clf_{device_id}.params'
 
 	
 	params_def = {
