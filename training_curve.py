@@ -79,56 +79,47 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	print('ENCODING DEFINITIONS DATA...\n')
-	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=True, use_sample=False)
+	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=False, use_sample=False)
 	train_definitions_encoder.encode()
 	train_definitions_encoder.shuffle_data()
 	
-	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, remove_demonyms=True, use_sample=False)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, remove_demonyms=False, use_sample=False)
 	freq_dev_definitions_encoder.encode()
 	
-	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=True, use_sample=False)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=False, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 	
-	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=True, use_sample=False)
+	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=False, use_sample=False)
 	freq_test_definitions_encoder.encode()
 	
-	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, remove_demonyms=True, use_sample=False)
+	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, remove_demonyms=False, use_sample=False)
 	rand_test_definitions_encoder.encode()
-	
-	train_encoder_1000 = train_definitions_encoder.clone()
-	train_encoder_1000.truncate_senses(k=1000)
 	
 	train_encoder_2000 = train_definitions_encoder.clone()
 	train_encoder_2000.truncate_senses(k=2000)
 	
-	train_encoder_3000 = train_definitions_encoder.clone()
-	train_encoder_3000.truncate_senses(k=3000)
-	
 	train_encoder_4000 = train_definitions_encoder.clone()
 	train_encoder_4000.truncate_senses(k=4000)
-	
-	train_encoder_5000 = train_definitions_encoder.clone()
-	train_encoder_5000.truncate_senses(k=5000)
 	
 	train_encoder_6000 = train_definitions_encoder.clone()
 	train_encoder_6000.truncate_senses(k=6000)
 	
-	train_encoder_7000 = train_definitions_encoder.clone()
-	train_encoder_7000.truncate_senses(k=7000)
-	
 	train_encoder_8000 = train_definitions_encoder.clone()
 	train_encoder_8000.truncate_senses(k=8000)
-	
-	train_encoder_9000 = train_definitions_encoder.clone()
-	train_encoder_9000.truncate_senses(k=9000)
+
 	print('DEFINITIONS DATA ENCODED.\n')
 	
 	results = []
 	
-	for run in range(5):
+	for enc in [train_encoder_2000, train_encoder_4000, train_encoder_6000, train_encoder_8000, train_definitions_encoder, freq_dev_definitions_encoder, freq_test_definitions_encoder, rand_dev_definitions_encoder, rand_test_definitions_encoder]:
+		print(enc.length)
+	
+	"""
+	
+	for nb, enc in zip([2000, 4000, 6000, 8000, 10000], [train_encoder_2000, train_encoder_4000, train_encoder_6000, train_encoder_8000, train_definitions_encoder]):
+	
+		for run in range(5):
 		
-		for nb, enc in zip([1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000], [train_encoder_1000, train_encoder_2000, train_encoder_3000, train_encoder_4000, train_encoder_5000, train_encoder_6000, train_encoder_7000, train_encoder_8000, train_encoder_9000, train_definitions_encoder]):
-			
 			print()
 			print("RUN", run+1, "NB TRAINING EXAMPLES", nb)
 			print()
@@ -188,4 +179,4 @@ if __name__ == '__main__':
 	
 	df = pd.DataFrame(results)
 	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
-	
+	"""
