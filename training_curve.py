@@ -123,17 +123,11 @@ if __name__ == '__main__':
 	train_encoder_9000.truncate_senses(k=9000)
 	print('DEFINITIONS DATA ENCODED.\n')
 	
-	
-	for enc in [train_encoder_1000, train_encoder_2000, train_encoder_3000, train_encoder_4000, train_encoder_5000, train_encoder_6000, train_encoder_7000, train_encoder_8000, train_encoder_9000, train_definitions_encoder, rand_dev_definitions_encoder, rand_test_definitions_encoder]:
-		print(enc.length)
-	
 	results = []
-	"""
+	
 	for run in range(5):
 		
-		#[1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
-		#[train_encoder_1000, train_encoder_2000, train_encoder_3000, train_encoder_4000, train_encoder_5000, train_encoder_6000, train_encoder_7000, train_encoder_8000, train_encoder_9000, train_definitions_encoder]
-		for nb, enc in zip([1000, 2000], [train_encoder_1000, train_encoder_2000]):
+		for nb, enc in zip([1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000], [train_encoder_1000, train_encoder_2000, train_encoder_3000, train_encoder_4000, train_encoder_5000, train_encoder_6000, train_encoder_7000, train_encoder_8000, train_encoder_9000, train_definitions_encoder]):
 			
 			print()
 			print("RUN", run+1, "NB TRAINING EXAMPLES", nb)
@@ -194,6 +188,4 @@ if __name__ == '__main__':
 	
 	df = pd.DataFrame(results)
 	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
-	
-	"""
 	
