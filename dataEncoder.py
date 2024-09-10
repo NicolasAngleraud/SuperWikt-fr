@@ -144,8 +144,8 @@ class Encoder:
 
 class definitionEncoder(Encoder):
 	
-	def __init__(self, sense_datafile, ex_datafile, dataset, tokenizer, use_sample=False, sample_size=32):
-		super().__init__(sense_datafile, ex_datafile, dataset, tokenizer, use_sample, sample_size)
+	def __init__(self, sense_datafile, ex_datafile, dataset, tokenizer, remove_demonyms=False, use_sample=False, sample_size=32):
+		super().__init__(sense_datafile, ex_datafile, dataset, tokenizer, use_sample=use_sample, sample_size=sample_size, remove_demonyms=remove_demonyms)
 
 	
 	def clone(self):
