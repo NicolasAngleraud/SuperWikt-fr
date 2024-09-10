@@ -222,6 +222,7 @@ class definitionEncoder(Encoder):
 		self.supersenses_encoded = self.supersenses_encoded[:k]
 		self.lemmas = self.lemmas[:k]
 		self.senses_ids = self.senses_ids[:k]
+		self.length = k
 		
 	def make_batches(self, batch_size, device, shuffle_data=False):
 		if shuffle_data: self.shuffle_data()
