@@ -177,20 +177,20 @@ if __name__ == '__main__':
 			
 			
 			freq_dev_df = pd.DataFrame(freq_dev_predictions)
-			freq_dev_df.to_csv(f'./out/training_curve/freq_dev_preds_{nb}_{run}.tsv', sep='\t', index=False, encoding='utf-8')
+			freq_dev_df.to_csv(f'./out/training_curve/freq_dev_preds_{nb}_{run}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 
 			rand_dev_df = pd.DataFrame(rand_dev_predictions)
-			rand_dev_df.to_csv(f'./out/training_curve/rand_dev_preds_{nb}_{run}.tsv', sep='\t', index=False, encoding='utf-8')
+			rand_dev_df.to_csv(f'./out/training_curve/rand_dev_preds_{nb}_{run}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 
 			freq_test_df = pd.DataFrame(freq_test_predictions)
-			freq_test_df.to_csv(f'./out/training_curve/freq_test_preds_{nb}_{run}.tsv', sep='\t', index=False, encoding='utf-8')
+			freq_test_df.to_csv(f'./out/training_curve/freq_test_preds_{nb}_{run}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 
 			rand_test_df = pd.DataFrame(rand_test_predictions)
-			rand_test_df.to_csv(f'./out/training_curve/rand_test_preds_{nb}_{run}.tsv', sep='\t', index=False, encoding='utf-8')
+			rand_test_df.to_csv(f'./out/training_curve/rand_test_preds_{nb}_{run}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 			
 	
 	df = pd.DataFrame(results)
-	df.to_csv('./out/training_curve/training_curve.tsv', sep='\t', index=False, encoding='utf-8')
+	df.to_csv('./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 	
 	
 	
