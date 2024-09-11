@@ -122,11 +122,11 @@ if __name__ == '__main__':
 			print()
 
 			print('TRAINING DEFINITION CLASSIFIER...\n')
-			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
+			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 			def_clf.train_clf(enc, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 			print('DEFINITION CLASSIFIER TRAINED.\n')
 			print('LOADING BEST DEFINITION CLASSIFIER...\n')
-			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
+			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
 			def_clf.load_clf(def_lem_clf_file)
 			print('BEST DEFINITION CLASSIFIER LOADED.\n')
 
