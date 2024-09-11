@@ -69,7 +69,7 @@ if __name__ == '__main__':
 		"batch_size": 16,
 		"hidden_layer_size": 768,
 		"patience": 2,
-		"lr": 0.000005,
+		"lr": 0.00001,
 		"weight_decay": 0.001,
 		"frozen": False,
 		"max_seq_length": 100
@@ -79,20 +79,21 @@ if __name__ == '__main__':
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 	
 	print('ENCODING DEFINITIONS DATA...\n')
-	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=True, use_sample=False)
+	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=False, use_sample=False)
 	train_definitions_encoder.encode()
 	train_definitions_encoder.shuffle_data()
 	
-	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, remove_demonyms=True, use_sample=False)
+	freq_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, remove_demonyms=False, use_sample=False)
 	freq_dev_definitions_encoder.encode()
 	
-	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=True, use_sample=False)
+	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=False, use_sample=False)
 	rand_dev_definitions_encoder.encode()
 	
-	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=True, use_sample=False)
+	"""
+	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=False, use_sample=False)
 	freq_test_definitions_encoder.encode()
 	
-	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, remove_demonyms=True, use_sample=False)
+	rand_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-test", tokenizer, remove_demonyms=False, use_sample=False)
 	rand_test_definitions_encoder.encode()
 	
 	train_encoder_2000 = train_definitions_encoder.clone()
@@ -106,13 +107,13 @@ if __name__ == '__main__':
 	
 	train_encoder_8000 = train_definitions_encoder.clone()
 	train_encoder_8000.truncate_senses(k=8000)
-
+	"""
 	print('DEFINITIONS DATA ENCODED.\n')
 	
 	results = []
 
 	
-	for nb, enc in zip([2000, 4000, 6000, 8000, 10000], [train_encoder_2000, train_encoder_4000, train_encoder_6000, train_encoder_8000, train_definitions_encoder]):
+	for nb, enc in zip([10117], [train_definitions_encoder]):
 	
 		for run in range(5):
 		
@@ -121,11 +122,11 @@ if __name__ == '__main__':
 			print()
 
 			print('TRAINING DEFINITION CLASSIFIER...\n')
-			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
+			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
 			def_clf.train_clf(enc, freq_dev_definitions_encoder, rand_dev_definitions_encoder, def_lem_clf_file)
 			print('DEFINITION CLASSIFIER TRAINED.\n')
 			print('LOADING BEST DEFINITION CLASSIFIER...\n')
-			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=True, bert_model_name=MODEL_NAME)
+			def_clf = clf.monoRankClf(params_def, DEVICE, use_lemma=False, bert_model_name=MODEL_NAME)
 			def_clf.load_clf(def_lem_clf_file)
 			print('BEST DEFINITION CLASSIFIER LOADED.\n')
 
