@@ -136,29 +136,29 @@ if __name__ == '__main__':
 			freq_dev_accuracy = def_clf.evaluate(freq_dev_definitions_encoder)
 			rand_dev_accuracy = def_clf.evaluate(rand_dev_definitions_encoder)
 
-			freq_test_accuracy = def_clf.evaluate(freq_test_definitions_encoder)
-			rand_test_accuracy = def_clf.evaluate(rand_test_definitions_encoder)
+			#freq_test_accuracy = def_clf.evaluate(freq_test_definitions_encoder)
+			#rand_test_accuracy = def_clf.evaluate(rand_test_definitions_encoder)
 
 			print("train def accurcay = ", percentage(train_accuracy))
 			print("freq dev def accurcay = ", percentage(freq_dev_accuracy))
 			print("rand dev def accurcay = ", percentage(rand_dev_accuracy))
-			print("freq test def accurcay = ", percentage(freq_test_accuracy))
-			print("rand test def accurcay = ", percentage(rand_test_accuracy))
+			#print("freq test def accurcay = ", percentage(freq_test_accuracy))
+			#print("rand test def accurcay = ", percentage(rand_test_accuracy))
 			print()
 			
 			comb = {"number_training_examples": nb,
 					"run": run+1,
 					"train_accuracy": train_accuracy,
 					"freq_dev_accuracy": freq_dev_accuracy,
-					"rand_dev_accuracy": rand_dev_accuracy,
-					"freq_test_accuracy": freq_test_accuracy,
-					"rand_test_accuracy": rand_test_accuracy}
+					"rand_dev_accuracy": rand_dev_accuracy}#,
+					#"freq_test_accuracy": freq_test_accuracy,
+					#"rand_test_accuracy": rand_test_accuracy}
 			results.append(comb)
 			
 			freq_dev_predictions = def_clf.predict(freq_dev_definitions_encoder)
 			rand_dev_predictions = def_clf.predict(rand_dev_definitions_encoder)
-			freq_test_predictions = def_clf.predict(freq_test_definitions_encoder)
-			rand_test_predictions = def_clf.predict(rand_test_definitions_encoder)
+			#freq_test_predictions = def_clf.predict(freq_test_definitions_encoder)
+			#rand_test_predictions = def_clf.predict(rand_test_definitions_encoder)
 			
 			
 			freq_dev_df = pd.DataFrame(freq_dev_predictions)
@@ -167,11 +167,11 @@ if __name__ == '__main__':
 			rand_dev_df = pd.DataFrame(rand_dev_predictions)
 			rand_dev_df.to_csv(f'./out/training_curve/rand_dev_preds_{nb}_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 
-			freq_test_df = pd.DataFrame(freq_test_predictions)
-			freq_test_df.to_csv(f'./out/training_curve/freq_test_preds_{nb}_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+			#freq_test_df = pd.DataFrame(freq_test_predictions)
+			#freq_test_df.to_csv(f'./out/training_curve/freq_test_preds_{nb}_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 
-			rand_test_df = pd.DataFrame(rand_test_predictions)
-			rand_test_df.to_csv(f'./out/training_curve/rand_test_preds_{nb}_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+			#rand_test_df = pd.DataFrame(rand_test_predictions)
+			#rand_test_df.to_csv(f'./out/training_curve/rand_test_preds_{nb}_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 			
 	
 	df = pd.DataFrame(results)
