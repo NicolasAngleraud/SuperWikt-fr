@@ -211,7 +211,7 @@ if __name__ == '__main__':
 	results = []
 	
 	
-	for run in range(3):
+	for run in range(2):
 		
 		print()
 		print("RUN", run+1)

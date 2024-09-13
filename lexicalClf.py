@@ -534,21 +534,27 @@ class multiRankClf(nn.Module):
 		
 		return accuracy, predictions
 		
-		
-	# TODO
+
 	def evaluate_wiki_senses(self, data_encoder):
 		self.eval()
 		accuracy = 0
 		with torch.no_grad():
-			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+			for _, _, bert_input_examples, tg_trks_examples, supersense, sense_id, lemma in sense_encoder.encoded_senses(device=self.device):
 				
-				log_probs = self.forward(b_bert_encodings, b_target_ranks)
-				predicted_indices = torch.argmax(log_probs, dim=1)
-				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				ex_log_probs = [self.ex_clf.forward(bert_input_examples, tg_trks_examples)]
+				ex_log_probs = torch.stack(ex_log_probs)
+				ex_log_probs = torch.mean(stacked_tensors, dim=0)
 				
-			return accuracy / data_encoder.length
+				predicted_index = torch.argmax(ex_log_probs, dim=1)
+				
+				accuracy += (predicted_index == torch.tensor(supersense2i[supersense], device=self.device)).sum().item()
+				
+		return accuracy / data_encoder.length
+				
+
 			
 	# TODO
+	'''
 	def predict_wiki_senses(self, data_encoder):
 		self.eval()
 		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
@@ -570,7 +576,7 @@ class multiRankClf(nn.Module):
 				
 			return predictions
 
-
+	'''
 
 
 
