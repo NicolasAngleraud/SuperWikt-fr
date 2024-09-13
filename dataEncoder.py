@@ -257,17 +257,14 @@ class exampleEncoder(Encoder):
 				
 		if sub_corpus:
 			if sub_corpus == "wiki":
-				self.df_definitions = self.df_definitions[~self.df_definitions["sense_id"].str.contains('frsemcor')]
 				self.df_examples = self.df_examples[~self.df_examples["sense_id"].str.contains('frsemcor')]
 			if sub_corpus == "frsemcor":
-				self.df_definitions = self.df_definitions[self.df_definitions["sense_id"].str.contains('frsemcor')]
 				self.df_examples = self.df_examples[self.df_examples["sense_id"].str.contains('frsemcor')]
 		
 	
 	def encode(self):
-		df_definitions = self.df_definitions
+	
 		df_examples = self.df_examples
-		
 		tokenizer = self.tokenizer
 		
 		examples = [ x.split(' ') for x in df_examples['example'].tolist() ]
