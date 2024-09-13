@@ -252,7 +252,7 @@ class definitionEncoder(Encoder):
 
 class exampleEncoder(Encoder):
 	def __init__(self, sense_datafile, ex_datafile, dataset, tokenizer, use_sample=False, sample_size=32, sub_corpus=None):
-		super().__init__(sense_datafile, ex_datafile, dataset, tokenizer, use_sample, sample_size)
+		super().__init__(sense_datafile, ex_datafile, dataset, tokenizer, use_sample=use_sample, sample_size=sample_size)
 		
 				
 		if sub_corpus:
