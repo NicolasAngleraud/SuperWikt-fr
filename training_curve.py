@@ -201,15 +201,15 @@ if __name__ == '__main__':
 	rand_dev_examples_encoder.encode()
 	
 	
-	print(train_examples_encoder.length)
-	print(freq_dev_examples_encoder.length)
-	print(rand_dev_examples_encoder.length)
+	#print(train_examples_encoder.length)
+	#print(freq_dev_examples_encoder.length)
+	#print(rand_dev_examples_encoder.length)
 	#freq_dev_sense_encoder = senseEncoder(sense_datafile, ex_datafile, "freq-dev", tokenizer, use_sample=False)
 	#rand_dev_sense_encoder = senseEncoder(sense_datafile, ex_datafile, "rand-dev", tokenizer, use_sample=False)
 	print('EXAMPLES DATA ENCODED.\n')
 	
 	results = []
-	"""
+	
 	
 	for run in range(3):
 		
@@ -258,6 +258,6 @@ if __name__ == '__main__':
 	df = pd.DataFrame(results)
 	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
 	print('EXAMPLES MODELS TRAINED.\n')
-	"""
+	
 	
 	
