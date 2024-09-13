@@ -532,7 +532,43 @@ class multiRankClf(nn.Module):
 		accuracy = self.evaluate(data_encoder)
 		predictions = self.predict(data_encoder)
 		
-		return accuracy, predictions	
+		return accuracy, predictions
+		
+		
+	# TODO
+	def evaluate_wiki_senses(self, data_encoder):
+		self.eval()
+		accuracy = 0
+		with torch.no_grad():
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, _, _ in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
+				predicted_indices = torch.argmax(log_probs, dim=1)
+				accuracy += torch.sum((predicted_indices == b_supersenses_encoded).int()).item()
+				
+			return accuracy / data_encoder.length
+			
+	# TODO
+	def predict_wiki_senses(self, data_encoder):
+		self.eval()
+		predictions = {"lemma":[], "sense_id":[], "gold":[], "pred":[], "sentence":[]}
+		with torch.no_grad():
+			for b_bert_encodings, b_target_ranks, b_supersenses_encoded, b_senses_ids, b_lemmas in data_encoder.make_batches(device=self.device, batch_size=self.params['batch_size'], shuffle_data=False):
+				
+				log_probs = self.forward(b_bert_encodings, b_target_ranks)
+				predicted_indices = torch.argmax(log_probs, dim=1).tolist()
+				
+				pred = [SUPERSENSES[i] for i in predicted_indices]
+				gold = [SUPERSENSES[i] for i in b_supersenses_encoded.tolist()]
+				sentences = [self.tokenizer.decode(token_ids.tolist(), skip_special_tokens=True) for token_ids in b_bert_encodings]
+				
+				predictions['lemma'].extend(b_lemmas)
+				predictions['sense_id'].extend(b_senses_ids)
+				predictions['gold'].extend(gold)
+				predictions['pred'].extend(pred)
+				predictions['sentence'].extend(sentences)
+				
+			return predictions
 
 
 

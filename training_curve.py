@@ -62,14 +62,26 @@ if __name__ == '__main__':
 	
 	
 	def_lem_clf_file = f'./out/models/NEW_def_lem_clf_{device_id}.params'
-
+	ex_clf_file = f'./out/models/NEW_ex_clf_{device_id}.params'
 	
 	params_def = {
 		"nb_epochs": 100,
 		"batch_size": 16,
 		"hidden_layer_size": 768,
 		"patience": 2,
-		"lr": 0.00001,
+		"lr": 0.000005,
+		"weight_decay": 0.001,
+		"frozen": False,
+		"max_seq_length": 100
+		}
+	
+	
+	params_ex = {
+		"nb_epochs": 100,
+		"batch_size": 16,
+		"hidden_layer_size": 768,
+		"patience": 2,
+		"lr": 0.000005,
 		"weight_decay": 0.001,
 		"frozen": False,
 		"max_seq_length": 100
@@ -77,7 +89,7 @@ if __name__ == '__main__':
 	
 	
 	tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-	
+	"""
 	print('ENCODING DEFINITIONS DATA...\n')
 	train_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, remove_demonyms=False, use_sample=False)
 	train_definitions_encoder.encode()
@@ -88,7 +100,7 @@ if __name__ == '__main__':
 	
 	rand_dev_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, remove_demonyms=False, use_sample=False)
 	rand_dev_definitions_encoder.encode()
-	
+	"""
 	"""
 	freq_test_definitions_encoder = data.definitionEncoder(args.sense_data_file, args.ex_data_file, "freq-test", tokenizer, remove_demonyms=False, use_sample=False)
 	freq_test_definitions_encoder.encode()
@@ -107,6 +119,7 @@ if __name__ == '__main__':
 	
 	train_encoder_8000 = train_definitions_encoder.clone()
 	train_encoder_8000.truncate_senses(k=8000)
+	"""
 	"""
 	print('DEFINITIONS DATA ENCODED.\n')
 	
@@ -176,4 +189,71 @@ if __name__ == '__main__':
 	
 	df = pd.DataFrame(results)
 	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+	"""
+	
+	
+	print('ENCODING EXAMPLES DATA...\n')
+	train_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_data_file, "train", tokenizer, use_sample=False, sub_corpus="wiki")
+	train_examples_encoder.encode()
+	freq_dev_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_data_file, "freq-dev", tokenizer, use_sample=False, sub_corpus="wiki")
+	freq_dev_examples_encoder.encode()
+	rand_dev_examples_encoder = data.exampleEncoder(args.sense_data_file, args.ex_data_file, "rand-dev", tokenizer, use_sample=False, sub_corpus="wiki")
+	rand_dev_examples_encoder.encode()
+	
+	
+	#freq_dev_sense_encoder = senseEncoder(sense_datafile, ex_datafile, "freq-dev", tokenizer, use_sample=False)
+	#rand_dev_sense_encoder = senseEncoder(sense_datafile, ex_datafile, "rand-dev", tokenizer, use_sample=False)
+	print('EXAMPLES DATA ENCODED.\n')
+	
+	results = []
+	
+	for run in range(3):
+		
+		print()
+		print("RUN", run+1, "NB TRAINING EXAMPLES", nb)
+		print()
+	
+		print('TRAINING EXAMPLE CLASSIFIER...\n')
+		ex_clf = clf.multiRankClf(params_ex, DEVICE, dropout_input=0, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+		ex_clf.train_clf(train_examples_encoder, freq_dev_examples_encoder, rand_dev_examples_encoder, ex_clf_file)
+		print('EXAMPLE CLASSIFIER TRAINED.\n')
+		print('LOADING BEST EXAMPLE CLASSIFIER...\n')
+		ex_clf = clf.multiRankClf(params_ex, DEVICE, dropout_input=0, dropout_hidden=0.3, bert_model_name=MODEL_NAME)
+		ex_clf.load_clf(ex_clf_file)
+		print('BEST EXAMPLE CLASSIFIER LOADED.\n')
+		
+		train_accuracy = ex_clf.evaluate(train_examples_encoder)
+		freq_dev_accuracy = ex_clf.evaluate(freq_dev_examples_encoder)
+		rand_dev_accuracy = ex_clf.evaluate(rand_dev_examples_encoder)
+		
+		freq_dev_predictions = ex_clf.predict(freq_dev_examples_encoder)
+		rand_dev_predictions = ex_clf.predict(rand_dev_examples_encoder)
+
+		
+		print("train accurcay = ", percentage(train_accuracy))
+		print("freq dev accurcay = ", percentage(freq_dev_accuracy))
+		print("rand dev accurcay = ", percentage(rand_dev_accuracy))
+
+		print()
+		
+		comb = {
+			"run": run+1,
+			"train_accuracy": train_accuracy,
+			"freq_dev_accuracy": freq_dev_accuracy,
+			"rand_dev_accuracy": rand_dev_accuracy
+			}
+		results.append(comb)
+		
+		freq_dev_ex_df = pd.DataFrame(freq_dev_predictions)
+		freq_dev_ex_df.to_csv(f'./out/training_curve/ex_freq_dev_preds_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+		
+		rand_dev_ex_df = pd.DataFrame(rand_dev_predictions)
+		rand_dev_ex_df.to_csv(f'./out/training_curve/ex_rand_dev_preds_{run+1}_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+		
+	
+	df = pd.DataFrame(results)
+	df.to_csv(f'./out/training_curve/training_curve_{device_id}.tsv', sep='\t', index=False, encoding='utf-8')
+	print('EXAMPLES MODELS TRAINED.\n')
+	
+	
 	
