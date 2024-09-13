@@ -210,7 +210,7 @@ if __name__ == '__main__':
 	for run in range(3):
 		
 		print()
-		print("RUN", run+1, "NB TRAINING EXAMPLES", nb)
+		print("RUN", run+1)
 		print()
 	
 		print('TRAINING EXAMPLE CLASSIFIER...\n')
