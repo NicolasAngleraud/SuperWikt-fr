@@ -60,7 +60,10 @@ class Encoder:
 		self.df_definitions = pd.read_csv(sense_datafile, sep='\t')
 		self.df_definitions = self.df_definitions[self.df_definitions['supersense'].isin(SUPERSENSES)]
 		self.df_definitions = self.df_definitions[(self.df_definitions['definition'] != "") & (self.df_definitions['definition'].notna())]
-		if remove_demonyms: self.df_definitions = self.df_definitions[~self.df_definitions["definition"].str.startswith("Habitant")]
+		if remove_demonyms: self.df_definitions = self.df_definitions[~self.df_definitions["definition"].str.lower().str.startswith("habitant")]
+		
+		
+
 		self.df_definitions['lemma'] = self.df_definitions['lemma'].str.replace('_', ' ')
 		
 		self.df_examples = pd.read_csv(ex_datafile, sep='\t')
