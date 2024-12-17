@@ -27,7 +27,7 @@ This repository contains files aiming at the production of a lexical resource fo
 
 - **memoire.pdf**: The master's thesis written in the context of this research project.
 
-The produced resource can be downloaded from the following google drive link: https://drive.google.com/file/d/1BOyg3msX4ofj9wEFr07NhSlCuRElq2de/view?usp=sharing
+The produced resource is available at: https://www.ortolang.fr/market/lexicons/superwikt-fr
 
 - **enriched_wiktionary.tsv**: tsv file containing the final resource produced with the ttl file present in this repository and the FlauBERT based definition and example classifiers stored on the website specified in the extract_enrich_wiktionary.sh file.
 
